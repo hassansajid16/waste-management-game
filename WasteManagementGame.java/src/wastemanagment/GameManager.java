@@ -1,8 +1,7 @@
 package wastemanagment;
 
-import javax.swing.*;
-
 import java.util.ArrayList;
+import javax.swing.*;
 
  
 
@@ -103,7 +102,7 @@ String wasteType = "Empty";
             		wasteType = "Food Waste";
             		randomInt = (int) (Math.random() * 2) + 1;
             	}
-                gameLog.append(player.getName() + " collected " + wasteType +  " and £" + moneyCollect + ".\n");
+                gameLog.append(player.getName() + " collected " + wasteType +  " and R" + moneyCollect + ".\n");
 
                 break;
             //start square
@@ -126,7 +125,7 @@ String wasteType = "Empty";
              		wasteType = "Food Waste";
              		randomInt = (int) (Math.random() * 2) + 1;
              	}
-                 gameLog.append(player.getName() + " collected " + wasteType +  " and £" + moneyCollect + ".\n");
+                 gameLog.append(player.getName() + " collected " + wasteType +  " and R" + moneyCollect + ".\n");
             	break;
             case " ":
              break;
@@ -161,7 +160,7 @@ String wasteType = "Empty";
         recyclablesLabel.setText("Recyclables: " + player.getRecyclables());
 
         foodWasteLabel.setText("Food Waste: " + player.getFoodWaste());
-        cashLabel.setText("Cash: £" + player.getCash());
+        cashLabel.setText("Cash: R" + player.getCash());
     }
 
 }
