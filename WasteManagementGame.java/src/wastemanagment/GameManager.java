@@ -141,7 +141,7 @@ String wasteType = "Empty";
 
                 player.depositWaste("Composting");
 
-                gameLog.append(player.getName() + " deposited food waste at Composting Center.\n");
+                gameLog.append(player.getName() + " Deposited food waste at Composting Center.\n");
 
                 break;
 
