@@ -160,7 +160,7 @@ String wasteType = "Empty";
         recyclablesLabel.setText("Recyclables: " + player.getRecyclables());
 
         foodWasteLabel.setText("Food Waste: " + player.getFoodWaste());
-        cashLabel.setText("Cash: R" + player.getCash());
+        cashLabel.setText("Cash: R " + player.getCash());
     }
 
 }
