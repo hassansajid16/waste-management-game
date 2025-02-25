@@ -1,5 +1,5 @@
 package wastemanagment;
-
+//comment
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
