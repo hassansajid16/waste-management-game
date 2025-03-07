@@ -33,6 +33,15 @@ public class WasteManagementGame extends JFrame {
         setupPlayerLabels(players);
         setupGameLog();
         setupGameBoard();
+        
+        // Initialize game manager after UI components
+        gameManager = new GameManager(gameLog, currentPlayerLabel, playerInfoLabels, playerStatsPanel);
+        
+        // Add players to the game manager
+        for (Player player : players) {
+            gameManager.getPlayers().add(player);
+        }
+        
         setupControlPanel();
         setupGameTimer();
         
@@ -233,11 +242,8 @@ public class WasteManagementGame extends JFrame {
         mainPanel.add(boardPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
         add(mainPanel, BorderLayout.CENTER);
-        
-        // Initialize game manager after UI components
-        gameManager = new GameManager(gameLog, currentPlayerLabel, playerInfoLabels, playerStatsPanel);
     }
-    
+
     private void setupControlPanel() {
         // Player info panel at bottom
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
@@ -332,7 +338,7 @@ public class WasteManagementGame extends JFrame {
         // Animate the dice rolling
         new Thread(() -> {
             try {
-                // Quick animation// Quick animation
+                // Quick animation
                 for (int i = 0; i < 8; i++) {
                     final int randomValue = random.nextInt(6) + 1;
                     SwingUtilities.invokeLater(() -> setDiceImage(randomValue));
