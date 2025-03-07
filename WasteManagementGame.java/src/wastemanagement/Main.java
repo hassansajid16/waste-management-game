@@ -3,9 +3,6 @@ package wastemanagement;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-/**
- * Main entry point for the Waste Management Game
- */
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

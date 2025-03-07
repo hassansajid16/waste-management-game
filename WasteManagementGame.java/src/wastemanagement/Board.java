@@ -13,6 +13,13 @@ public class Board {
             else if (i == 5 || i == 10 || i == 15) {
                 tiles[i] = new Tile("Refill Resources", "Refill Resources");
             }
+            else if (i == 3 || i == 8 || i == 13 || i == 18) {
+                tiles[i] = new Tile("Special Task", "Special Task");
+            }
+            else if (i == 19) {
+                // Replacing the "End" square with "Waste Exchange" square
+                tiles[i] = new Tile("Waste Exchange", "Waste Exchange");
+            }
             else {
                 tiles[i] = new Tile("Task", "Task");
             }
