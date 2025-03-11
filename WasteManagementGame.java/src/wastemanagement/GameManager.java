@@ -1,14 +1,20 @@
 package wastemanagement;
 
+// import javax.swing.BorderFactory;
+// import javax.swing.border.Border;
+// import java.util.ArrayList;
+// import javax.swing.*;
+// import javax.swing.border.BorderFactory;
+// import java.awt.Color;
+// import java.awt.Component;
+// import java.awt.Font;
+// import java.awt.SwingConstants;
+// import java.awt.BorderLayout;
+// import java.awt.BoxLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.border.BorderFactory;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.BoxLayout;
 
 public class GameManager {
     private ArrayList<Player> players;
