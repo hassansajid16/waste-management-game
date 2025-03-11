@@ -1,4 +1,5 @@
 package wastemanagement;
+import java.net.URL;
 
 import javax.swing.*;
 import java.awt.*;
@@ -315,21 +316,37 @@ public class WasteManagementGame extends JFrame {
     }
     
     private void setDiceImage(int value) {
-        try {
-            // Try to load images from resources
-            ImageIcon icon = new ImageIcon(getClass().getResource("/resources/dice" + value + ".png"));
-            diceImage.setIcon(icon);
-            diceImage.setText("");
-        } catch (Exception e) {
-            // Fallback if image not found - create a visual dice representation
+    try {
+        // The path is relative to the src folder, not an absolute path
+        // Notice how your folder structure shows src/Resources/dice1.png
+        URL imageUrl = getClass().getResource("/Resources/dice" + value + ".png");
+        
+        if (imageUrl != null) {
+            ImageIcon icon = new ImageIcon(imageUrl);
+            // Resize if needed
+            Image img = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+            diceImage.setIcon(new ImageIcon(img));
+            diceImage.setText(""); // Clear any text
+        } else {
+            // Fallback if image not found - print debug info
+            System.out.println("Could not find dice image for value: " + value);
+            System.out.println("Looking for: /Resources/dice" + value + ".png");
             diceImage.setIcon(null);
             diceImage.setText(String.valueOf(value));
             diceImage.setFont(new Font("Arial", Font.BOLD, 48));
             diceImage.setBackground(Color.WHITE);
             diceImage.setOpaque(true);
-            diceImage.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         }
+    } catch (Exception e) {
+        // Fallback if loading fails
+        diceImage.setIcon(null);
+        diceImage.setText(String.valueOf(value));
+        diceImage.setFont(new Font("Arial", Font.BOLD, 48));
+        diceImage.setBackground(Color.WHITE);
+        diceImage.setOpaque(true);
+        System.out.println("Error loading dice image: " + e.getMessage());
     }
+}
     
     private void rollDice() {
         // Disable interaction during animation
