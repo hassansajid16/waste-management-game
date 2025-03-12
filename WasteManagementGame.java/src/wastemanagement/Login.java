@@ -288,7 +288,7 @@ public class Login extends JFrame {
     }
     
     private JButton createColorButton(Color color) {
-        final int SIZE = 50;
+        final int SIZE = 37;  // Increased size from 50 to 60
         
         JButton button = new JButton() {
             @Override
@@ -298,7 +298,7 @@ public class Login extends JFrame {
                 
                 int width = getWidth();
                 int height = getHeight();
-                int diameter = Math.min(width, height);
+                int diameter = Math.min(width, height) - 10;  // Reduced diameter to add padding
                 
                 // Choose color based on enabled state
                 Color baseColor = isEnabled() ? color : darkenColor(color, 0.6f);
@@ -348,6 +348,16 @@ public class Login extends JFrame {
             public Dimension getPreferredSize() {
                 return new Dimension(SIZE, SIZE);
             }
+            
+            @Override
+            public Dimension getMinimumSize() {
+                return getPreferredSize();
+            }
+            
+            @Override
+            public Dimension getMaximumSize() {
+                return getPreferredSize();
+            }
         };
         
         button.setBackground(color);
@@ -359,7 +369,6 @@ public class Login extends JFrame {
         
         return button;
     }
-    
     // Helper method to brighten a color
     private Color brightenColor(Color color, float factor) {
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
