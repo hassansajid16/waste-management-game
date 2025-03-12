@@ -14,8 +14,8 @@ public class Main {
                 System.out.println("Could not set system look and feel: " + e.getMessage());
             }
             
-            // Start with the login screen
-            new Login();
+            // Start with the splash screen instead of login
+            new SplashScreen();
         });
     }
 }
