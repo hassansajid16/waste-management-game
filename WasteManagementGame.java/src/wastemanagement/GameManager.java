@@ -206,33 +206,11 @@ public class GameManager {
                 break;
                 
             case "Special Task":
-                // Handle special task squares - require resources
-                int requiredRecyclables = 1;
-                int requiredFoodWaste = 1;
-                int bonusReward = 200;
-                
-                gameLog.append("⭐ " + player.getName() + " landed on a Special Task square!\n");
-                gameLog.append("   This task requires " + requiredRecyclables + " recyclables and " + 
-                             requiredFoodWaste + " food waste.\n");
-                
-                if (player.getRecyclables() >= requiredRecyclables && 
-                    player.getFoodWaste() >= requiredFoodWaste) {
-                    
-                    // Consume resources
-                    for (int i = 0; i < requiredRecyclables; i++) {
-                        player.collectWaste("useRecyclables");
-                    }
-                    for (int i = 0; i < requiredFoodWaste; i++) {
-                        player.collectWaste("useFoodWaste");
-                    }
-                    
-                    // Give reward
-                    player.updateCash(bonusReward);
-                    gameLog.append("🎉 Task completed! " + player.getName() + " received R" + bonusReward + ".\n");
-                } else {
-                    gameLog.append("❌ " + player.getName() + " doesn't have enough resources for this task.\n");
-                }
+                gameLog.append(player.getName() + " landed on a Special Task square!\n");
+                SpecialTask.askQuestion(player, gameLog);  // Call the new method
                 break;
+        
+            
                 
             case "Waste Exchange":
                 // Handle waste exchange - convert waste to money
