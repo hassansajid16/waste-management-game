@@ -1,11 +1,13 @@
 package wastemanagement;
-import java.net.URL;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class WasteManagementGame extends JFrame {
@@ -17,23 +19,35 @@ public class WasteManagementGame extends JFrame {
     private JLabel[] playerInfoLabels;
     private JPanel playerStatsPanel;
     private JLabel diceImage;
-    private JLabel[] tileLabels;
     private Random random = new Random();
     private Timer gameTimer;
     private int gameSeconds = 0;
     private JLabel timerLabel;
+    
+    // New fields for token-based board
+    private GameBoardManager boardManager;
+    private Map<String, Color> playerColors;
 
     public WasteManagementGame(ArrayList<Player> players) {
+        this(players, createDefaultPlayerColors(players));
+    }
+    
+    public WasteManagementGame(ArrayList<Player> players, Map<String, Color> playerColors) {
         setTitle("Waste Management Game");
         setSize(1100, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(new Color(45, 65, 45));
+        
+        // Store player colors
+        this.playerColors = playerColors;
+        
+        // Assign colors to players
+        assignColorsToPlayers(players, playerColors);
 
         // Initialize components
         setupPlayerLabels(players);
         setupGameLog();
-        setupGameBoard();
         
         // Initialize game manager after UI components
         gameManager = new GameManager(gameLog, currentPlayerLabel, playerInfoLabels, playerStatsPanel);
@@ -43,13 +57,15 @@ public class WasteManagementGame extends JFrame {
             gameManager.getPlayers().add(player);
         }
         
+        // Setup board after game manager has players
+        setupGameBoard();
         setupControlPanel();
         setupGameTimer();
         
         // Setup players and start game
         if (!players.isEmpty()) {
             gameLog.append("\n----- " + players.get(0).getName() + "'s Turn (" + players.get(0).getRole() + ") -----\n");
-            highlightTile(0);
+            boardManager.highlightTile(0);
             gameManager.updateCurrentPlayerDisplay();
             gameManager.updateAllPlayerStats();
         }
@@ -58,6 +74,50 @@ public class WasteManagementGame extends JFrame {
         setVisible(true);
     }
     
+    // Helper method to create default colors if none provided from Login
+    private static Map<String, Color> createDefaultPlayerColors(ArrayList<Player> players) {
+        Map<String, Color> colors = new HashMap<>();
+        Color[] defaultColors = {
+            new Color(65, 105, 225),  // Royal Blue
+            new Color(220, 20, 60),   // Crimson
+            new Color(50, 205, 50),   // Lime Green
+            new Color(255, 215, 0)    // Gold
+        };
+        
+        for (int i = 0; i < players.size(); i++) {
+            colors.put(players.get(i).getName(), defaultColors[i % defaultColors.length]);
+        }
+        
+        return colors;
+    }
+    
+    // Helper method to assign colors to players
+    private void assignColorsToPlayers(ArrayList<Player> players, Map<String, Color> colors) {
+        for (Player player : players) {
+            // Get color directly by player name
+            Color playerColor = colors.get(player.getName());
+            if (playerColor != null) {
+                player.setPlayerColor(playerColor);
+                System.out.println("Assigned color " + playerColor + " to player " + player.getName());
+            } else {
+                // If no exact match, try partial match as fallback
+                for (Map.Entry<String, Color> entry : colors.entrySet()) {
+                    if (entry.getKey().contains(player.getName()) || 
+                        player.getName().contains(entry.getKey())) {
+                        player.setPlayerColor(entry.getValue());
+                        System.out.println("Assigned color by partial match to " + player.getName());
+                        break;
+                    }
+                }
+                
+                // If still no color, assign a default
+                if (player.getPlayerColor() == null) {
+                    player.setPlayerColor(Color.GRAY);
+                    System.out.println("Assigned default color to " + player.getName());
+                }
+            }
+        }
+    }
     private void setupPlayerLabels(ArrayList<Player> players) {
         // Create left sidebar panel
         JPanel leftSidebarPanel = new JPanel();
@@ -157,48 +217,9 @@ public class WasteManagementGame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setOpaque(false);
         
-        // Create board panel
-        JPanel boardPanel = new JPanel(new GridLayout(4, 5, 10, 10));
-        boardPanel.setBackground(new Color(45, 65, 45));
-        boardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        tileLabels = new JLabel[Board.BOARD_SIZE];
-        Board board = new Board();
-        
-        // Create tiles
-        for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            tileLabels[i] = new JLabel(board.getTile(i).getName(), SwingConstants.CENTER);
-            tileLabels[i].setOpaque(true);
-            tileLabels[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-            tileLabels[i].setPreferredSize(new Dimension(100, 70));
-            tileLabels[i].setFont(new Font("Arial", Font.BOLD, 14));
-
-            // Set tile colors based on type
-            switch (board.getTile(i).getType()) {
-                case "Resource Square":
-                    tileLabels[i].setBackground(new Color(89, 116, 89));
-                    break;
-                case "Special Task":
-                    tileLabels[i].setBackground(new Color(142, 92, 174));
-                    break;
-                case "Task":
-                    tileLabels[i].setBackground(new Color(50, 57, 57));
-                    break;
-                case "Refill Resources":
-                    tileLabels[i].setBackground(new Color(89, 116, 89));
-                    break;
-                case "Waste Exchange":
-                    tileLabels[i].setBackground(new Color(70, 130, 180)); // Steel blue
-                    break;
-                default:
-                    tileLabels[i].setBackground(new Color(70, 77, 77));
-            }
-            
-            // Add position number to each tile
-            tileLabels[i].setText("<html>" + board.getTile(i).getName() + "<br><small>Position " + i + "</small></html>");
-            tileLabels[i].setForeground(Color.WHITE);
-            boardPanel.add(tileLabels[i]);
-        }
+        // Create board manager with the players
+        boardManager = new GameBoardManager(gameManager.getPlayers());
+        JPanel boardPanel = boardManager.getBoardPanel();
         
         // Dice and log panel
         JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
@@ -316,37 +337,32 @@ public class WasteManagementGame extends JFrame {
     }
     
     private void setDiceImage(int value) {
-    try {
-        // The path is relative to the src folder, not an absolute path
-        // Notice how your folder structure shows src/Resources/dice1.png
-        URL imageUrl = getClass().getResource("/Resources/dice" + value + ".png");
-        
-        if (imageUrl != null) {
-            ImageIcon icon = new ImageIcon(imageUrl);
-            // Resize if needed
-            Image img = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-            diceImage.setIcon(new ImageIcon(img));
-            diceImage.setText(""); // Clear any text
-        } else {
-            // Fallback if image not found - print debug info
-            System.out.println("Could not find dice image for value: " + value);
-            System.out.println("Looking for: /Resources/dice" + value + ".png");
+        try {
+            URL imageUrl = getClass().getResource("/Resources/dice" + value + ".png");
+            
+            if (imageUrl != null) {
+                ImageIcon icon = new ImageIcon(imageUrl);
+                Image img = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+                diceImage.setIcon(new ImageIcon(img));
+                diceImage.setText(""); // Clear any text
+            } else {
+                System.out.println("Could not find dice image for value: " + value);
+                System.out.println("Looking for: /Resources/dice" + value + ".png");
+                diceImage.setIcon(null);
+                diceImage.setText(String.valueOf(value));
+                diceImage.setFont(new Font("Arial", Font.BOLD, 48));
+                diceImage.setBackground(Color.WHITE);
+                diceImage.setOpaque(true);
+            }
+        } catch (Exception e) {
             diceImage.setIcon(null);
             diceImage.setText(String.valueOf(value));
             diceImage.setFont(new Font("Arial", Font.BOLD, 48));
             diceImage.setBackground(Color.WHITE);
             diceImage.setOpaque(true);
+            System.out.println("Error loading dice image: " + e.getMessage());
         }
-    } catch (Exception e) {
-        // Fallback if loading fails
-        diceImage.setIcon(null);
-        diceImage.setText(String.valueOf(value));
-        diceImage.setFont(new Font("Arial", Font.BOLD, 48));
-        diceImage.setBackground(Color.WHITE);
-        diceImage.setOpaque(true);
-        System.out.println("Error loading dice image: " + e.getMessage());
     }
-}
     
     private void rollDice() {
         // Disable interaction during animation
@@ -373,10 +389,12 @@ public class WasteManagementGame extends JFrame {
                     // Get current player and move
                     Player currentPlayer = gameManager.getCurrentPlayer();
                     if (currentPlayer != null) {
+                        int oldPosition = currentPlayer.getPosition();
                         gameManager.playTurn(currentPlayer, positionLabel, recyclablesLabel, foodWasteLabel, cashLabel);
+                        int newPosition = currentPlayer.getPosition();
                         
-                        // Update visual position
-                        highlightTile(currentPlayer.getPosition());
+                        // Move the player token on the board
+                        boardManager.movePlayer(currentPlayer, newPosition);
                         
                         // Next player
                         gameManager.nextTurn();
@@ -391,20 +409,6 @@ public class WasteManagementGame extends JFrame {
                 setEnabled(true);
             }
         }).start();
-    }
-
-    private void highlightTile(int position) {
-        // Reset all tile borders
-        for (int i = 0; i < tileLabels.length; i++) {
-            if (tileLabels[i] != null) {
-                tileLabels[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-            }
-        }
-        
-        // Highlight current tile
-        if (tileLabels[position] != null) {
-            tileLabels[position].setBorder(BorderFactory.createLineBorder(Color.YELLOW, 3));
-        }
     }
     
     // Clean up resources when the game closes

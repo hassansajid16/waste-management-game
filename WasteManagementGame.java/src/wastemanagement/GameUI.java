@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BoxLayout;
 
 public class GameUI extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -27,7 +28,10 @@ public class GameUI extends JFrame {
         gameLog.setFont(new Font("Arial", Font.PLAIN, 16));
         
         // Initialize GameManager
-        gameManager = new GameManager(gameLog);
+        JLabel dummyCurrentPlayerLabel = new JLabel();
+JLabel[] dummyPlayerLabels = new JLabel[0];
+JPanel dummyStatsPanel = new JPanel();
+gameManager = new GameManager(gameLog, dummyCurrentPlayerLabel, dummyPlayerLabels, dummyStatsPanel);
 
         // Create main content panel to hold board and message panel
         JPanel mainContent = new JPanel(new BorderLayout(0, 20));

@@ -1,5 +1,7 @@
 package wastemanagement;
 
+import java.awt.Color;
+
 public class Player {
     private String name;
     private int position;
@@ -7,6 +9,7 @@ public class Player {
     private int foodWaste;
     private int cash;
     private String role;
+    private Color playerColor; // Added field to store the player's color
 
     public Player(String name) {
         this.name = name;
@@ -15,6 +18,7 @@ public class Player {
         this.foodWaste = 0;
         this.cash = 0;
         this.role = "null";
+        this.playerColor = Color.GRAY; // Default color
     }
         
     public String getName() {
@@ -77,6 +81,15 @@ public class Player {
     
     public String getRole() {
         return role;
+    }
+    
+    // New methods for player color
+    public Color getPlayerColor() {
+        return playerColor;
+    }
+    
+    public void setPlayerColor(Color color) {
+        this.playerColor = color;
     }
     
     public void applyRole(String role) {

@@ -473,10 +473,10 @@ public class Login extends JFrame {
         Player player = new Player(name);
         player.setRole(role);
         player.applyRole(role);
+        player.setPlayerColor(color);
         players.add(player);
         
-        // Store the color as used
-        playerColors.put(colorName, color);
+        playerColors.put(name, color);
         
         // Add player card to the registered players panel
         addPlayerCard(player, color);
@@ -604,8 +604,16 @@ public class Login extends JFrame {
     
     private void startGame() {
         if (players.size() >= 2) {
+            // We've already stored colors by player name, so we can use playerColors directly
+            System.out.println("Starting game with players and their colors:");
+            for (Player player : players) {
+                Color playerColor = playerColors.get(player.getName());
+                System.out.println(player.getName() + ": " + 
+                                   (playerColor != null ? playerColor : "No color"));
+            }
+            
             dispose();
-            new WasteManagementGame(players);
+            new WasteManagementGame(players, playerColors);
         } else {
             JOptionPane.showMessageDialog(this, 
                 "You need at least 2 players to start the game.",
@@ -613,15 +621,4 @@ public class Login extends JFrame {
                 JOptionPane.WARNING_MESSAGE);
         }
     }
-    
-    public static void main(String[] args) {
-        try {
-            // Set system look and feel
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        SwingUtilities.invokeLater(() -> new Login());
     }
-}
