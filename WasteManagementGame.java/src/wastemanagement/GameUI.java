@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BoxLayout;
 
 public class GameUI extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -25,7 +24,12 @@ public class GameUI extends JFrame {
         // Initialize game log first since it's needed by GameManager
         gameLog = new JTextArea(4, 30);
         gameLog.setEditable(false);
-        gameLog.setFont(new Font("Arial", Font.PLAIN, 16));
+        gameLog.setFont(new Font("Arial", Font.PLAIN, 14)); // Reduce font size slightly
+        gameLog.setLineWrap(true);
+        gameLog.setWrapStyleWord(true);
+        gameLog.setPreferredSize(new Dimension(600,150));
+        gameLog.setMaximumSize(new Dimension(600, 150));
+
         
         // Initialize GameManager
         JLabel dummyCurrentPlayerLabel = new JLabel();
@@ -121,8 +125,20 @@ gameManager = new GameManager(gameLog, dummyCurrentPlayerLabel, dummyPlayerLabel
         // Set preferred size for better control of the panel's dimensions
         messagePanel.setPreferredSize(new Dimension(600, 150));
         
-        JScrollPane scrollPane = new JScrollPane(gameLog);
+        JScrollPane scrollPane = new JScrollPane(gameLog){
+            @Override
+            public Dimension getPreferredSize(){
+                return new Dimension(600,150);
+            }
+        };
         scrollPane.setBorder(null);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setMinimumSize(new Dimension(600, 150));
+        scrollPane.setPreferredSize(new Dimension(600, 150));
+        scrollPane.getViewport().setPreferredSize(new Dimension(600, 150));
+        scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+
+        messagePanel.setLayout(new BorderLayout());
         messagePanel.add(scrollPane, BorderLayout.CENTER);
     }
 
