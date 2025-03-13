@@ -62,8 +62,19 @@ public class PlayerStatisticsPanel extends JPanel {
         startObjectiveButton.setFont(new Font("Arial", Font.BOLD, 12));
         startObjectiveButton.setBackground(new Color(100, 180, 100));
         startObjectiveButton.setForeground(Color.WHITE);
+        startObjectiveButton.setOpaque(true); // Make sure it's visible
+        startObjectiveButton.setBorderPainted(true);
         startObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         startObjectiveButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, startObjectiveButton.getPreferredSize().height));
+        
+        // Make sure the button is visible on the panel
+        startObjectiveButton.setVisible(true);
+        
+        // Optional: Add a border to make it stand out more
+        startObjectiveButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(50, 100, 50), 2),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
         
         // Add button action
         startObjectiveButton.addActionListener(new ActionListener() {
@@ -87,13 +98,24 @@ public class PlayerStatisticsPanel extends JPanel {
     }
     
     private void openObjectiveGameDialog() {
-        ObjectiveGameDialog dialog = new ObjectiveGameDialog(
-            gameInstance, player, gameInstance.getGameLog());
-        dialog.setVisible(true);
-        
-        // Update UI after dialog closes
-        if (dialog.wasGameSelected()) {
-            gameInstance.updatePlayerStats();
+        System.out.println("Opening Objective Game Dialog for player: " + player.getName());
+        try {
+            ObjectiveGameDialog dialog = new ObjectiveGameDialog(
+                gameInstance, player, gameInstance.getGameLog());
+            System.out.println("Dialog created, setting visible...");
+            dialog.setVisible(true);
+            System.out.println("Dialog shown");
+            
+            // Update UI after dialog closes
+            if (dialog.wasGameSelected()) {
+                System.out.println("Game was selected, updating player stats");
+                gameInstance.updatePlayerStats();
+            } else {
+                System.out.println("No game was selected");
+            }
+        } catch (Exception e) {
+            System.err.println("Error opening objective game dialog: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

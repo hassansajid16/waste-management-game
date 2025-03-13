@@ -35,6 +35,7 @@ public class WasteManagementGame extends JFrame {
     private JPanel playerStatsPanel;
     private Map<Player, ObjectivesPanel> playerObjectivesPanels;
     private GameTilePanel[] tilePanels;
+    private JPanel objectivesContainer;
     
     // Game state
     private Timer gameTimer;
@@ -93,14 +94,22 @@ public class WasteManagementGame extends JFrame {
             gameManager.getPlayers().add(player);
         }
         
+        // Create player statistic panels and add to the sidebar
+        playerStatsPanel.removeAll();
+        for (Player player : players) {
+            PlayerStatisticsPanel playerPanel = new PlayerStatisticsPanel(player, this);
+            playerPanel.update(); // Update the panel with current player data
+            playerStatsPanel.add(playerPanel);
+        }
+        
+        playerStatsPanel.revalidate();
+        playerStatsPanel.repaint();
+        
         // Initialize game and start timer
         initializeGame();
         setupGameTimer();
     }
     
-    /**
-     * Initialize game state
-     */
     private void initializeGame() {
         if (!players.isEmpty()) {
             // Welcome message and game start
@@ -319,7 +328,7 @@ public class WasteManagementGame extends JFrame {
         // Add bottom panel to main window
         add(bottomPanel, BorderLayout.SOUTH);
     }
-    private JPanel objectivesContainer;
+    
     /**
      * Setup the objectives panel
      */
