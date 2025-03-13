@@ -3,6 +3,9 @@ package wastemanagement;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+/**
+ * Main class for launching the Waste Management Game
+ */
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -14,7 +17,7 @@ public class Main {
                 System.out.println("Could not set system look and feel: " + e.getMessage());
             }
             
-            // Start with the splash screen instead of login
+            // Launch the splash screen
             new SplashScreen();
         });
     }

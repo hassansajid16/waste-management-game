@@ -34,23 +34,23 @@ public class SpecialTask {
         "Makers Valley does not have adequate facilities for electronic waste disposal.",
         "Pikitup regularly cleans up areas prone to illegal dumping in Makers Valley.",
         "Pikitup educates the community of Makers Valley about the benefits of sorting waste at home.",
-        "Makers Valley residents are actively involved in keeping their streets clean with Pikitup’s support.",
+        "Makers Valley residents are actively involved in keeping their streets clean with Pikitup's support.",
         "Makers Valley has implemented measures to reduce littering and encourage responsible waste disposal.",
-        "Pikitup’s collection services in Makers Valley are extended to public areas and parks.",
-        "Makers Valley residents complain about missed waste collection due to Pikitup’s service gaps.",
+        "Pikitup's collection services in Makers Valley are extended to public areas and parks.",
+        "Makers Valley residents complain about missed waste collection due to Pikitup's service gaps.",
         "Pikitup collaborates with the community in Makers Valley to combat illegal dumping.",
         "Pikitup provides green waste collection services in Makers Valley on a weekly basis.",
         "Pikitup encourages the reduction of waste by offering drop-off points for recyclables in Makers Valley.",
         "Pikitup has successfully reduced landfill waste in Makers Valley through its recycling initiatives.",
         "Makers Valley has community clean-up campaigns supported by Pikitup.",
         "Pikitup has reduced waste overflow in high-density areas of Makers Valley.",
-        "Makers Valley residents are encouraged to use Pikitup’s mobile app for waste-related queries.",
+        "Makers Valley residents are encouraged to use Pikitup's mobile app for waste-related queries.",
         "Pikitup handles the collection of hazardous waste such as paint and batteries in Makers Valley.",
         "Makers Valley has efficient waste sorting programs in place thanks to Pikitup.",
         "Pikitup conducts waste separation at the curb in Makers Valley.",
         "Makers Valley has seen a decrease in waste-related complaints since Pikitup started its initiatives.",
         "Pikitup provides waste disposal services for major events in Makers Valley.",
-        "Pikitup’s recycling efforts have reduced the amount of waste sent to landfills in Makers Valley.",
+        "Pikitup's recycling efforts have reduced the amount of waste sent to landfills in Makers Valley.",
         "Makers Valley has dedicated collection times for organic waste through Pikitup."
     };
 
@@ -64,6 +64,14 @@ public class SpecialTask {
 
     public static void askQuestion(Player player, JTextArea gameLog) {
         Random rand = new Random();
+        
+        // 40% chance to launch waste sorting game instead of true/false question
+        if (rand.nextInt(100) < 40) {
+            launchWasteSortingGame(player, gameLog);
+            return;
+        }
+        
+        // Otherwise, proceed with true/false question
         int index = rand.nextInt(QUESTIONS.length); // Pick a random question
         
         // Display question in game log
@@ -75,16 +83,29 @@ public class SpecialTask {
                 null, QUESTIONS[index], "Special Task", JOptionPane.YES_NO_OPTION
             );
 
-        boolean playerAnswer = (choice == JOptionPane.YES_OPTION);
-        boolean correctAnswer = ANSWERS[index];
+            boolean playerAnswer = (choice == JOptionPane.YES_OPTION);
+            boolean correctAnswer = ANSWERS[index];
 
-        if(playerAnswer == correctAnswer){
-            gameLog.append("Correct " + player.getName() + "completes the special task\n");
-            player.updateCash(100);
-            gameLog.append("Yaho bai theres 100 ruples for you smmart brain of yours horse\n");
-        }else{
-            gameLog.append("Unlucky. No reward for " + player.getName() + " ouch thats tough mate " + "\n");
-        }
+            if(playerAnswer == correctAnswer){
+                gameLog.append("Correct! " + player.getName() + " completes the special task.\n");
+                player.updateCash(100);
+                gameLog.append("💰 Earned R100 for your knowledge about waste management!\n");
+            } else {
+                gameLog.append("Incorrect. No reward for " + player.getName() + ".\n");
+            }
+        });
+    }
+    
+    /**
+     * Launches the waste sorting mini-game
+     */
+    private static void launchWasteSortingGame(Player player, JTextArea gameLog) {
+        gameLog.append("\n🧹 " + player.getName() + " has encountered a Waste Sorting Challenge!\n");
+        gameLog.append("Sort the waste items correctly to earn rewards.\n");
         
-    });
-}}
+        // Launch the waste sorting game in the EDT
+        SwingUtilities.invokeLater(() -> {
+            new WasteSortingGame(player, gameLog);
+        });
+    }
+}

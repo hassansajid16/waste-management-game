@@ -3,10 +3,11 @@ package wastemanagement;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.net.URL;
 import javax.swing.*;
 
+/**
+ * Splash screen that displays when the game first launches
+ */
 public class SplashScreen extends JFrame {
     private static final long serialVersionUID = 1L;
     
@@ -21,6 +22,9 @@ public class SplashScreen extends JFrame {
     private Color accentColor = new Color(89, 116, 89);  // Accent color
     private Color buttonColor = new Color(173, 216, 230);  // Light blue for buttons
     
+    /**
+     * Constructor
+     */
     public SplashScreen() {
         // Setup frame
         setTitle("Waste Management Game");
@@ -35,6 +39,9 @@ public class SplashScreen extends JFrame {
         setVisible(true);
     }
     
+    /**
+     * Setup the UI components
+     */
     private void setupUI() {
         // Main panel with gradient background
         mainPanel = new JPanel() {
@@ -60,65 +67,19 @@ public class SplashScreen extends JFrame {
         logoPanel.setOpaque(false);
         logoPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
         
-        // Load logo
-        logoLabel = new JLabel();
-        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        boolean logoLoaded = false;
-        
-        try {
-            // Method 1: Try to load from resources folder using resource stream
-            String resourcePath = "/Resources/logo.jpg";
-            URL logoUrl = getClass().getResource(resourcePath);
-            
-            if (logoUrl != null) {
-                ImageIcon originalIcon = new ImageIcon(logoUrl);
-                Image scaledImage = originalIcon.getImage().getScaledInstance(
-                    Math.min(originalIcon.getIconWidth(), 300), 
-                    Math.min(originalIcon.getIconHeight(), 300), 
-                    Image.SCALE_SMOOTH
-                );
-                logoLabel.setIcon(new ImageIcon(scaledImage));
-                logoLoaded = true;
-            } else {
-                System.out.println("Couldn't find logo using resource path: " + resourcePath);
-            }
-            
-            // Method 2: If Method 1 failed, try direct file path
-            if (!logoLoaded) {
-                String absolutePath = "C:\\Users\\lucia\\CSC2058-2425-G31\\WasteManagementGame.java\\src\\Resources\\logo.png";
-                File logoFile = new File(absolutePath);
-                
-                if (logoFile.exists()) {
-                    ImageIcon originalIcon = new ImageIcon(absolutePath);
-                    Image scaledImage = originalIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
-                    logoLabel.setIcon(new ImageIcon(scaledImage));
-                    logoLoaded = true;
-                    System.out.println("Loaded logo from absolute path: " + absolutePath);
-                } else {
-                    System.out.println("File doesn't exist at path: " + absolutePath);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error loading logo: " + e.getMessage());
-            e.printStackTrace();
-        }
-        
-        // Fallback if logo still not loaded
-        if (!logoLoaded) {
-            logoLabel.setText("BINOVATORS OF MAKERS VALLEY");
-            logoLabel.setFont(new Font("Arial", Font.BOLD, 28));
-            logoLabel.setForeground(Color.WHITE);
-        }
-        
-        logoPanel.add(logoLabel, BorderLayout.CENTER);
+        // Create title text
+        logoLabel = new JLabel("WASTE MANAGEMENT GAME", SwingConstants.CENTER);
+        logoLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        logoLabel.setForeground(Color.WHITE);
         
         // Tagline label
-        taglineLabel = new JLabel("Innovating waste, transforming tomorrow", SwingConstants.CENTER);
+        taglineLabel = new JLabel("Tackling Waste Management in Makers Valley", SwingConstants.CENTER);
         taglineLabel.setFont(new Font("Arial", Font.ITALIC, 20));
         taglineLabel.setForeground(new Color(220, 220, 220));
         taglineLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 40, 0));
         
+        // Add logo and tagline to logo panel
+        logoPanel.add(logoLabel, BorderLayout.CENTER);
         logoPanel.add(taglineLabel, BorderLayout.SOUTH);
         
         // Start button panel (bottom of the screen)
@@ -126,6 +87,7 @@ public class SplashScreen extends JFrame {
         buttonPanel.setOpaque(false);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
         
+        // Create start button
         startButton = new JButton("START");
         startButton.setFont(new Font("Arial", Font.BOLD, 18));
         startButton.setForeground(Color.BLACK);
@@ -149,7 +111,7 @@ public class SplashScreen extends JFrame {
             }
         });
         
-        // Add action to start button
+        // Add action to start button - launches the login screen
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,17 +119,50 @@ public class SplashScreen extends JFrame {
                 dispose();
                 
                 // Open the login page
-                SwingUtilities.invokeLater(() -> new Login());
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        new Login();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null,
+                            "Error starting the login screen: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                });
             }
         });
         
+        // Add start button to button panel
         buttonPanel.add(startButton);
+        
+        // Add subtitle panel
+        JPanel subtitlePanel = new JPanel();
+        subtitlePanel.setOpaque(false);
+        JLabel subtitle2 = new JLabel("A Game About Sustainable Waste Management Solutions", SwingConstants.CENTER);
+        subtitle2.setFont(new Font("Arial", Font.PLAIN, 16));
+        subtitle2.setForeground(Color.WHITE);
+        subtitlePanel.add(subtitle2);
         
         // Add components to main panel
         mainPanel.add(logoPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(subtitlePanel, BorderLayout.NORTH);
         
         // Add main panel to frame
         setContentPane(mainPanel);
+    }
+    
+    // Main method for direct testing
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // Set system look and feel
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            new SplashScreen();
+        });
     }
 }

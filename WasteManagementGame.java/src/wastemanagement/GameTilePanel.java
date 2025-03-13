@@ -15,16 +15,27 @@ public class GameTilePanel extends JPanel {
     private boolean highlighted = false;
     private Map<Player, PlayerToken> playerTokens = new HashMap<>();
     
+    // New property related fields
+    private Player owner;
+    private boolean isProperty;
+    private int propertyPrice;
+    
     // Styling constants
     private Color baseColor;
     private Color highlightColor = Color.YELLOW;
-    private Font titleFont = new Font("Arial", Font.BOLD, 12);
-    private Font positionFont = new Font("Arial", Font.PLAIN, 10);
+    protected Font titleFont = new Font("Arial", Font.BOLD, 12);
+    protected Font positionFont = new Font("Arial", Font.PLAIN, 10);
     
     public GameTilePanel(String tileName, String tileType, int position) {
         this.tileName = tileName;
         this.tileType = tileType;
         this.position = position;
+        this.isProperty = tileType.equals("Property");
+        
+        // Set property price based on position
+        if (isProperty) {
+            this.propertyPrice = 100 + (position * 20);
+        }
         
         // Set tile background color based on type
         setBaseColorByType(tileType);
@@ -34,27 +45,30 @@ public class GameTilePanel extends JPanel {
         
         // Enable proper rendering
         setOpaque(true);
+        
+        // Debug print the tile name for troubleshooting
+        System.out.println("Creating tile: " + position + " - " + tileName + " (" + tileType + ")");
     }
     
     private void setBaseColorByType(String type) {
         switch (type) {
-            case "Resource Square":
-                baseColor = new Color(89, 116, 89);
+            case "StartSquare":
+                baseColor = new Color(89, 116, 89);  // Green for GO
                 break;
-            case "Special Task":
-                baseColor = new Color(142, 92, 174);
+            case "SpecialTask":
+                baseColor = new Color(142, 92, 174);  // Purple
                 break;
-            case "Task":
-                baseColor = new Color(50, 57, 57);
+            case "EcoChallenge":
+                baseColor = new Color(46, 139, 87);   // Sea Green - distinctive color for eco challenges
                 break;
-            case "Refill Resources":
-                baseColor = new Color(89, 116, 89);
+            case "Property":
+                baseColor = new Color(50, 57, 57);    // Dark slate for properties
                 break;
-            case "Waste Exchange":
-                baseColor = new Color(70, 130, 180); // Steel blue
+            case "CommunityFund":
+                baseColor = new Color(89, 116, 89);   // Green for community funds
                 break;
             default:
-                baseColor = new Color(70, 77, 77);
+                baseColor = new Color(70, 77, 77);    // Default dark slate
         }
     }
     
@@ -64,6 +78,15 @@ public class GameTilePanel extends JPanel {
                 BorderFactory.createLineBorder(highlightColor, 3) : 
                 BorderFactory.createLineBorder(Color.BLACK, 2));
         repaint();
+    }
+    
+    public void setOwner(Player owner) {
+        this.owner = owner;
+        repaint(); // Redraw to show ownership
+    }
+
+    public Player getOwner() {
+        return owner;
     }
     
     public void addPlayerToken(Player player) {
@@ -130,19 +153,65 @@ public class GameTilePanel extends JPanel {
         g2d.setColor(baseColor);
         g2d.fillRect(0, 0, getWidth(), getHeight());
         
+        // Draw property ownership marker if applicable
+        if (isProperty && owner != null) {
+            // Draw a colored band at the top
+            g2d.setColor(owner.getPlayerColor());
+            g2d.fillRect(0, 0, getWidth(), 12);
+        }
+        
         // Draw tile name
         g2d.setColor(Color.WHITE);
         g2d.setFont(titleFont);
         FontMetrics fm = g2d.getFontMetrics();
-        int textX = (getWidth() - fm.stringWidth(tileName)) / 2;
-        g2d.drawString(tileName, textX, 15);
+        
+        // Break long names into multiple lines if needed
+        if (fm.stringWidth(tileName) > getWidth() - 10) {
+            String[] words = tileName.split(" ");
+            String line1 = "", line2 = "";
+            
+            for (String word : words) {
+                if (fm.stringWidth(line1 + word) < getWidth() - 10) {
+                    line1 += (line1.isEmpty() ? "" : " ") + word;
+                } else {
+                    line2 += (line2.isEmpty() ? "" : " ") + word;
+                }
+            }
+            
+            int line1X = (getWidth() - fm.stringWidth(line1)) / 2;
+            int line1Y = isProperty && owner != null ? 25 : 15;
+            g2d.drawString(line1, line1X, line1Y);
+            
+            if (!line2.isEmpty()) {
+                int line2X = (getWidth() - fm.stringWidth(line2)) / 2;
+                g2d.drawString(line2, line2X, line1Y + fm.getHeight());
+            }
+        } else {
+            // Draw tile name on a single line
+            int textX = (getWidth() - fm.stringWidth(tileName)) / 2;
+            int textY = isProperty && owner != null ? 25 : 15;
+            g2d.drawString(tileName, textX, textY);
+        }
         
         // Draw position number
         g2d.setFont(positionFont);
         String posText = "Position " + position;
         fm = g2d.getFontMetrics();
-        textX = (getWidth() - fm.stringWidth(posText)) / 2;
-        g2d.drawString(posText, textX, 30);
+        int textX = (getWidth() - fm.stringWidth(posText)) / 2;
+        int textY = 40; // Fixed position regardless of title
+        g2d.drawString(posText, textX, textY);
+        
+        // Draw price for properties
+        if (isProperty) {
+            String priceText = "R" + propertyPrice;
+            g2d.drawString(priceText, textX, textY + 15);
+            
+            // Draw owner's name if owned
+            if (owner != null) {
+                String ownerText = "Owner: " + owner.getName();
+                g2d.drawString(ownerText, textX, textY + 30);
+            }
+        }
         
         // Draw all player tokens
         for (PlayerToken token : playerTokens.values()) {
@@ -156,5 +225,21 @@ public class GameTilePanel extends JPanel {
     
     public int getPlayerTokenCount() {
         return playerTokens.size();
+    }
+    
+    public boolean isProperty() {
+        return isProperty;
+    }
+    
+    public int getPropertyPrice() {
+        return propertyPrice;
+    }
+    
+    public String getTileType() {
+        return tileType;
+    }
+    
+    public String getTileName() {
+        return tileName;
     }
 }

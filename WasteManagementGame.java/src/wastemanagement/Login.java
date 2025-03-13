@@ -1,16 +1,19 @@
 package wastemanagement;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
-
+/**
+ * The login screen for player setup
+ */
 public class Login extends JFrame {
-    private ArrayList<Player> players;
+    private ArrayList<Player> players = new ArrayList<>();
     private int currentPlayerIndex = 0;
-    private Map<String, Color> playerColors;
-    private Map<String, JButton> colorButtonMap;
+    private Map<String, Color> playerColors = new HashMap<>();
+    private Map<String, JButton> colorButtonMap = new HashMap<>();
     
     // UI Components
     private JPanel mainPanel;
@@ -37,57 +40,80 @@ public class Login extends JFrame {
         new Color(255, 215, 0)    // Gold
     };
     
-    // Images (paths should be adjusted based on your project structure)
+    // Images
     private ImageIcon logoIcon;
     private ImageIcon[] roleIcons;
 
+    /**
+     * Constructor for the login screen
+     */
     public Login() {
-        players = new ArrayList<>();
-        playerColors = new HashMap<>();
-        colorButtonMap = new HashMap<>();
-        
-        // Load images
-        loadImages();
-        
-        // Setup frame
+        // Setup frame properties
         setTitle("Waste Management Game - Player Setup");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        // Try to load images
+        loadImages();
         
         // Setup UI
         setupUI();
         
-        // Center on screen and show
-        setLocationRelativeTo(null);
+        // Show the frame
         setVisible(true);
     }
     
+    /**
+     * Load images for the UI
+     */
     private void loadImages() {
-        // Try to load images (with fallbacks if not found)
         try {
-            // Main logo
-            logoIcon = new ImageIcon(getClass().getResource("/Resources/waste_logo.png"));
-            if (logoIcon.getIconWidth() <= 0) {
-                // Fallback to text if image not found
-                logoIcon = null;
-            }
+            // Try to load images from resources
+            logoIcon = createIconFromText("Waste Management", new Font("Arial", Font.BOLD, 24), Color.WHITE);
             
             // Role icons
             roleIcons = new ImageIcon[2];
-            roleIcons[0] = new ImageIcon(getClass().getResource("/Resources/business_icon.png"));
-            roleIcons[1] = new ImageIcon(getClass().getResource("/Resources/community_icon.png"));
-            
-            // Fallback if icons are invalid
-            if (roleIcons[0] == null || roleIcons[0].getIconWidth() <= 0) {
-                roleIcons = null;
-            }
+            roleIcons[0] = createIconFromText("BO", new Font("Arial", Font.BOLD, 14), Color.WHITE);
+            roleIcons[1] = createIconFromText("CL", new Font("Arial", Font.BOLD, 14), Color.WHITE);
         } catch (Exception e) {
-            System.out.println("Could not load some images: " + e.getMessage());
+            System.out.println("Error loading images: " + e.getMessage());
             logoIcon = null;
             roleIcons = null;
         }
     }
     
+    /**
+     * Create an icon from text
+     */
+    private ImageIcon createIconFromText(String text, Font font, Color textColor) {
+        // Create a label with the text
+        JLabel label = new JLabel(text);
+        label.setFont(font);
+        label.setForeground(textColor);
+        label.setBackground(headerColor);
+        label.setOpaque(true);
+        label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        
+        // Get preferred size
+        label.setSize(label.getPreferredSize());
+        
+        // Create image
+        BufferedImage image = new BufferedImage(
+            label.getWidth(), label.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        
+        // Paint label to image
+        Graphics2D g2d = image.createGraphics();
+        label.paint(g2d);
+        g2d.dispose();
+        
+        // Return as icon
+        return new ImageIcon(image);
+    }
+    
+    /**
+     * Setup the main UI
+     */
     private void setupUI() {
         // Main content panel with background
         mainPanel = new JPanel(new BorderLayout(0, 10));
@@ -107,6 +133,9 @@ public class Login extends JFrame {
         setContentPane(mainPanel);
     }
     
+    /**
+     * Setup the header panel
+     */
     private void setupHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(headerColor);
@@ -122,10 +151,7 @@ public class Login extends JFrame {
         
         // Add logo if available
         if (logoIcon != null) {
-            // Resize logo to appropriate size
-            Image img = logoIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
-            ImageIcon resizedIcon = new ImageIcon(img);
-            titleLabel.setIcon(resizedIcon);
+            titleLabel.setIcon(logoIcon);
             titleLabel.setIconTextGap(15);
         }
         
@@ -142,14 +168,17 @@ public class Login extends JFrame {
         mainPanel.add(headerPanel, BorderLayout.NORTH);
     }
     
+    /**
+     * Setup the content panel
+     */
     private void setupContentPanel() {
         JPanel contentPanel = new JPanel(new BorderLayout(20, 0));
         contentPanel.setOpaque(false);
         
-        // Setup left panel - current player setup
+        // Left panel - current player setup
         JPanel leftPanel = createCurrentPlayerPanel();
         
-        // Setup right panel - registered players
+        // Right panel - registered players
         JPanel rightPanel = createRegisteredPlayersPanel();
         
         // Add panels to content
@@ -160,6 +189,9 @@ public class Login extends JFrame {
         mainPanel.add(contentPanel, BorderLayout.CENTER);
     }
     
+    /**
+     * Create panel for setting up current player
+     */
     private JPanel createCurrentPlayerPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 15));
         panel.setOpaque(false);
@@ -179,6 +211,9 @@ public class Login extends JFrame {
         return panel;
     }
     
+    /**
+     * Refresh the current player card
+     */
     private void refreshCurrentPlayerCard() {
         currentPlayerCardPanel.removeAll();
         currentPlayerCardPanel.setLayout(new BorderLayout(10, 15));
@@ -287,103 +322,27 @@ public class Login extends JFrame {
         currentPlayerCardPanel.repaint();
     }
     
+    /**
+     * Create a button for color selection
+     */
     private JButton createColorButton(Color color) {
-        final int SIZE = 37;  // Increased size from 50 to 60
+        final int SIZE = 37;
         
-        JButton button = new JButton() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
-                int width = getWidth();
-                int height = getHeight();
-                int diameter = Math.min(width, height) - 10;  // Reduced diameter to add padding
-                
-                // Choose color based on enabled state
-                Color baseColor = isEnabled() ? color : darkenColor(color, 0.6f);
-                
-                // Draw shadow effect for depth
-                if (isEnabled()) {
-                    g2.setColor(new Color(0, 0, 0, 60));
-                    g2.fillOval((width - diameter) / 2 + 2, 
-                                (height - diameter) / 2 + 2, 
-                                diameter - 4, 
-                                diameter - 4);
-                }
-                
-                // Draw colored circle with gradient for 3D effect
-                Paint gradient = new GradientPaint(
-                    0, 0, 
-                    brightenColor(baseColor, 0.3f),
-                    diameter, diameter, 
-                    darkenColor(baseColor, 0.2f)
-                );
-                g2.setPaint(gradient);
-                
-                g2.fillOval((width - diameter) / 2, 
-                            (height - diameter) / 2, 
-                            diameter, 
-                            diameter);
-                
-                // Draw glossy highlight
-                g2.setColor(new Color(255, 255, 255, 130));
-                g2.fillOval((width - diameter) / 2 + 5, 
-                            (height - diameter) / 2 + 5, 
-                            diameter / 2, 
-                            diameter / 2);
-                
-                // Draw border
-                g2.setColor(darkenColor(baseColor, 0.4f));
-                g2.setStroke(new BasicStroke(1.5f));
-                g2.drawOval((width - diameter) / 2, 
-                            (height - diameter) / 2, 
-                            diameter, 
-                            diameter);
-                
-                g2.dispose();
-            }
-            
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(SIZE, SIZE);
-            }
-            
-            @Override
-            public Dimension getMinimumSize() {
-                return getPreferredSize();
-            }
-            
-            @Override
-            public Dimension getMaximumSize() {
-                return getPreferredSize();
-            }
-        };
-        
+        JButton button = new JButton();
         button.setBackground(color);
+        button.setPreferredSize(new Dimension(SIZE, SIZE));
         button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
+        button.setOpaque(true);
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setToolTipText(getColorName(color));
         
         return button;
     }
-    // Helper method to brighten a color
-    private Color brightenColor(Color color, float factor) {
-        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-        hsb[1] = Math.max(0, Math.min(1, hsb[1] - factor * 0.7f));  // Less saturation reduction
-        hsb[2] = Math.min(1, hsb[2] + factor);  // More brightness
-        return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
-    }
     
-    // Helper method to darken a color
-    private Color darkenColor(Color color, float factor) {
-        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-        hsb[2] = Math.max(0, hsb[2] - factor);  // Reduce brightness
-        return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
-    }
-    
+    /**
+     * Get the name of a color
+     */
     private String getColorName(Color color) {
         if (color.equals(new Color(65, 105, 225))) return "Blue";
         if (color.equals(new Color(220, 20, 60))) return "Red";
@@ -392,6 +351,9 @@ public class Login extends JFrame {
         return "Unknown";
     }
     
+    /**
+     * Create panel for registered players
+     */
     private JPanel createRegisteredPlayersPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setPreferredSize(new Dimension(250, 400));
@@ -423,25 +385,31 @@ public class Login extends JFrame {
         return panel;
     }
     
+    /**
+     * Setup the navigation panel
+     */
     private void setupNavigationPanel() {
         JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         navPanel.setOpaque(false);
         navPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         
-        // Start game button (keep existing code)
+        // Start game button
         startGameButton = createNavigationButton("Start Game");
         startGameButton.setEnabled(false);
         startGameButton.setBackground(new Color(100, 180, 100));
         startGameButton.setForeground(Color.WHITE);
         startGameButton.addActionListener(e -> startGame());
         
-        // Add only the start game button
+        // Add start game button
         navPanel.add(startGameButton);
         
         // Add to main panel
         mainPanel.add(navPanel, BorderLayout.SOUTH);
     }
     
+    /**
+     * Create a navigation button
+     */
     private JButton createNavigationButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 14));
@@ -455,6 +423,9 @@ public class Login extends JFrame {
         return button;
     }
     
+    /**
+     * Select a color for the current player
+     */
     private void selectPlayerColor(String colorName, Color color) {
         // Validate name
         String name = nameField.getText().trim();
@@ -509,11 +480,14 @@ public class Login extends JFrame {
         refreshCurrentPlayerCard();
     }
     
+    /**
+     * Add a player card to the registered players panel
+     */
     private void addPlayerCard(Player player, Color playerColor) {
         JPanel card = new JPanel(new BorderLayout(10, 0));
         card.setBackground(new Color(45, 55, 45));
         
-        // Enhanced card design with rounded corners
+        // Enhanced card design
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(0, 5, 0, 0, playerColor),
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -521,48 +495,10 @@ public class Login extends JFrame {
         card.setMaximumSize(new Dimension(250, 80));
         card.setPreferredSize(new Dimension(250, 80));
         
-        // Color indicator with perfectly round circle
-        JPanel colorIndicator = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g.create();
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
-                int diameter = Math.min(getWidth(), getHeight()) - 4;
-                
-                // Draw shadow for depth
-                g2d.setColor(new Color(0, 0, 0, 60));
-                g2d.fillOval(3, 3, diameter, diameter);
-                
-                // Create glossy effect with gradient
-                Paint gradient = new GradientPaint(
-                    0, 0, 
-                    brightenColor(playerColor, 0.2f),
-                    diameter, diameter, 
-                    darkenColor(playerColor, 0.2f)
-                );
-                g2d.setPaint(gradient);
-                g2d.fillOval(0, 0, diameter, diameter);
-                
-                // Highlight for 3D effect
-                g2d.setColor(new Color(255, 255, 255, 120));
-                g2d.fillOval(3, 3, diameter/2, diameter/2);
-                
-                // Draw border
-                g2d.setColor(darkenColor(playerColor, 0.3f));
-                g2d.setStroke(new BasicStroke(1.5f));
-                g2d.drawOval(0, 0, diameter, diameter);
-                
-                g2d.dispose();
-            }
-            
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(26, 26);
-            }
-        };
-        colorIndicator.setOpaque(false);
+        // Color indicator
+        JPanel colorIndicator = new JPanel();
+        colorIndicator.setBackground(playerColor);
+        colorIndicator.setPreferredSize(new Dimension(20, 20));
         
         // Player info with better spacing
         JPanel infoPanel = new JPanel(new GridLayout(2, 1, 0, 2));
@@ -600,20 +536,34 @@ public class Login extends JFrame {
         playerCardsPanel.repaint();
     }
     
-
-    
+    /**
+     * Start the game with the registered players
+     */
     private void startGame() {
         if (players.size() >= 2) {
-            // We've already stored colors by player name, so we can use playerColors directly
-            System.out.println("Starting game with players and their colors:");
+            // Log the players and their colors
+            System.out.println("Starting game with " + players.size() + " players:");
             for (Player player : players) {
-                Color playerColor = playerColors.get(player.getName());
-                System.out.println(player.getName() + ": " + 
-                                   (playerColor != null ? playerColor : "No color"));
+                System.out.println(player.getName() + " (" + player.getRole() + ") - Color: " + 
+                                  player.getPlayerColor());
             }
             
+            // Close this window
             dispose();
-            new WasteManagementGame(players, playerColors);
+            
+            // Launch the main game with players and colors
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    new WasteManagementGame(players, playerColors);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null,
+                        "Error starting the game: " + e.getMessage() + "\n" +
+                        "Please try restarting the application.",
+                        "Game Launch Error",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            });
         } else {
             JOptionPane.showMessageDialog(this, 
                 "You need at least 2 players to start the game.",
@@ -621,4 +571,4 @@ public class Login extends JFrame {
                 JOptionPane.WARNING_MESSAGE);
         }
     }
-    }
+}

@@ -1,6 +1,8 @@
 package wastemanagement;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     private String name;
@@ -9,7 +11,14 @@ public class Player {
     private int foodWaste;
     private int cash;
     private String role;
-    private Color playerColor; // Added field to store the player's color
+    private Color playerColor;
+    
+    // New properties for Monopoly-style gameplay
+    private List<Integer> ownedProperties;
+    private int ecoScore;
+    private int publicInfluence;
+    private boolean hasCompletedObjective1;
+    private boolean hasCompletedObjective2;
 
     public Player(String name) {
         this.name = name;
@@ -19,6 +28,13 @@ public class Player {
         this.cash = 0;
         this.role = "null";
         this.playerColor = Color.GRAY; // Default color
+        
+        // Initialize new properties
+        this.ownedProperties = new ArrayList<>();
+        this.ecoScore = 0;
+        this.publicInfluence = 0;
+        this.hasCompletedObjective1 = false;
+        this.hasCompletedObjective2 = false;
     }
         
     public String getName() {
@@ -83,7 +99,6 @@ public class Player {
         return role;
     }
     
-    // New methods for player color
     public Color getPlayerColor() {
         return playerColor;
     }
@@ -105,11 +120,76 @@ public class Player {
         cash += money;
     }
     
+    // New methods for Monopoly-style gameplay
+    
+    public boolean ownsProperty(int propertyPosition) {
+        return ownedProperties.contains(propertyPosition);
+    }
+    
+    public void buyProperty(int propertyPosition) {
+        if (!ownedProperties.contains(propertyPosition)) {
+            ownedProperties.add(propertyPosition);
+        }
+    }
+    
+    public List<Integer> getOwnedProperties() {
+        return ownedProperties;
+    }
+    
+    public int getPropertyCount() {
+        return ownedProperties.size();
+    }
+    
+    public int getEcoScore() {
+        return ecoScore;
+    }
+    
+    public void increaseEcoScore(int amount) {
+        this.ecoScore += amount;
+    }
+    
+    public int getPublicInfluence() {
+        return publicInfluence;
+    }
+    
+    public void increasePublicInfluence(int amount) {
+        this.publicInfluence += amount;
+    }
+    
+    public boolean hasCompletedObjective1() {
+        return hasCompletedObjective1;
+    }
+    
+    public void completeObjective1() {
+        this.hasCompletedObjective1 = true;
+    }
+    
+    public boolean hasCompletedObjective2() {
+        return hasCompletedObjective2;
+    }
+    
+    public void completeObjective2() {
+        this.hasCompletedObjective2 = true;
+    }
+    
+    public boolean hasCompletedAllObjectives() {
+        return hasCompletedObjective1 && hasCompletedObjective2;
+    }
+    
     @Override
     public String toString() {
-        return name + " (" + role + ") - Position: " + position + 
+        String baseInfo = name + " (" + role + ") - Position: " + position + 
                ", Recyclables: " + recyclables + 
                ", Food Waste: " + foodWaste + 
                ", Cash: R" + cash;
+               
+        // Add role-specific scores
+        if (role.equalsIgnoreCase("Business Owner")) {
+            baseInfo += ", Eco Score: " + ecoScore;
+        } else if (role.equalsIgnoreCase("Community Leader")) {
+            baseInfo += ", Public Influence: " + publicInfluence;
+        }
+        
+        return baseInfo;
     }
 }
