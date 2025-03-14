@@ -27,7 +27,7 @@ public class GameManager {
     private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
     private static final int PROPERTY_BASE_PRICE = 100;
     private static final int PROPERTY_BASE_RENT = 50;
-    private static final int GO_MONEY = 200;
+    private static final int GO_MONEY = 2000;
     
     // Property ownership tracking
     private Map<Integer, Player> propertyOwners;
@@ -322,7 +322,7 @@ public class GameManager {
             // Property is not owned, player can buy it
             int propertyPrice = getPropertyPrice(position);
             
-            gameLog.append("🏠 " + player.getName() + " landed on " + propertyName + " (Price: R" + propertyPrice + ")\n");
+            gameLog.append(" " + player.getName() + " landed on " + propertyName + " (Price: R" + propertyPrice + ")\n");
             
             // Check if player has enough money
             if (player.getCash() >= propertyPrice) {

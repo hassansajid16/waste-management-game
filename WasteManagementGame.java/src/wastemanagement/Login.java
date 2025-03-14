@@ -397,7 +397,7 @@ public class Login extends JFrame {
         startGameButton = createNavigationButton("Start Game");
         startGameButton.setEnabled(false);
         startGameButton.setBackground(new Color(100, 180, 100));
-        startGameButton.setForeground(Color.WHITE);
+        startGameButton.setForeground(Color.RED);
         startGameButton.addActionListener(e -> startGame());
         
         // Add start game button

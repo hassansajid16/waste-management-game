@@ -491,27 +491,27 @@ public class WasteManagementGame extends JFrame {
         
         // Build headline sequence
         StringBuilder headlines = new StringBuilder();
-        headlines.append("🌟 MAKERS VALLEY TRANSFORMATION: 2025-2030 🌟\n\n");
+        headlines.append(" MAKERS VALLEY TRANSFORMATION: 2025-2030 \n\n");
         
-        headlines.append("📰 2025: ").append(winner.getName())
-                .append(" leads waste management initiative in Makers Valley\n");
+        headlines.append("2025: ").append(winner.getName())
+                .append(" leads waste management initiative in Makers Valley\n\n");
         
-        headlines.append("📰 2026: Recycling rates increase by 35% in Makers Valley\n");
+        headlines.append(" 2026: Recycling rates increase by 35% in Makers Valley\n\n");
         
-        headlines.append("📰 2027: New composting facility opens, diverting 500 tons of organic waste from landfills\n");
+        headlines.append(" 2027: New composting facility opens, diverting 500 tons of organic waste from landfills\n\n");
         
-        headlines.append("📰 2028: Makers Valley waste collection coverage reaches 95% of households\n");
+        headlines.append(" 2028: Makers Valley waste collection coverage reaches 95% of households\n\n");
         
-        headlines.append("📰 2029: Community income from recycling enterprises tops R2 million\n");
+        headlines.append(" 2029: Community income from recycling enterprises tops R2 million\n\n");
         
-        headlines.append("📰 2030: Makers Valley recognized as South Africa's model for sustainable waste management\n\n");
+        headlines.append(" 2030: Makers Valley recognized as South Africa's model for sustainable waste management\n\n");
         
         headlines.append("FINAL STATE OF PLAY:\n");
         
         // Add player statistics
         for (Player p : players) {
-            headlines.append(p.getName()).append(" (").append(p.getRole()).append(")\n");
-            headlines.append("• Position: ").append(p.getPosition()).append("\n");
+            headlines.append(p.getName()).append(" \n");
+            
             headlines.append("• Cash: R").append(p.getCash()).append("\n");
             headlines.append("• Properties: ").append(p.getPropertyCount()).append("\n");
             
@@ -524,16 +524,23 @@ public class WasteManagementGame extends JFrame {
             headlines.append("\n");
         }
         
-        // Display result in dialog
         JTextArea resultText = new JTextArea(headlines.toString());
         resultText.setEditable(false);
-        resultText.setFont(new Font("Arial", Font.PLAIN, 14));
+        resultText.setFont(new Font("Arial", Font.BOLD, 14));
         resultText.setLineWrap(true);
         resultText.setWrapStyleWord(true);
-        
+        resultText.setBackground(new Color(45, 65, 45)); // Match board's dark green
+        resultText.setForeground(Color.WHITE); // White text
+        resultText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         JScrollPane scrollPane = new JScrollPane(resultText);
         scrollPane.setPreferredSize(new Dimension(500, 400));
-        
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(50, 70, 50), 2));
+
+        // Apply UI background color consistency
+        UIManager.put("OptionPane.background", new Color(45, 65, 45));
+        UIManager.put("Panel.background", new Color(45, 65, 45));
+
         JOptionPane.showMessageDialog(this, scrollPane, 
                                      "Game Over - " + winner.getName() + " Wins!", 
                                      JOptionPane.INFORMATION_MESSAGE);

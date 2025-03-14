@@ -109,10 +109,10 @@ public class Player {
     
     public void applyRole(String role) {
         if(role.equalsIgnoreCase("Business Owner")) {
-            cash = 300;
+            cash = 7000;    //this is around £300
         }
         else if (role.equalsIgnoreCase("Community Leader")) {
-            cash = 200;	
+            cash = 4000;	//this is around £170
         }
     }
     

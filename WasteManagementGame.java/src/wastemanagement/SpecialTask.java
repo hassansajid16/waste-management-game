@@ -88,8 +88,8 @@ public class SpecialTask {
 
             if(playerAnswer == correctAnswer){
                 gameLog.append("Correct! " + player.getName() + " completes the special task.\n");
-                player.updateCash(100);
-                gameLog.append("💰 Earned R100 for your knowledge about waste management!\n");
+                player.updateCash(1000);
+                gameLog.append(" Earned R1000 for your knowledge about waste management!\n");
             } else {
                 gameLog.append("Incorrect. No reward for " + player.getName() + ".\n");
             }
@@ -100,7 +100,7 @@ public class SpecialTask {
      * Launches the waste sorting mini-game
      */
     private static void launchWasteSortingGame(Player player, JTextArea gameLog) {
-        gameLog.append("\n🧹 " + player.getName() + " has encountered a Waste Sorting Challenge!\n");
+        gameLog.append("\n " + player.getName() + " has encountered a Waste Sorting Challenge!\n");
         gameLog.append("Sort the waste items correctly to earn rewards.\n");
         
         // Launch the waste sorting game in the EDT

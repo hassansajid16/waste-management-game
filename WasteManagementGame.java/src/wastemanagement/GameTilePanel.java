@@ -34,7 +34,7 @@ public class GameTilePanel extends JPanel {
         
         // Set property price based on position
         if (isProperty) {
-            this.propertyPrice = 100 + (position * 20);
+            this.propertyPrice = 1000 + (position * 20);
         }
         
         // Set tile background color based on type
