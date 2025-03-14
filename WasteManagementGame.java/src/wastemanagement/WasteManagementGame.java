@@ -15,8 +15,8 @@ import javax.swing.*;
 public class WasteManagementGame extends JFrame {
     // Game constants
     private static final long serialVersionUID = 1L;
-    private static final int WINDOW_WIDTH = 1200;
-    private static final int WINDOW_HEIGHT = 800;
+    private static final int WINDOW_WIDTH = 1400;
+    private static final int WINDOW_HEIGHT = 900;
     private static final Color BG_COLOR = new Color(45, 65, 45);
     
     // Game components
@@ -61,6 +61,11 @@ public class WasteManagementGame extends JFrame {
         // Assign colors to players if not already assigned
         assignColorsToPlayers(players, playerColors);
         
+        // Initialize playerStatsPanel
+        playerStatsPanel = new JPanel();
+        playerStatsPanel.setLayout(new BoxLayout(playerStatsPanel, BoxLayout.Y_AXIS));
+        playerStatsPanel.setOpaque(false);
+        
         // Initialize UI components
         setupUI();
         
@@ -85,6 +90,13 @@ public class WasteManagementGame extends JFrame {
         setupRightSidebar();
         setupGameBoard();
         setupBottomPanel();
+        setupObjectivesPanel();
+        
+        for (Player player : players) {
+            PlayerStatisticsPanel playerPanel = new PlayerStatisticsPanel(player, this);
+            playerPanel.update(); // Update the panel with current player data
+            playerStatsPanel.add(playerPanel);
+        }
         
         // Initialize game manager after UI components
         gameManager = new GameManager(gameLog, currentPlayerLabel, playerInfoLabels, playerStatsPanel);
@@ -95,13 +107,7 @@ public class WasteManagementGame extends JFrame {
         }
         
         // Create player statistic panels and add to the sidebar
-        playerStatsPanel.removeAll();
-        for (Player player : players) {
-            PlayerStatisticsPanel playerPanel = new PlayerStatisticsPanel(player, this);
-            playerPanel.update(); // Update the panel with current player data
-            playerStatsPanel.add(playerPanel);
-        }
-        
+     
         playerStatsPanel.revalidate();
         playerStatsPanel.repaint();
         
@@ -138,19 +144,19 @@ public class WasteManagementGame extends JFrame {
     private void setupLeftSidebar() {
         // Create left sidebar panel
         JPanel leftSidebar = new JPanel();
-        leftSidebar.setLayout(new BorderLayout(0, 10));
+        leftSidebar.setLayout(new BorderLayout(0, 5)); // Reduced spacing
         leftSidebar.setBackground(new Color(50, 70, 50));
-        leftSidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        leftSidebar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Reduced padding
         leftSidebar.setPreferredSize(new Dimension(220, getHeight()));
         
         // Current player label (top of sidebar)
         currentPlayerLabel = new JLabel("Current Player: ");
-        currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Smaller font
         currentPlayerLabel.setForeground(Color.WHITE);
         
         // Timer label
         timerLabel = new JLabel("Game Time: 00:00");
-        timerLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        timerLabel.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         timerLabel.setForeground(Color.WHITE);
         
         // Top panel for current player and timer
@@ -159,50 +165,105 @@ public class WasteManagementGame extends JFrame {
         topPanel.add(currentPlayerLabel, BorderLayout.CENTER);
         topPanel.add(timerLabel, BorderLayout.SOUTH);
         
-        // Player list panel (middle of sidebar)
-        JPanel playerListPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        // Player list panel
+        JPanel playerListPanel = new JPanel();
+        playerListPanel.setLayout(new BoxLayout(playerListPanel, BoxLayout.Y_AXIS));
         playerListPanel.setBackground(new Color(50, 70, 50));
         playerListPanel.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.WHITE),
             "Players",
             javax.swing.border.TitledBorder.CENTER,
             javax.swing.border.TitledBorder.TOP,
-            new Font("Arial", Font.BOLD, 14),
+            new Font("Arial", Font.BOLD, 12), // Smaller font
             Color.WHITE
         ));
         
-        // Create player labels
+        // Create player labels and objective panels
         playerInfoLabels = new JLabel[players.size()];
+        playerObjectivesPanels = new HashMap<>();
+        
         for (int i = 0; i < players.size(); i++) {
-            playerInfoLabels[i] = new JLabel(players.get(i).getName());
-            playerInfoLabels[i].setFont(new Font("Arial", Font.PLAIN, 14));
-            playerInfoLabels[i].setForeground(Color.WHITE);
-            playerListPanel.add(playerInfoLabels[i]);
+            Player player = players.get(i);
+            
+            // Create a panel for each player
+            JPanel playerPanel = new JPanel();
+            playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
+            playerPanel.setBackground(new Color(50, 70, 50));
+            playerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            
+            // Player name label
+            JLabel playerNameLabel = new JLabel(player.getName() + " (" + player.getRole() + ")");
+            playerNameLabel.setFont(new Font("Arial", Font.BOLD, 12)); // Smaller font
+            playerNameLabel.setForeground(Color.WHITE);
+            playerNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            
+            // Create objectives panel
+            ObjectivesPanel objectivesPanel = new ObjectivesPanel(player);
+            objectivesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            objectivesPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100)); // Limit height
+            
+            // Store references
+            playerInfoLabels[i] = playerNameLabel;
+            playerObjectivesPanels.put(player, objectivesPanel);
+            
+            // Add components to player panel
+            playerPanel.add(playerNameLabel);
+            playerPanel.add(Box.createVerticalStrut(2)); // Reduced spacing
+            playerPanel.add(objectivesPanel);
+            
+            // Add a thinner separator between player panels
+            playerPanel.add(Box.createVerticalStrut(5)); // Reduced spacing
+            JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+            separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1)); // Thinner separator
+            playerPanel.add(separator);
+            
+            // Add player panel to player list panel
+            playerListPanel.add(playerPanel);
         }
         
-        // Player stats panel (bottom of sidebar)
-        playerStatsPanel = new JPanel();
-        playerStatsPanel.setLayout(new BoxLayout(playerStatsPanel, BoxLayout.Y_AXIS));
-        playerStatsPanel.setBackground(new Color(50, 70, 50));
-        playerStatsPanel.setBorder(BorderFactory.createTitledBorder(
+        // Create player statistics panel section
+        JPanel statsContainerPanel = new JPanel();
+        statsContainerPanel.setLayout(new BoxLayout(statsContainerPanel, BoxLayout.Y_AXIS));
+        statsContainerPanel.setBackground(new Color(50, 70, 50));
+        statsContainerPanel.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.WHITE),
             "Player Statistics",
             javax.swing.border.TitledBorder.CENTER,
             javax.swing.border.TitledBorder.TOP,
-            new Font("Arial", Font.BOLD, 14),
+            new Font("Arial", Font.BOLD, 12),
             Color.WHITE
         ));
         
-        // Create scrollable stats panel
-        JScrollPane statsScrollPane = new JScrollPane(playerStatsPanel);
-        statsScrollPane.setBackground(new Color(50, 70, 50));
-        statsScrollPane.setBorder(null);
-        statsScrollPane.setPreferredSize(new Dimension(200, 300));
+        // Initialize player statistics panels
+        playerStatsPanel = new JPanel();
+        playerStatsPanel.setLayout(new BoxLayout(playerStatsPanel, BoxLayout.Y_AXIS));
+        playerStatsPanel.setOpaque(false);
+        
+        // Create individual player statistics panels
+        for (Player player : players) {
+            PlayerStatisticsPanel playerPanel = new PlayerStatisticsPanel(player, this);
+            playerPanel.update(); // Update with current player data
+            playerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180)); // Control height
+            playerStatsPanel.add(playerPanel);
+        }
+        
+        statsContainerPanel.add(playerStatsPanel);
+        
+        // Create a main container for players and stats
+        JPanel mainContainer = new JPanel(new BorderLayout());
+        mainContainer.setOpaque(false);
+        mainContainer.add(playerListPanel, BorderLayout.NORTH);
+        mainContainer.add(statsContainerPanel, BorderLayout.CENTER);
+        
+        // Create a scroll pane that can show both sections
+        JScrollPane scrollPane = new JScrollPane(mainContainer);
+        scrollPane.setBackground(new Color(50, 70, 50));
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smoother scrolling
         
         // Add components to left sidebar
         leftSidebar.add(topPanel, BorderLayout.NORTH);
-        leftSidebar.add(playerListPanel, BorderLayout.CENTER);
-        leftSidebar.add(statsScrollPane, BorderLayout.SOUTH);
+        leftSidebar.add(scrollPane, BorderLayout.CENTER);
         
         // Add left sidebar to main window
         add(leftSidebar, BorderLayout.WEST);
@@ -267,35 +328,64 @@ public class WasteManagementGame extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
     }
     
-    /**
-     * Setup the right sidebar with objectives and game log
-     */
     private void setupRightSidebar() {
-        // Game log
-        gameLog = new JTextArea(15, 30);
+        // Create right sidebar panel with BorderLayout
+        JPanel rightSidebar = new JPanel(new BorderLayout(0, 10));
+        rightSidebar.setOpaque(false);
+        rightSidebar.setPreferredSize(new Dimension(350, getHeight())); // Increased width
+
+        // Game log with increased size
+        gameLog = new JTextArea(20, 40); // Increased rows
         gameLog.setEditable(false);
         gameLog.setFont(new Font("Arial", Font.PLAIN, 14));
         gameLog.setBackground(new Color(240, 245, 240));
         gameLog.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.BLACK),
             BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        
+        gameLog.setLineWrap(true);
+        gameLog.setWrapStyleWord(true);
+
         JScrollPane gameLogScroll = new JScrollPane(gameLog);
-        gameLogScroll.setPreferredSize(new Dimension(250, 300));
-        
-        // Objectives panel
-        setupObjectivesPanel();
-        
-        // Right sidebar panel
-        JPanel rightSidebar = new JPanel(new BorderLayout(0, 10));
-        rightSidebar.setOpaque(false);
-        rightSidebar.setPreferredSize(new Dimension(250, getHeight()));
-        rightSidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        // Add components to right sidebar
-        rightSidebar.add(objectivesContainer, BorderLayout.NORTH);
-        rightSidebar.add(gameLogScroll, BorderLayout.CENTER);
-        
+        gameLogScroll.setPreferredSize(new Dimension(350, 900));
+
+        // Objectives panel container
+    
+        objectivesContainer = new JPanel();
+        objectivesContainer.setLayout(new BoxLayout(objectivesContainer, BoxLayout.Y_AXIS));
+        objectivesContainer.setBackground(new Color(45, 65, 45));
+        objectivesContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+
+        // Create a panel to hold both objectives and game log
+        JPanel combinedPanel = new JPanel(new BorderLayout());
+        combinedPanel.setOpaque(false);
+
+        // Title for objectives
+        JLabel objectivesTitle = new JLabel("Game Log", SwingConstants.CENTER);
+        objectivesTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        objectivesTitle.setForeground(Color.WHITE);
+        objectivesTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        objectivesTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+
+        // Scrollable objectives panel
+        JScrollPane objectivesScrollPane = new JScrollPane(objectivesContainer);
+        objectivesScrollPane.setPreferredSize(new Dimension(350, 250)); // Fixed height
+        objectivesScrollPane.setBorder(null);
+        objectivesScrollPane.setBackground(new Color(45, 65, 45));
+        objectivesScrollPane.getViewport().setBackground(new Color(45, 65, 45));
+
+        // Combine objectives title and scrollpane
+        JPanel objectivesTitlePanel = new JPanel(new BorderLayout());
+        objectivesTitlePanel.setOpaque(false);
+        objectivesTitlePanel.add(objectivesTitle, BorderLayout.NORTH);
+        objectivesTitlePanel.add(objectivesScrollPane, BorderLayout.CENTER);
+
+        // Add components to combined panel
+        combinedPanel.add(objectivesTitlePanel, BorderLayout.NORTH);
+        combinedPanel.add(gameLogScroll, BorderLayout.CENTER);
+
+        // Add combined panel to right sidebar
+        rightSidebar.add(combinedPanel, BorderLayout.CENTER);
+
         // Add right sidebar to main window
         add(rightSidebar, BorderLayout.EAST);
     }
@@ -332,35 +422,14 @@ public class WasteManagementGame extends JFrame {
     /**
      * Setup the objectives panel
      */
-    private void setupObjectivesPanel() {
-        objectivesContainer = new JPanel();
-        objectivesContainer.setLayout(new BoxLayout(objectivesContainer, BoxLayout.Y_AXIS));
-        objectivesContainer.setBackground(new Color(45, 65, 45));
-        objectivesContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        
-        // Title for objectives
-        JLabel objectivesTitle = new JLabel("Game Objectives", SwingConstants.CENTER);
-        objectivesTitle.setFont(new Font("Arial", Font.BOLD, 16));
-        objectivesTitle.setForeground(Color.WHITE);
-        objectivesTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        objectivesTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        
-        objectivesContainer.add(objectivesTitle);
-        
-        // Create an objectives panel for each player
-        for (Player player : players) {
-            ObjectivesPanel panel = new ObjectivesPanel(player);
-            playerObjectivesPanels.put(player, panel);
-            
-            // Add some spacing between player panels
-            if (objectivesContainer.getComponentCount() > 1) {
-                objectivesContainer.add(Box.createVerticalStrut(10));
-            }
-            
-            objectivesContainer.add(panel);
+  
+        private void setupObjectivesPanel() {
+            objectivesContainer.removeAll();
+            objectivesContainer.revalidate();
+            objectivesContainer.repaint();
         }
-    }
     
+
     /**
      * Setup the game timer
      */
@@ -694,8 +763,12 @@ public class WasteManagementGame extends JFrame {
      * Update player statistics
      */
     public void updatePlayerStats() {
-        gameManager.updateAllPlayerStats();
-        updateObjectivesDisplay();
+        // Update all player statistics panels
+        for (Component comp : playerStatsPanel.getComponents()) {
+            if (comp instanceof PlayerStatisticsPanel) {
+                ((PlayerStatisticsPanel) comp).update();
+            }
+        }
     }
     
     /**
@@ -715,6 +788,8 @@ public class WasteManagementGame extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             ArrayList<Player> testPlayers = new ArrayList<>();
+            
+            
             
             Player p1 = new Player("Alice");
             p1.setRole("Business Owner");
