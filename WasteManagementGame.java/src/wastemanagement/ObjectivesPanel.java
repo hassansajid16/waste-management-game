@@ -21,36 +21,36 @@ public class ObjectivesPanel extends JPanel {
     public ObjectivesPanel(Player player) {
         this.player = player;
         
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(5, 5)); // Reduced spacing
         setBackground(new Color(60, 80, 60));
         setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(89, 116, 89), 2),
-            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            BorderFactory.createLineBorder(new Color(89, 116, 89), 1), // Thinner border
+            BorderFactory.createEmptyBorder(5, 5, 5, 5) // Reduced padding
         ));
         
-        // Title
+        // Title with smaller font
         JLabel titleLabel = new JLabel("Objectives", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 12)); // Smaller font
         titleLabel.setForeground(Color.WHITE);
         
-        // Content panel
+        // Content panel with compact layout
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setOpaque(false);
         
-        // Objective 1 - Role specific
+        // Objective 1 - Role specific (more compact layout)
         String objective1Text = player.getRole().equalsIgnoreCase("Business Owner") 
-            ? "Eco Score: 0/" + ECO_SCORE_THRESHOLD
-            : "Public Influence: 0/" + PUBLIC_INFLUENCE_THRESHOLD;
+            ? "Eco: 0/" + ECO_SCORE_THRESHOLD
+            : "Infl: 0/" + PUBLIC_INFLUENCE_THRESHOLD;
             
         objective1Label = new JLabel(objective1Text);
-        objective1Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        objective1Label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         objective1Label.setForeground(Color.WHITE);
         
-        // Progress bar for objective 1
+        // Progress bar for objective 1 - shorter height
         JProgressBar objective1Bar = player.getRole().equalsIgnoreCase("Business Owner")
-            ? createProgressBar(Color.GREEN, ECO_SCORE_THRESHOLD)
-            : createProgressBar(Color.BLUE, PUBLIC_INFLUENCE_THRESHOLD);
+            ? createCompactProgressBar(Color.GREEN, ECO_SCORE_THRESHOLD)
+            : createCompactProgressBar(Color.BLUE, PUBLIC_INFLUENCE_THRESHOLD);
             
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
             ecoScoreBar = objective1Bar;
@@ -58,22 +58,22 @@ public class ObjectivesPanel extends JPanel {
             publicInfluenceBar = objective1Bar;
         }
         
-        // Objective 2 - Properties
-        objective2Label = new JLabel("Properties: 0/" + PROPERTY_THRESHOLD);
-        objective2Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        // Objective 2 - Properties (more compact)
+        objective2Label = new JLabel("Props: 0/" + PROPERTY_THRESHOLD);
+        objective2Label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         objective2Label.setForeground(Color.WHITE);
         
-        // Progress bar for objective 2
-        propertiesBar = createProgressBar(new Color(255, 165, 0), PROPERTY_THRESHOLD); // Orange color
+        // Progress bar for objective 2 - shorter height
+        propertiesBar = createCompactProgressBar(new Color(255, 165, 0), PROPERTY_THRESHOLD);
         
-        // Add components
-        contentPanel.add(Box.createVerticalStrut(10));
+        // Add components with less vertical space
+        contentPanel.add(Box.createVerticalStrut(2)); // Reduced spacing
         contentPanel.add(objective1Label);
-        contentPanel.add(Box.createVerticalStrut(5));
+        contentPanel.add(Box.createVerticalStrut(1)); // Reduced spacing
         contentPanel.add(objective1Bar);
-        contentPanel.add(Box.createVerticalStrut(15));
+        contentPanel.add(Box.createVerticalStrut(2)); // Reduced spacing
         contentPanel.add(objective2Label);
-        contentPanel.add(Box.createVerticalStrut(5));
+        contentPanel.add(Box.createVerticalStrut(1)); // Reduced spacing
         contentPanel.add(propertiesBar);
         
         // Add to main panel
@@ -81,21 +81,29 @@ public class ObjectivesPanel extends JPanel {
         add(contentPanel, BorderLayout.CENTER);
     }
     
-    private JProgressBar createProgressBar(Color foreground, int maximum) {
+    /**
+     * Create a compact progress bar with reduced height
+     */
+    private JProgressBar createCompactProgressBar(Color foreground, int maximum) {
         JProgressBar bar = new JProgressBar(0, maximum);
         bar.setValue(0);
         bar.setStringPainted(true);
         bar.setForeground(foreground);
         bar.setBackground(Color.DARK_GRAY);
         bar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        bar.setPreferredSize(new Dimension(bar.getPreferredSize().width, 15)); // Reduced height
+        bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 15)); // Limit maximum height
         return bar;
     }
     
+    /**
+     * Update the progress bars and labels with current player data
+     */
     public void updateProgress() {
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
             int ecoScore = player.getEcoScore();
             ecoScoreBar.setValue(ecoScore);
-            objective1Label.setText("Eco Score: " + ecoScore + "/" + ECO_SCORE_THRESHOLD);
+            objective1Label.setText("Eco: " + ecoScore + "/" + ECO_SCORE_THRESHOLD);
             
             if (ecoScore >= ECO_SCORE_THRESHOLD) {
                 objective1Label.setForeground(Color.GREEN);
@@ -103,7 +111,7 @@ public class ObjectivesPanel extends JPanel {
         } else {
             int publicInfluence = player.getPublicInfluence();
             publicInfluenceBar.setValue(publicInfluence);
-            objective1Label.setText("Public Influence: " + publicInfluence + "/" + PUBLIC_INFLUENCE_THRESHOLD);
+            objective1Label.setText("Infl: " + publicInfluence + "/" + PUBLIC_INFLUENCE_THRESHOLD);
             
             if (publicInfluence >= PUBLIC_INFLUENCE_THRESHOLD) {
                 objective1Label.setForeground(Color.GREEN);
@@ -112,7 +120,7 @@ public class ObjectivesPanel extends JPanel {
         
         int propertyCount = player.getPropertyCount();
         propertiesBar.setValue(propertyCount);
-        objective2Label.setText("Properties: " + propertyCount + "/" + PROPERTY_THRESHOLD);
+        objective2Label.setText("Props: " + propertyCount + "/" + PROPERTY_THRESHOLD);
         
         if (propertyCount >= PROPERTY_THRESHOLD) {
             objective2Label.setForeground(Color.GREEN);
