@@ -18,7 +18,6 @@ public class PlayerStatisticsPanel extends JPanel {
     private JLabel foodWasteLabel;
     private JButton startObjectiveButton;
     private WasteManagementGame gameInstance;
-    private ObjectivesPanel objectivesPanel;
     
     // Game cost constant
     private static final int GAME_COST = 200;
@@ -76,17 +75,11 @@ public class PlayerStatisticsPanel extends JPanel {
         statsGrid.add(recyclablesLabel);
         statsGrid.add(foodWasteLabel);
         
-        // Create integrated objectives panel - THIS IS THE KEY FIX
-        objectivesPanel = new ObjectivesPanel(player);
-        objectivesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        objectivesPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80)); // Limit height
-        
         // Create mini-game button
         startObjectiveButton = new JButton("Play Mini-Game (R" + GAME_COST + ")");
         startObjectiveButton.setFont(new Font("Arial", Font.BOLD, 12));
         startObjectiveButton.setBackground(new Color(100, 180, 100));
         startObjectiveButton.setForeground(Color.WHITE);
-        startObjectiveButton.setOpaque(true);
         startObjectiveButton.setOpaque(true);
         startObjectiveButton.setBorderPainted(true);
         startObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -166,8 +159,7 @@ public class PlayerStatisticsPanel extends JPanel {
         add(Box.createVerticalStrut(2)); // Reduced spacing
         add(statsGrid);
         add(Box.createVerticalStrut(2)); // Reduced spacing
-        add(objectivesPanel); // Add the objectives panel - THIS IS IMPORTANT
-        add(Box.createVerticalStrut(2)); // Reduced spacing
+        // Removed: add(objectivesPanel); // This line is removed to fix the duplicate objectives issue
         add(startObjectiveButton);
         
         // Add a separator at the bottom
@@ -192,8 +184,8 @@ public class PlayerStatisticsPanel extends JPanel {
             ecoScoreLabel.setText("Infl: " + player.getPublicInfluence());
         }
         
-        recyclablesLabel.setText("Recyclables: " + player.getRecyclables());
-        foodWasteLabel.setText("Food Waste: " + player.getFoodWaste());
+        recyclablesLabel.setText("Recyc: " + player.getRecyclables());
+        foodWasteLabel.setText("Food: " + player.getFoodWaste());
         
         // IMPORTANT: Make sure button is always visible and enable/disable based on cash
         startObjectiveButton.setVisible(true); // Ensure button is always visible
