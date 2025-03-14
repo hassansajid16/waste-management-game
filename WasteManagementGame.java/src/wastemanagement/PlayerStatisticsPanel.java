@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Panel for displaying player statistics with objective game button
+ * Panel for displaying player statistics with objectives integrated
  */
 public class PlayerStatisticsPanel extends JPanel {
     private Player player;
@@ -18,62 +18,80 @@ public class PlayerStatisticsPanel extends JPanel {
     private JLabel foodWasteLabel;
     private JButton startObjectiveButton;
     private WasteManagementGame gameInstance;
+    private ObjectivesPanel objectivesPanel; // This is defined but was never initialized
     
     public PlayerStatisticsPanel(Player player, WasteManagementGame gameInstance) {
         this.player = player;
         this.gameInstance = gameInstance;
         
+        // Use BoxLayout to stack components vertically
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(new Color(50, 70, 50));
-        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3)); // Reduced padding
         
         // Player name with role
-        JLabel nameLabel = new JLabel(player.getName() + " (" + player.getRole() + ")");
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel nameLabel = new JLabel(player.getName(), SwingConstants.LEFT);
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 11)); // Smaller font
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         // Create statistics labels
-        positionLabel = new JLabel("Position: " + player.getPosition());
+        positionLabel = new JLabel("Pos: " + player.getPosition());
         cashLabel = new JLabel("Cash: R" + player.getCash());
-        propertiesLabel = new JLabel("Properties: " + player.getPropertyCount());
+        propertiesLabel = new JLabel("Props: " + player.getPropertyCount());
         
         // Role-specific label
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
-            ecoScoreLabel = new JLabel("Eco Score: " + player.getEcoScore());
+            ecoScoreLabel = new JLabel("Eco: " + player.getEcoScore());
         } else {
-            ecoScoreLabel = new JLabel("Public Influence: " + player.getPublicInfluence());
+            ecoScoreLabel = new JLabel("Infl: " + player.getPublicInfluence());
         }
         
         // Optional labels for compatibility
-        recyclablesLabel = new JLabel("Recyclables: " + player.getRecyclables());
-        foodWasteLabel = new JLabel("Food Waste: " + player.getFoodWaste());
+        recyclablesLabel = new JLabel("Recyc: " + player.getRecyclables());
+        foodWasteLabel = new JLabel("Food: " + player.getFoodWaste());
         
         // Style all labels
         JLabel[] labels = {positionLabel, cashLabel, propertiesLabel, ecoScoreLabel, recyclablesLabel, foodWasteLabel};
         for (JLabel label : labels) {
             label.setForeground(Color.WHITE);
-            label.setFont(new Font("Arial", Font.PLAIN, 12));
+            label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
             label.setAlignmentX(Component.LEFT_ALIGNMENT);
         }
         
+        // Create stats grid for more compact display
+        JPanel statsGrid = new JPanel(new GridLayout(3, 2, 5, 0)); // 3 rows, 2 columns
+        statsGrid.setOpaque(false);
+        statsGrid.setAlignmentX(Component.LEFT_ALIGNMENT);
+        statsGrid.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60)); // Control height
+        
+        // Add labels to grid
+        statsGrid.add(positionLabel);
+        statsGrid.add(cashLabel);
+        statsGrid.add(propertiesLabel);
+        statsGrid.add(ecoScoreLabel);
+        statsGrid.add(recyclablesLabel);
+        statsGrid.add(foodWasteLabel);
+        
+        // Create integrated objectives panel - THIS IS THE KEY FIX
+        objectivesPanel = new ObjectivesPanel(player);
+        objectivesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        objectivesPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80)); // Limit height
+        
         // Create start objective button
         startObjectiveButton = new JButton("Start Objective");
-        startObjectiveButton.setFont(new Font("Arial", Font.BOLD, 12));
+        startObjectiveButton.setFont(new Font("Arial", Font.BOLD, 11)); // Smaller font
         startObjectiveButton.setBackground(new Color(100, 180, 100));
         startObjectiveButton.setForeground(Color.WHITE);
-        startObjectiveButton.setOpaque(true); // Make sure it's visible
+        startObjectiveButton.setOpaque(true);
         startObjectiveButton.setBorderPainted(true);
         startObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        startObjectiveButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, startObjectiveButton.getPreferredSize().height));
+        startObjectiveButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 20)); // Shorter button
         
-        // Make sure the button is visible on the panel
-        startObjectiveButton.setVisible(true);
-        
-        // Optional: Add a border to make it stand out more
+        // Border to make it stand out but not too thick
         startObjectiveButton.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(50, 100, 50), 2),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            BorderFactory.createLineBorder(new Color(50, 100, 50), 1),
+            BorderFactory.createEmptyBorder(2, 5, 2, 5) // Reduced padding
         ));
         
         // Add button action
@@ -84,17 +102,20 @@ public class PlayerStatisticsPanel extends JPanel {
             }
         });
         
-        // Add all components
+        // Add components in more compact layout
         add(nameLabel);
-        add(Box.createVerticalStrut(5));
-        add(positionLabel);
-        add(cashLabel);
-        add(propertiesLabel);
-        add(ecoScoreLabel);
-        add(recyclablesLabel);
-        add(foodWasteLabel);
-        add(Box.createVerticalStrut(10));
+        add(Box.createVerticalStrut(2)); // Reduced spacing
+        add(statsGrid);
+        add(Box.createVerticalStrut(2)); // Reduced spacing
+        add(objectivesPanel); // Add the objectives panel - THIS IS IMPORTANT
+        add(Box.createVerticalStrut(2)); // Reduced spacing
         add(startObjectiveButton);
+        
+        // Add a separator at the bottom
+        add(Box.createVerticalStrut(3));
+        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        add(separator);
     }
     
     private void openObjectiveGameDialog() {
@@ -110,6 +131,9 @@ public class PlayerStatisticsPanel extends JPanel {
             if (dialog.wasGameSelected()) {
                 System.out.println("Game was selected, updating player stats");
                 gameInstance.updatePlayerStats();
+                
+                // Specifically update the integrated objectives panel
+                objectivesPanel.updateProgress();
             } else {
                 System.out.println("No game was selected");
             }
@@ -120,18 +144,21 @@ public class PlayerStatisticsPanel extends JPanel {
     }
     
     public void update() {
-        // Update all labels with current player data
-        positionLabel.setText("Position: " + player.getPosition());
+        // Update all labels with current player data - Fixed to match constructor labels
+        positionLabel.setText("Pos: " + player.getPosition());
         cashLabel.setText("Cash: R" + player.getCash());
-        propertiesLabel.setText("Properties: " + player.getPropertyCount());
+        propertiesLabel.setText("Props: " + player.getPropertyCount());
         
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
-            ecoScoreLabel.setText("Eco Score: " + player.getEcoScore());
+            ecoScoreLabel.setText("Eco: " + player.getEcoScore());
         } else {
-            ecoScoreLabel.setText("Public Influence: " + player.getPublicInfluence());
+            ecoScoreLabel.setText("Infl: " + player.getPublicInfluence());
         }
         
-        recyclablesLabel.setText("Recyclables: " + player.getRecyclables());
-        foodWasteLabel.setText("Food Waste: " + player.getFoodWaste());
+        recyclablesLabel.setText("Recyc: " + player.getRecyclables());
+        foodWasteLabel.setText("Food: " + player.getFoodWaste());
+        
+        // Update objectives panel
+        objectivesPanel.updateProgress();
     }
 }
