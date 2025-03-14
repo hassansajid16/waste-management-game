@@ -19,6 +19,7 @@ public class Main {
             
             // Launch the splash screen
             new SplashScreen();
+
         });
     }
 }

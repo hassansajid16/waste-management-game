@@ -311,7 +311,23 @@ public class GameManager {
         // Check if objectives have been completed
         checkObjectiveCompletion(player);
     }
-    
+    // Add these methods to the GameManager class
+
+/**
+ * Get the current player index
+ */
+public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+}
+
+/**
+ * Set the current player index directly
+ */
+public void setCurrentPlayerIndex(int index) {
+    if (index >= 0 && index < players.size()) {
+        currentPlayerIndex = index;
+    }
+}
     /**
      * Handle landing on a property tile
      */
