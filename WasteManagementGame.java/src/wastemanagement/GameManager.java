@@ -191,36 +191,7 @@ public class GameManager {
         // Make properties progressively more expensive around the board
         return PROPERTY_BASE_PRICE + (position * 20);
     }
-// In GameManager.java, add the missing playTurn method
-// Add this method to your GameManager class
 
-/**
- * Process a player's turn (version called from GameUI)
- */
-public void playTurn(Player player, JLabel positionLabel, JLabel recyclablesLabel, JLabel foodWasteLabel, JLabel cashLabel) {
-    if (player == null) {
-        return;
-    }
-    
-    // Roll the dice
-    int diceRoll = dice.roll();
-    
-    // Get the old position
-    int oldPosition = player.getPosition();
-    
-    // Move the player
-    player.move(diceRoll);
-    int newPosition = player.getPosition();
-    
-    // Process the turn
-    processTurn(player, diceRoll, oldPosition, newPosition, gameLog);
-    
-    // Update labels in UI
-    if (positionLabel != null) positionLabel.setText("Position: " + player.getPosition());
-    if (recyclablesLabel != null) recyclablesLabel.setText("Recyclables: " + player.getRecyclables());
-    if (foodWasteLabel != null) foodWasteLabel.setText("Food Waste: " + player.getFoodWaste());
-    if (cashLabel != null) cashLabel.setText("Cash: R" + player.getCash());
-}
     /**
      * Calculate rent based on position
      */
@@ -340,7 +311,23 @@ public void playTurn(Player player, JLabel positionLabel, JLabel recyclablesLabe
         // Check if objectives have been completed
         checkObjectiveCompletion(player);
     }
-    
+    // Add these methods to the GameManager class
+
+/**
+ * Get the current player index
+ */
+public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+}
+
+/**
+ * Set the current player index directly
+ */
+public void setCurrentPlayerIndex(int index) {
+    if (index >= 0 && index < players.size()) {
+        currentPlayerIndex = index;
+    }
+}
     /**
      * Handle landing on a property tile
      */

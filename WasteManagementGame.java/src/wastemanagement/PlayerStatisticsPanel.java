@@ -18,6 +18,7 @@ public class PlayerStatisticsPanel extends JPanel {
     private JLabel foodWasteLabel;
     private JButton startObjectiveButton;
     private WasteManagementGame gameInstance;
+    private ObjectivesPanel objectivesPanel;
     
     // Game cost constant
     private static final int GAME_COST = 200;

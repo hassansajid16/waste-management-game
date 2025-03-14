@@ -18,7 +18,8 @@ public class WasteManagementGame extends JFrame {
     private static final int WINDOW_WIDTH = 1200;
     private static final int WINDOW_HEIGHT = 800;
     private static final Color BG_COLOR = new Color(45, 65, 45);
-    
+    // Add this field to store panel references
+    private Map<Player, PlayerStatisticsPanel> playerStatPanels = new HashMap<>();
     // Game components
     private GameManager gameManager;
     private GameBoardManager boardManager;
@@ -95,19 +96,24 @@ public class WasteManagementGame extends JFrame {
         }
         
         // Create player statistic panels and add to the sidebar
-        playerStatsPanel.removeAll();
+        playerStatsPanel.removeAll(); // Clear any existing panels
+       
+        playerStatPanels.clear(); // Clear the map
         for (Player player : players) {
+            // Create panel with reference to this game instance
             PlayerStatisticsPanel playerPanel = new PlayerStatisticsPanel(player, this);
-            playerPanel.update(); // Update the panel with current player data
+            playerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            playerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
+            
+            // Store reference in map
+            playerStatPanels.put(player, playerPanel);
+            
+            // Add to sidebar
             playerStatsPanel.add(playerPanel);
-        }
-        
-        playerStatsPanel.revalidate();
-        playerStatsPanel.repaint();
-        
-        // Initialize game and start timer
-        initializeGame();
-        setupGameTimer();
+            playerStatsPanel.add(Box.createVerticalStrut(10));}
+playerStatsPanel.add(Box.createVerticalGlue()); // Push panels to the top
+playerStatsPanel.revalidate();
+playerStatsPanel.repaint();
     }
     
     private void initializeGame() {
@@ -142,7 +148,19 @@ public class WasteManagementGame extends JFrame {
         leftSidebar.setBackground(new Color(50, 70, 50));
         leftSidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         leftSidebar.setPreferredSize(new Dimension(220, getHeight()));
-        
+        // Player stats panel (bottom of sidebar)
+        playerStatsPanel = new JPanel();
+        playerStatsPanel.setLayout(new BoxLayout(playerStatsPanel, BoxLayout.Y_AXIS));
+        playerStatsPanel.setBackground(new Color(50, 70, 50));
+        playerStatsPanel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(Color.WHITE),
+            "Player Statistics",
+            javax.swing.border.TitledBorder.CENTER,
+            javax.swing.border.TitledBorder.TOP,
+            new Font("Arial", Font.BOLD, 14),
+            Color.WHITE
+        ));
+        playerStatsPanel.add(Box.createVerticalGlue()); // Ensure vertical expansion
         // Current player label (top of sidebar)
         currentPlayerLabel = new JLabel("Current Player: ");
         currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -396,70 +414,106 @@ public class WasteManagementGame extends JFrame {
     /**
      * Roll the dice and process the player's turn
      */
-    private void rollDice() {
-        if (gameEnded) return;
-        
-        // Disable interaction during animation
-        setEnabled(false);
-        
-        // Animate the dice roll
-        new Thread(() -> {
-            try {
-                // Quick animation
-                for (int i = 0; i < 8; i++) {
-                    final int randomValue = random.nextInt(6) + 1;
-                    SwingUtilities.invokeLater(() -> setDiceImage(randomValue));
-                    Thread.sleep(100);
+    /**
+ * Roll the dice and process the player's turn
+ */
+private void rollDice() {
+    if (gameEnded) return;
+    
+    // Disable interaction during animation
+    setEnabled(false);
+    
+    // Animate the dice roll
+    new Thread(() -> {
+        try {
+            // Quick animation
+            for (int i = 0; i < 8; i++) {
+                final int randomValue = random.nextInt(6) + 1;
+                SwingUtilities.invokeLater(() -> setDiceImage(randomValue));
+                Thread.sleep(100);
+            }
+            
+            // Final dice value
+            final int diceValue = random.nextInt(6) + 1;
+            
+            // Update UI on EDT
+            SwingUtilities.invokeLater(() -> {
+                // Set final dice value
+                setDiceImage(diceValue);
+                
+                // Get current player and move
+                Player currentPlayer = gameManager.getCurrentPlayer();
+                if (currentPlayer != null) {
+                    // Get old position before moving
+                    int oldPosition = currentPlayer.getPosition();
+                    
+                    // Move player (updates position in Player object)
+                    currentPlayer.move(diceValue);
+                    int newPosition = currentPlayer.getPosition();
+                    
+                    // Move the player token on the board
+                    boardManager.movePlayer(currentPlayer, newPosition);
+                    
+                    // Process the turn in game manager
+                    gameManager.processTurn(currentPlayer, diceValue, oldPosition, newPosition, gameLog);
+                    
+                    // Update property ownership display
+                    gameManager.updatePropertyDisplay(tilePanels);
+                    
+                    // Use OUR method to update player stats
+                    updatePlayerStats();
+                    
+                    // Update objectives and check for winners
+                    updateObjectivesDisplay();
+                    checkForWinner(currentPlayer);
+                    
+                    // If game didn't end, move to next player
+                    if (!gameEnded) {
+                        // Use our wrapper method instead
+                        handleNextTurn();
+                    }
                 }
                 
-                // Final dice value
-                final int diceValue = random.nextInt(6) + 1;
-                
-                // Update UI on EDT
-                SwingUtilities.invokeLater(() -> {
-                    // Set final dice value
-                    setDiceImage(diceValue);
-                    
-                    // Get current player and move
-                    Player currentPlayer = gameManager.getCurrentPlayer();
-                    if (currentPlayer != null) {
-                        // Get old position before moving
-                        int oldPosition = currentPlayer.getPosition();
-                        
-                        // Move player (updates position in Player object)
-                        currentPlayer.move(diceValue);
-                        int newPosition = currentPlayer.getPosition();
-                        
-                        // Move the player token on the board
-                        boardManager.movePlayer(currentPlayer, newPosition);
-                        
-                        // Process the turn in game manager
-                        gameManager.processTurn(currentPlayer, diceValue, oldPosition, newPosition, gameLog);
-                        
-                        // Update property ownership display
-                        gameManager.updatePropertyDisplay(tilePanels);
-                        
-                        // Update objectives and check for winners
-                        updateObjectivesDisplay();
-                        checkForWinner(currentPlayer);
-                        
-                        // If game didn't end, move to next player
-                        if (!gameEnded) {
-                            gameManager.nextTurn();
-                        }
-                    }
-                    
-                    // Re-enable interaction
-                    setEnabled(true);
-                });
-                
-            } catch (InterruptedException e) {
-                System.out.println("Dice animation interrupted: " + e);
+                // Re-enable interaction
                 setEnabled(true);
-            }
-        }).start();
+            });
+            
+        } catch (InterruptedException e) {
+            System.out.println("Dice animation interrupted: " + e);
+            setEnabled(true);
+        }
+    }).start();
+}
+    /**
+ * Create a wrapper for GameManager's nextTurn method to prevent it from
+ * destroying our player panels
+ */
+public void handleNextTurn() {
+    if (players.isEmpty()) {
+        return;
     }
     
+    // Get the current player index from game manager
+    int currentIndex = gameManager.getCurrentPlayerIndex();
+    
+    // Calculate next player index
+    int nextIndex = (currentIndex + 1) % players.size();
+    
+    // Set next player in game manager
+    gameManager.setCurrentPlayerIndex(nextIndex);
+    
+    // Get next player
+    Player nextPlayer = players.get(nextIndex);
+    
+    // Update game log with next player
+    gameLog.append("\n----- " + nextPlayer.getName() + "'s Turn (" + nextPlayer.getRole() + ") -----\n");
+    
+    // Update current player label
+    gameManager.updateCurrentPlayerDisplay();
+    
+    // Use our method instead of gameManager.updateAllPlayerStats()
+    updatePlayerStats();
+}
     /**
      * Set the dice image for a specific value
      */
@@ -690,14 +744,19 @@ public class WasteManagementGame extends JFrame {
         return gameLog;
     }
     
-    /**
-     * Update player statistics
-     */
-    public void updatePlayerStats() {
-        gameManager.updateAllPlayerStats();
-        updateObjectivesDisplay();
+   // Replace or modify the updatePlayerStats() method
+public void updatePlayerStats() {
+    // Update each player's panel directly using our map
+    for (Player player : players) {
+        PlayerStatisticsPanel panel = playerStatPanels.get(player);
+        if (panel != null) {
+            panel.update();
+        }
     }
     
+    // Also update objectives display
+    updateObjectivesDisplay();
+}
     /**
      * Clean up resources when the game closes
      */
