@@ -12,7 +12,7 @@ public class WasteSortingLauncher {
      * Launches the waste sorting mini-game with reliable visibility
      */
     public static void launchSortingGame(Player player, JTextArea gameLog) {
-        gameLog.append("\n🧹 " + player.getName() + " is starting the Waste Sorting Challenge!\n");
+        gameLog.append("\n " + player.getName() + " is starting the Waste Sorting Challenge!\n");
         
         // Create a separate launcher thread
         Thread gameThread = new Thread(() -> {
@@ -47,11 +47,11 @@ public class WasteSortingLauncher {
                         
                         // Give default rewards if game fails
                         SwingUtilities.invokeLater(() -> {
-                            gameLog.append("⚠️ Sorting game couldn't launch. Player receives default rewards.\n");
+                            gameLog.append(" Sorting game couldn't launch. Player receives default rewards.\n");
                             player.collectWaste("recyclables");
                             player.collectWaste("foodWaste");
                             player.updateCash(50);
-                            gameLog.append("💰 Default rewards: 1 recyclable, 1 food waste, R50 cash\n");
+                            gameLog.append(" Default rewards: 1 recyclable, 1 food waste, R50 cash\n");
                         });
                     }
                 });
@@ -144,8 +144,8 @@ public class WasteSortingLauncher {
             
             // Update game log
             SwingUtilities.invokeLater(() -> {
-                gameLog.append("\n🧹 " + player.getName() + " completed the Waste Sorting Challenge!\n");
-                gameLog.append("💰 Rewards: " + recyclablesEarned + " recyclables, " + 
+                gameLog.append("\n " + player.getName() + " completed the Waste Sorting Challenge!\n");
+                gameLog.append(" Rewards: " + recyclablesEarned + " recyclables, " + 
                              foodWasteEarned + " food waste, R" + cashEarned + " cash\n");
             });
             

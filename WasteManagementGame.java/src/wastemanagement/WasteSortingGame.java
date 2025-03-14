@@ -252,10 +252,10 @@ public class WasteSortingGame extends JFrame {
         binPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         
         // Create bin buttons
-        recyclablesButton = createBinButton("Recyclables", new Color(0, 150, 200), WasteCategory.RECYCLABLE);
-        organicButton = createBinButton("Organic", new Color(0, 150, 0), WasteCategory.ORGANIC);
-        generalWasteButton = createBinButton("General Waste", new Color(150, 150, 150), WasteCategory.GENERAL_WASTE);
-        hazardousButton = createBinButton("Hazardous", new Color(200, 50, 50), WasteCategory.HAZARDOUS);
+        recyclablesButton = createBinButton("Recyclables", new Color(0, 0, 0), WasteCategory.RECYCLABLE);
+        organicButton = createBinButton("Organic", new Color(0, 0, 0), WasteCategory.ORGANIC);
+        generalWasteButton = createBinButton("General Waste", new Color(0, 0, 0), WasteCategory.GENERAL_WASTE);
+        hazardousButton = createBinButton("Hazardous", new Color(0, 0, 0), WasteCategory.HAZARDOUS);
         
         binPanel.add(recyclablesButton);
         binPanel.add(organicButton);
@@ -446,9 +446,9 @@ public class WasteSortingGame extends JFrame {
         currentPlayer.updateCash(cashEarned);
         
         // Update game log in main game
-        gameLog.append("\n🧹 " + currentPlayer.getName() + " completed the Waste Sorting Challenge!\n");
-        gameLog.append("📊 Items processed: " + itemsProcessed + ", Final score: " + score + "\n");
-        gameLog.append("💰 Rewards: " + recyclablesEarned + " recyclables, " + 
+        gameLog.append("\n " + currentPlayer.getName() + " completed the Waste Sorting Challenge!\n");
+        gameLog.append(" Items processed: " + itemsProcessed + ", Final score: " + score + "\n");
+        gameLog.append(" Rewards: " + recyclablesEarned + " recyclables, " + 
                      foodWasteEarned + " food waste, R" + cashEarned + " cash\n");
         
         // Show results dialog

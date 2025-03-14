@@ -25,7 +25,7 @@ public class GameManager {
     // Game constants
     private static final int ECO_SCORE_THRESHOLD = 50;
     private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
-    private static final int PROPERTY_BASE_PRICE = 100;
+    private static final int PROPERTY_BASE_PRICE = 1000;
     private static final int PROPERTY_BASE_RENT = 50;
     private static final int GO_MONEY = 2000;
     
@@ -402,8 +402,8 @@ public void setCurrentPlayerIndex(int index) {
      */
     private void handleCommunityFund(Player player) {
         // Random bonus between 50 and 150
-        int bonus = random.nextInt(101) + 50;
-        gameLog.append("💰 " + player.getName() + " landed on Community Fund and received R" + bonus + "!\n");
+        int bonus = random.nextInt(1001) + 500;
+        gameLog.append(" " + player.getName() + " landed on Community Fund and received R" + bonus + "!\n");
         player.updateCash(bonus);
         
         // Also increase role-specific scores
