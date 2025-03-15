@@ -276,7 +276,7 @@ public class WasteSortingGame extends JFrame {
         JButton button = new JButton(name);
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(color);
-        button.setForeground(Color.WHITE);
+        button.setForeground(Color.black);
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.BLACK),

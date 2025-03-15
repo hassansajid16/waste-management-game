@@ -396,7 +396,7 @@ private void initializeGame() {
 
         // Scrollable objectives panel
         JScrollPane objectivesScrollPane = new JScrollPane(objectivesContainer);
-        objectivesScrollPane.setPreferredSize(new Dimension(350, 250)); // Fixed height
+        objectivesScrollPane.setPreferredSize(new Dimension(350, 0)); // Fixed height
         objectivesScrollPane.setBorder(null);
         objectivesScrollPane.setBackground(new Color(45, 65, 45));
         objectivesScrollPane.getViewport().setBackground(new Color(45, 65, 45));
