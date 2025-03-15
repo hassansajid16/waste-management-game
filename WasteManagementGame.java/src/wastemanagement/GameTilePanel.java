@@ -194,7 +194,7 @@ public class GameTilePanel extends JPanel {
         
         // Draw all player tokens
         for (PlayerToken token : playerTokens.values()) {
-            token.draw(g2d, 0, 0);
+            token.draw(g2d, 35, 25);
         }
     }
         
@@ -227,7 +227,7 @@ public class GameTilePanel extends JPanel {
             int col = index % 2;
             
             int offsetX = 15 + (col * 25);
-            int offsetY = 40 + (row * 25);
+            int offsetY = 50 + (row * 25);
             
             token.setOffset(offsetX, offsetY);
             index++;
