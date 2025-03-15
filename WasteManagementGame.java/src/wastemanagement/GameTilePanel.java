@@ -76,9 +76,10 @@ public class GameTilePanel extends JPanel {
     
     public void setOwner(Player owner) {
         this.owner = owner;
+        System.out.println("Setting owner of " + tileName + " to " + (owner != null ? owner.getName() : "null"));
         repaint(); // Redraw to show ownership
     }
-
+    
     public Player getOwner() {
         return owner;
     }
@@ -110,6 +111,24 @@ public class GameTilePanel extends JPanel {
         // Fill background
         g2d.setColor(baseColor);
         g2d.fillRect(0, 0, getWidth(), getHeight());
+        
+        // If there's an owner, show a colored ownership bar at the TOP instead of left side
+        if (owner != null) {
+            Color ownerColor = owner.getPlayerColor();
+            if (ownerColor != null) {
+                // Draw a colored bar at the TOP to indicate ownership
+                g2d.setColor(ownerColor);
+                g2d.fillRect(0, 0, getWidth(), 8);
+                
+                // Draw owner name at the bottom
+                g2d.setFont(new Font("Arial", Font.BOLD, 12));
+                FontMetrics fm = g2d.getFontMetrics();
+                String ownerText = "In Charge: " + owner.getName();
+                int textX = 8;
+                int textY = getHeight() - 5;
+                g2d.drawString(ownerText, textX, textY);
+            }
+        }
         
         // Draw tile name
         g2d.setColor(Color.WHITE);
@@ -179,7 +198,6 @@ public class GameTilePanel extends JPanel {
         }
     }
         
-      
     public void removePlayerToken(Player player) {
         if (player == null) {
             System.err.println("Warning: Attempted to remove null player token from position " + position);
@@ -215,8 +233,6 @@ public class GameTilePanel extends JPanel {
             index++;
         }
     }
-    
-   
     
     public int getPosition() {
         return position;

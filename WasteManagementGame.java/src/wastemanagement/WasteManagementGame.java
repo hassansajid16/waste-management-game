@@ -101,6 +101,7 @@ public class WasteManagementGame extends JFrame {
         
         // Initialize game manager after UI components
         gameManager = new GameManager(gameLog, currentPlayerLabel, playerInfoLabels, playerStatsPanel);
+    
         
         // Add players to game manager
         for (Player player : players) {
@@ -109,7 +110,7 @@ public class WasteManagementGame extends JFrame {
         
         // Create player statistic panels and add to the sidebar
         playerStatsPanel.removeAll(); // Clear any existing panels
-       
+        gameManager.setTilePanels(tilePanels);
         playerStatPanels.clear(); // Clear the map
         for (Player player : players) {
             // Create panel with reference to this game instance
@@ -601,7 +602,12 @@ public void handleNextTurn() {
         diceImage.setBackground(Color.WHITE);
         diceImage.setOpaque(true);
     }
-    
+
+    // Add a setter method to initialize the reference from WasteManagementGame
+public void setTilePanels(GameTilePanel[] tilePanels) {
+    this.tilePanels = tilePanels;
+}
+
     /**
      * Check if a player has won the game
      */

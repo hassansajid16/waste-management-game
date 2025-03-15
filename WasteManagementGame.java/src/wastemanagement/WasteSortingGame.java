@@ -1,17 +1,16 @@
 package wastemanagement;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import javax.swing.*;
+import javax.swing.border.TitledBorder; // Add this import
 /**
- * A mini-game that allows players to sort waste items into appropriate bins.
- * Players earn points for correct sorting and lose points for incorrect sorting.
+ * A simplified mini-game that allows players to sort waste items into appropriate bins.
+ * This version uses text-only representation for waste items.
  */
 public class WasteSortingGame extends JFrame {
     // Constants
@@ -28,13 +27,12 @@ public class WasteSortingGame extends JFrame {
     private ArrayList<WasteItem> wasteItems = new ArrayList<>();
     private WasteItem currentItem;
     private int itemsProcessed = 0;
-    private JTextArea gameLog;
+    private final JTextArea gameLog;
     
     // UI Components
     private JLabel timeLabel;
     private JLabel scoreLabel;
-    private JLabel itemImageLabel;
-    private JLabel itemNameLabel;
+    private JLabel itemLabel;
     private JButton recyclablesButton;
     private JButton organicButton;
     private JButton generalWasteButton;
@@ -46,66 +44,14 @@ public class WasteSortingGame extends JFrame {
         RECYCLABLE, ORGANIC, GENERAL_WASTE, HAZARDOUS
     }
     
-    // Waste item class
-    private class WasteItem {
-        private String name;
-        private WasteCategory category;
-        private ImageIcon image;
+    // Simplified Waste item class
+    private static class WasteItem {
+        private final String name;
+        private final WasteCategory category;
         
-        public WasteItem(String name, WasteCategory category, String imagePath) {
+        public WasteItem(String name, WasteCategory category) {
             this.name = name;
             this.category = category;
-            
-            // Try to load image
-            try {
-                image = new ImageIcon(getClass().getResource(imagePath));
-                // Scale image if needed
-                if (image.getIconWidth() > 0) {
-                    Image img = image.getImage();
-                    Image scaledImg = img.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-                    image = new ImageIcon(scaledImg);
-                }
-            } catch (Exception e) {
-                // If image can't be loaded, create a text-based representation
-                image = createTextIcon(name, category);
-            }
-        }
-        
-        // Create a text-based icon for the waste item
-        private ImageIcon createTextIcon(String name, WasteCategory category) {
-            JLabel label = new JLabel(name);
-            label.setFont(new Font("Arial", Font.BOLD, 16));
-            label.setHorizontalAlignment(JLabel.CENTER);
-            label.setOpaque(true);
-            
-            // Set background color based on category
-            switch (category) {
-                case RECYCLABLE:
-                    label.setBackground(new Color(0, 150, 200));
-                    break;
-                case ORGANIC:
-                    label.setBackground(new Color(0, 150, 0));
-                    break;
-                case GENERAL_WASTE:
-                    label.setBackground(new Color(150, 150, 150));
-                    break;
-                case HAZARDOUS:
-                    label.setBackground(new Color(200, 50, 50));
-                    break;
-            }
-            
-            label.setForeground(Color.WHITE);
-            label.setPreferredSize(new Dimension(150, 150));
-            
-            // Convert JLabel to ImageIcon
-            label.setSize(150, 150);
-            BufferedImage bi = new BufferedImage(
-                label.getWidth(), label.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics g = bi.createGraphics();
-            label.paint(g);
-            g.dispose();
-            
-            return new ImageIcon(bi);
         }
         
         public String getName() {
@@ -115,16 +61,10 @@ public class WasteSortingGame extends JFrame {
         public WasteCategory getCategory() {
             return category;
         }
-        
-        public ImageIcon getImage() {
-            return image;
-        }
     }
     
     /**
      * Creates a new waste sorting game for the specified player
-     * @param player The player who will play the waste sorting game
-     * @param gameLog The game log from the main game to report results
      */
     public WasteSortingGame(Player player, JTextArea gameLog) {
         super("Waste Sorting Challenge");
@@ -133,12 +73,12 @@ public class WasteSortingGame extends JFrame {
         this.currentPlayer = player;
         this.gameLog = gameLog;
         
-        // Make this window appear on top and be modal
+        // Make this window appear on top
         setAlwaysOnTop(true);
         toFront();
         requestFocus();
         
-        setSize(600, 500);
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         
@@ -152,37 +92,38 @@ public class WasteSortingGame extends JFrame {
             dispose(); // Clean up if setup fails
         }
     }
+    
     /**
      * Sets up the waste item data for the game
      */
     private void setupGameData() {
         // Recyclable items
-        wasteItems.add(new WasteItem("Plastic Bottle", WasteCategory.RECYCLABLE, "/resources/plastic_bottle.png"));
-        wasteItems.add(new WasteItem("Newspaper", WasteCategory.RECYCLABLE, "/resources/newspaper.png"));
-        wasteItems.add(new WasteItem("Glass Jar", WasteCategory.RECYCLABLE, "/resources/glass_jar.png"));
-        wasteItems.add(new WasteItem("Aluminum Can", WasteCategory.RECYCLABLE, "/resources/can.png"));
-        wasteItems.add(new WasteItem("Cardboard Box", WasteCategory.RECYCLABLE, "/resources/cardboard.png"));
+        wasteItems.add(new WasteItem("Plastic Bottle", WasteCategory.RECYCLABLE));
+        wasteItems.add(new WasteItem("Newspaper", WasteCategory.RECYCLABLE));
+        wasteItems.add(new WasteItem("Glass Jar", WasteCategory.RECYCLABLE));
+        wasteItems.add(new WasteItem("Aluminum Can", WasteCategory.RECYCLABLE));
+        wasteItems.add(new WasteItem("Cardboard Box", WasteCategory.RECYCLABLE));
         
         // Organic/Food waste items
-        wasteItems.add(new WasteItem("Banana Peel", WasteCategory.ORGANIC, "/resources/banana_peel.png"));
-        wasteItems.add(new WasteItem("Apple Core", WasteCategory.ORGANIC, "/resources/apple_core.png"));
-        wasteItems.add(new WasteItem("Coffee Grounds", WasteCategory.ORGANIC, "/resources/coffee_grounds.png"));
-        wasteItems.add(new WasteItem("Vegetable Scraps", WasteCategory.ORGANIC, "/resources/veggie_scraps.png"));
-        wasteItems.add(new WasteItem("Eggshells", WasteCategory.ORGANIC, "/resources/eggshells.png"));
+        wasteItems.add(new WasteItem("Banana Peel", WasteCategory.ORGANIC));
+        wasteItems.add(new WasteItem("Apple Core", WasteCategory.ORGANIC));
+        wasteItems.add(new WasteItem("Coffee Grounds", WasteCategory.ORGANIC));
+        wasteItems.add(new WasteItem("Vegetable Scraps", WasteCategory.ORGANIC));
+        wasteItems.add(new WasteItem("Eggshells", WasteCategory.ORGANIC));
         
         // General waste items
-        wasteItems.add(new WasteItem("Styrofoam Cup", WasteCategory.GENERAL_WASTE, "/resources/styrofoam.png"));
-        wasteItems.add(new WasteItem("Candy Wrapper", WasteCategory.GENERAL_WASTE, "/resources/candy_wrapper.png"));
-        wasteItems.add(new WasteItem("Used Tissue", WasteCategory.GENERAL_WASTE, "/resources/tissue.png"));
-        wasteItems.add(new WasteItem("Plastic Bag", WasteCategory.GENERAL_WASTE, "/resources/plastic_bag.png"));
-        wasteItems.add(new WasteItem("Disposable Diaper", WasteCategory.GENERAL_WASTE, "/resources/diaper.png"));
+        wasteItems.add(new WasteItem("Styrofoam Cup", WasteCategory.GENERAL_WASTE));
+        wasteItems.add(new WasteItem("Candy Wrapper", WasteCategory.GENERAL_WASTE));
+        wasteItems.add(new WasteItem("Used Tissue", WasteCategory.GENERAL_WASTE));
+        wasteItems.add(new WasteItem("Plastic Bag", WasteCategory.GENERAL_WASTE));
+        wasteItems.add(new WasteItem("Disposable Diaper", WasteCategory.GENERAL_WASTE));
         
         // Hazardous waste items
-        wasteItems.add(new WasteItem("Battery", WasteCategory.HAZARDOUS, "/resources/battery.png"));
-        wasteItems.add(new WasteItem("Paint Can", WasteCategory.HAZARDOUS, "/resources/paint_can.png"));
-        wasteItems.add(new WasteItem("Light Bulb", WasteCategory.HAZARDOUS, "/resources/light_bulb.png"));
-        wasteItems.add(new WasteItem("Motor Oil", WasteCategory.HAZARDOUS, "/resources/motor_oil.png"));
-        wasteItems.add(new WasteItem("Electronic Waste", WasteCategory.HAZARDOUS, "/resources/electronics.png"));
+        wasteItems.add(new WasteItem("Battery", WasteCategory.HAZARDOUS));
+        wasteItems.add(new WasteItem("Paint Can", WasteCategory.HAZARDOUS));
+        wasteItems.add(new WasteItem("Light Bulb", WasteCategory.HAZARDOUS));
+        wasteItems.add(new WasteItem("Motor Oil", WasteCategory.HAZARDOUS));
+        wasteItems.add(new WasteItem("Electronic Waste", WasteCategory.HAZARDOUS));
     }
     
     /**
@@ -230,32 +171,28 @@ public class WasteSortingGame extends JFrame {
                 TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 14)
             ),
-            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         
-        // Image label
-        itemImageLabel = new JLabel();
-        itemImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        itemImageLabel.setPreferredSize(new Dimension(150, 150));
+        // Item display - simplified text-only version
+        itemLabel = new JLabel("", SwingConstants.CENTER);
+        itemLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        itemLabel.setOpaque(true);
+        itemLabel.setBackground(Color.WHITE);
+        itemLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Item name
-        itemNameLabel = new JLabel();
-        itemNameLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        itemNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        itemPanel.add(itemImageLabel, BorderLayout.CENTER);
-        itemPanel.add(itemNameLabel, BorderLayout.SOUTH);
+        itemPanel.add(itemLabel, BorderLayout.CENTER);
         
         // Bin selection panel
         JPanel binPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         binPanel.setOpaque(false);
         binPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         
-        // Create bin buttons
-        recyclablesButton = createBinButton("Recyclables", new Color(0, 0, 0), WasteCategory.RECYCLABLE);
-        organicButton = createBinButton("Organic", new Color(0, 0, 0), WasteCategory.ORGANIC);
-        generalWasteButton = createBinButton("General Waste", new Color(0, 0, 0), WasteCategory.GENERAL_WASTE);
-        hazardousButton = createBinButton("Hazardous", new Color(0, 0, 0), WasteCategory.HAZARDOUS);
+        // Create bin buttons with proper colors
+        recyclablesButton = createBinButton("Recyclables", new Color(0, 150, 200), WasteCategory.RECYCLABLE);
+        organicButton = createBinButton("Organic", new Color(0, 150, 0), WasteCategory.ORGANIC);
+        generalWasteButton = createBinButton("General Waste", new Color(150, 150, 150), WasteCategory.GENERAL_WASTE);
+        hazardousButton = createBinButton("Hazardous", new Color(200, 50, 50), WasteCategory.HAZARDOUS);
         
         binPanel.add(recyclablesButton);
         binPanel.add(organicButton);
@@ -277,7 +214,6 @@ public class WasteSortingGame extends JFrame {
         gamePanel.add(headerPanel, BorderLayout.NORTH);
         gamePanel.add(itemPanel, BorderLayout.CENTER);
         gamePanel.add(binPanel, BorderLayout.SOUTH);
-        gamePanel.add(instructionsPanel, BorderLayout.NORTH);
         
         // Set content pane
         setContentPane(gamePanel);
@@ -305,13 +241,10 @@ public class WasteSortingGame extends JFrame {
             BorderFactory.createEmptyBorder(10, 5, 10, 5)
         ));
         
-        // Add action listener
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentItem != null) {
-                    checkSorting(category);
-                }
+        // Add action listener with lambda
+        button.addActionListener(e -> {
+            if (currentItem != null) {
+                checkSorting(category);
             }
         });
         
@@ -365,9 +298,26 @@ public class WasteSortingGame extends JFrame {
             int index = random.nextInt(wasteItems.size());
             currentItem = wasteItems.get(index);
             
-            // Update UI
-            itemImageLabel.setIcon(currentItem.getImage());
-            itemNameLabel.setText(currentItem.getName());
+            // Update UI with item name
+            itemLabel.setText(currentItem.getName());
+            
+            // Set background color based on category (for visual hint)
+            switch (currentItem.getCategory()) {
+                case RECYCLABLE:
+                    itemLabel.setBackground(new Color(220, 240, 255)); // Light blue
+                    break;
+                case ORGANIC:
+                    itemLabel.setBackground(new Color(220, 255, 220)); // Light green
+                    break;
+                case GENERAL_WASTE:
+                    itemLabel.setBackground(new Color(240, 240, 240)); // Light gray
+                    break;
+                case HAZARDOUS:
+                    itemLabel.setBackground(new Color(255, 220, 220)); // Light red
+                    break;
+                default:
+                    itemLabel.setBackground(Color.WHITE);
+            }
         }
     }
     
@@ -400,7 +350,7 @@ public class WasteSortingGame extends JFrame {
      * @param correct Whether the sorting was correct
      */
     private void flashFeedback(boolean correct) {
-        Color originalColor = gamePanel.getBackground();
+        final Color originalColor = gamePanel.getBackground();
         Color feedbackColor = correct ? new Color(200, 255, 200) : new Color(255, 200, 200);
         
         gamePanel.setBackground(feedbackColor);
@@ -424,15 +374,12 @@ public class WasteSortingGame extends JFrame {
             gameTimer.cancel();
         }
         
-        // Calculate rewards
-        int recyclablesEarned = (int)(score / 10.0);
-        int foodWasteEarned = (int)(score / 15.0);
-        int cashEarned = score * 5;
-        
-        // Ensure minimum values are 0
-        recyclablesEarned = Math.max(0, recyclablesEarned);
-        foodWasteEarned = Math.max(0, foodWasteEarned);
-        cashEarned = Math.max(0, cashEarned);
+        // Calculate rewards (make all variables final for lambda use)
+        final int recyclablesEarned = Math.max(0, (int)(score / 10.0));
+        final int foodWasteEarned = Math.max(0, (int)(score / 15.0));
+        final int cashEarned = Math.max(0, score * 5);
+        final int finalItemsProcessed = itemsProcessed;
+        final int finalScore = score;
         
         // Award resources to player
         for (int i = 0; i < recyclablesEarned; i++) {
@@ -446,8 +393,8 @@ public class WasteSortingGame extends JFrame {
         currentPlayer.updateCash(cashEarned);
         
         // Update game log in main game
-        gameLog.append("\n " + currentPlayer.getName() + " completed the Waste Sorting Challenge!\n");
-        gameLog.append(" Items processed: " + itemsProcessed + ", Final score: " + score + "\n");
+        gameLog.append("\n " + currentPlayer.getName() + " successfully completed the BinNovaters Initiative!\n");
+        gameLog.append(" Items processed: " + finalItemsProcessed + ", Final score: " + finalScore + "\n");
         gameLog.append(" Rewards: " + recyclablesEarned + " recyclables, " + 
                      foodWasteEarned + " food waste, R" + cashEarned + " cash\n");
         
@@ -455,8 +402,8 @@ public class WasteSortingGame extends JFrame {
         SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(this,
                 "Challenge complete!\n\n" +
-                "Items Processed: " + itemsProcessed + "\n" +
-                "Final Score: " + score + "\n\n" +
+                "Items Processed: " + finalItemsProcessed + "\n" +
+                "Final Score: " + finalScore + "\n\n" +
                 "Rewards:\n" +
                 "• " + recyclablesEarned + " recyclables\n" +
                 "• " + foodWasteEarned + " food waste\n" +

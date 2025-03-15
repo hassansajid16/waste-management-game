@@ -21,7 +21,7 @@ public class GameManager {
     private JLabel currentPlayerLabel;
     private JLabel[] playerLabels;
     private JPanel playerStatsPanel;
-    
+    private GameTilePanel[] tilePanels;
     
  
     // Update the property threshold constant
@@ -62,7 +62,10 @@ private static final int GO_MONEY = 3000; // Increased from 2000
     public void addPlayer(String name) {
         players.add(new Player(name));
     }
-
+// Add this method to GameManager.java
+public void setTilePanels(GameTilePanel[] tilePanels) {
+    this.tilePanels = tilePanels;
+}
     /**
      * Get all players
      */
@@ -288,15 +291,31 @@ public void processTurn(Player player, int diceRoll, int oldPosition, int newPos
     
     // Check if objectives have been completed
     checkObjectiveCompletion(player);
-}
+      // After processing turn, update property ownership display
+      if (tilePanels != null) {
+        updatePropertyDisplay(tilePanels);
+}}
 
 private void handleSpecialTask(Player player, JTextArea gameLog) {
+    int position = player.getPosition();
+    String tileName = board.getTile(position).getName();
+    
+    // First check if this square is already owned by another player
+    Player currentOwner = propertyOwners.get(position);
+    if (currentOwner != null && currentOwner != player) {
+        // Square already has an owner who isn't the current player
+        // Handle donation instead of takeover
+        handleDonation(player, currentOwner, position, tileName);
+        return;
+    }
+    
+    // Original code continues for unowned squares
     gameLog.append("🎓 " + player.getName() + " landed on a Special Task square!\n");
     
-    // Ask if player wants to play the quiz
+    // Ask if player wants to play the quiz with thematic language
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to play the Quiz Challenge for R200?",
+        "Would you like to take part in the BinNovaters Initiative for R200?",
         "Special Task",
         JOptionPane.YES_NO_OPTION
     );
@@ -305,10 +324,23 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
         if (player.getCash() >= 200) {
             // Deduct cost
             player.updateCash(-200);
-            gameLog.append("💰 " + player.getName() + " spent R200 to play the Quiz Challenge!\n");
+            gameLog.append("💰 " + player.getName() + " spent R200 to join the BinNovaters Initiative!\n");
             
-            // IMPORTANT: Mark task as completed BEFORE launching the quiz
-            player.buyProperty(player.getPosition());
+            // Mark task as completed
+            player.buyProperty(position);
+            
+            // IMPORTANT: Update ownership display immediately
+            if (tilePanels != null && position < tilePanels.length) {
+                tilePanels[position].setOwner(player);
+                // Force the tile to repaint
+                tilePanels[position].repaint();
+                System.out.println("Set owner for position " + position + " to " + player.getName());
+            } else {
+                System.out.println("Failed to set owner - tilePanels null or invalid position: " + position);
+            }
+            
+            // Store property ownership
+            propertyOwners.put(position, player);
             
             // Launch the quiz
             SpecialTask.askQuestion(player, gameLog);
@@ -324,20 +356,37 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
             
             // Update stats to refresh UI
             updateAllPlayerStats();
+            
+            // Update property display again after the quiz completion
+            updatePropertyDisplay(tilePanels);
         } else {
-            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to play!\n");
+            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to participate!\n");
         }
     } else {
-        gameLog.append("❌ " + player.getName() + " declined to play the Quiz Challenge.\n");
+        gameLog.append("❌ " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
+
 private void handleEcoChallenge(Player player, JTextArea gameLog) {
+    int position = player.getPosition();
+    String tileName = board.getTile(position).getName();
+    
+    // First check if this square is already owned by another player
+    Player currentOwner = propertyOwners.get(position);
+    if (currentOwner != null && currentOwner != player) {
+        // Square already has an owner who isn't the current player
+        // Handle donation instead of takeover
+        handleDonation(player, currentOwner, position, tileName);
+        return;
+    }
+    
+    // Original code continues for unowned squares
     gameLog.append("🌱 " + player.getName() + " landed on an Eco Challenge square!\n");
     
-    // Ask if player wants to play the waste sorting game
+    // Ask if player wants to play the waste sorting game with thematic language
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to play the Waste Sorting Challenge for R200?",
+        "Would you like to take part in the BinNovaters Initiative for R200?",
         "Eco Challenge",
         JOptionPane.YES_NO_OPTION
     );
@@ -346,10 +395,23 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
         if (player.getCash() >= 200) {
             // Deduct cost
             player.updateCash(-200);
-            gameLog.append("💰 " + player.getName() + " spent R200 to play the Waste Sorting Challenge!\n");
+            gameLog.append("💰 " + player.getName() + " spent R200 to join the BinNovaters Initiative!\n");
             
-            // IMPORTANT: Mark task as completed BEFORE launching the game
-            player.buyProperty(player.getPosition());
+            // Mark task as completed
+            player.buyProperty(position);
+            
+            // IMPORTANT: Update ownership display immediately
+            if (tilePanels != null && position < tilePanels.length) {
+                tilePanels[position].setOwner(player);
+                // Force the tile to repaint
+                tilePanels[position].repaint();
+                System.out.println("Set owner for position " + position + " to " + player.getName());
+            } else {
+                System.out.println("Failed to set owner - tilePanels null or invalid position: " + position);
+            }
+            
+            // Store property ownership
+            propertyOwners.put(position, player);
             
             // Launch the waste sorting game
             WasteSortingLauncher.launchSortingGame(player, gameLog);
@@ -365,14 +427,16 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
             
             // Update stats to refresh UI
             updateAllPlayerStats();
+            
+            // Update property display again after the game completion
+            updatePropertyDisplay(tilePanels);
         } else {
-            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to play!\n");
+            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to participate!\n");
         }
     } else {
-        gameLog.append("❌ " + player.getName() + " declined to play the Waste Sorting Challenge.\n");
+        gameLog.append("❌ " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
-
     // Add these methods to the GameManager class
 
 /**
@@ -381,7 +445,101 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
 public int getCurrentPlayerIndex() {
     return currentPlayerIndex;
 }
-
+/**
+ * Handle donation when a player lands on a square owned by another player
+ */
+private void handleDonation(Player player, Player owner, int position, String tileName) {
+    // Base suggested donation amount
+    int suggestedDonation = 100; 
+    
+    // Show dialog to ask for donation amount
+    String[] options = {
+        "Donate R" + suggestedDonation, 
+        "Donate R" + (suggestedDonation/2), 
+        "Donate Custom Amount", 
+        "Skip Donation"
+    };
+    
+    int choice = JOptionPane.showOptionDialog(
+        null,
+        tileName + " is already managed by " + owner.getName() + ".\n" +
+        "Would you like to make a donation to support this initiative?",
+        "Support " + tileName,
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        options,
+        options[0]
+    );
+    
+    int donationAmount = 0;
+    
+    switch (choice) {
+        case 0: // Full suggested donation
+            donationAmount = suggestedDonation;
+            break;
+        case 1: // Half donation
+            donationAmount = suggestedDonation / 2;
+            break;
+        case 2: // Custom donation
+            String input = JOptionPane.showInputDialog(
+                null,
+                "Enter donation amount (R0-R" + player.getCash() + "):",
+                "Custom Donation",
+                JOptionPane.PLAIN_MESSAGE
+            );
+            try {
+                donationAmount = Integer.parseInt(input);
+                // Ensure donation is within valid range
+                donationAmount = Math.max(0, Math.min(donationAmount, player.getCash()));
+            } catch (NumberFormatException e) {
+                donationAmount = 0; // Invalid input, no donation
+            }
+            break;
+        default: // Skip donation
+            donationAmount = 0;
+            break;
+    }
+    
+    // Process the donation
+    if (donationAmount > 0) {
+        // Check if player has enough cash
+        if (player.getCash() >= donationAmount) {
+            player.updateCash(-donationAmount);
+            owner.updateCash(donationAmount);
+            
+            gameLog.append("🤝 " + player.getName() + " donated R" + donationAmount + " to " + 
+                         owner.getName() + " for " + tileName + ".\n");
+                         
+            // Give a small role-specific bonus to both players
+            if (player.getRole().equalsIgnoreCase("Business Owner")) {
+                player.increaseEcoScore(1);
+                gameLog.append("♻️ " + player.getName() + " gained 1 Eco Score point for donating!\n");
+            } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+                player.increasePublicInfluence(1);
+                gameLog.append("👥 " + player.getName() + " gained 1 Public Influence point for donating!\n");
+            }
+            
+            if (owner.getRole().equalsIgnoreCase("Business Owner")) {
+                owner.increaseEcoScore(2);
+                gameLog.append("♻️ " + owner.getName() + " gained 2 Eco Score points from the donation!\n");
+            } else if (owner.getRole().equalsIgnoreCase("Community Leader")) {
+                owner.increasePublicInfluence(2);
+                gameLog.append("👥 " + owner.getName() + " gained 2 Public Influence points from the donation!\n");
+            }
+        } else {
+            // Player doesn't have enough cash
+            gameLog.append("❌ " + player.getName() + " doesn't have enough cash to donate R" + 
+                         donationAmount + ".\n");
+        }
+    } else {
+        gameLog.append("❌ " + player.getName() + " chose not to donate to " + 
+                     owner.getName() + " for " + tileName + ".\n");
+    }
+    
+    // Update UI
+    updateAllPlayerStats();
+}
 /**
  * Set the current player index directly
  */

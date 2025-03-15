@@ -40,31 +40,34 @@ public class ObjectivesPanel extends JPanel {
         
         // Objective 1 - Role specific (more compact layout)
         String objective1Text = player.getRole().equalsIgnoreCase("Business Owner") 
-            ? "Eco: 0/" + ECO_SCORE_THRESHOLD
-            : "Infl: 0/" + PUBLIC_INFLUENCE_THRESHOLD;
+            ? "Eco: " + player.getEcoScore() + "/" + ECO_SCORE_THRESHOLD
+            : "Infl: " + player.getPublicInfluence() + "/" + PUBLIC_INFLUENCE_THRESHOLD;
             
         objective1Label = new JLabel(objective1Text);
         objective1Label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         objective1Label.setForeground(Color.WHITE);
         
-        // Progress bar for objective 1 - shorter height
+        // Progress bar for objective 1 - shorter height and NO STRING PAINTED
         JProgressBar objective1Bar = player.getRole().equalsIgnoreCase("Business Owner")
             ? createCompactProgressBar(Color.GREEN, ECO_SCORE_THRESHOLD)
             : createCompactProgressBar(Color.BLUE, PUBLIC_INFLUENCE_THRESHOLD);
             
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
             ecoScoreBar = objective1Bar;
+            ecoScoreBar.setValue(player.getEcoScore());
         } else {
             publicInfluenceBar = objective1Bar;
+            publicInfluenceBar.setValue(player.getPublicInfluence());
         }
         
         // Objective 2 - Tasks (previously Properties) - CHANGED FROM "Props" TO "Tasks"
-        objective2Label = new JLabel("Tasks: 0/" + PROPERTY_THRESHOLD);
+        objective2Label = new JLabel("Tasks: " + player.getPropertyCount() + "/" + PROPERTY_THRESHOLD);
         objective2Label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         objective2Label.setForeground(Color.WHITE);
         
-        // Progress bar for objective 2 - shorter height
+        // Progress bar for objective 2 - shorter height and NO STRING PAINTED
         propertiesBar = createCompactProgressBar(new Color(255, 165, 0), PROPERTY_THRESHOLD);
+        propertiesBar.setValue(player.getPropertyCount());
         
         // Add components with less vertical space
         contentPanel.add(Box.createVerticalStrut(2)); // Reduced spacing
@@ -82,12 +85,13 @@ public class ObjectivesPanel extends JPanel {
     }
     
     /**
-     * Create a compact progress bar with reduced height
+     * Create a compact progress bar with reduced height and no string painted
      */
     private JProgressBar createCompactProgressBar(Color foreground, int maximum) {
         JProgressBar bar = new JProgressBar(0, maximum);
         bar.setValue(0);
-        bar.setStringPainted(true);
+        // Don't show percentage text
+        bar.setStringPainted(false);
         bar.setForeground(foreground);
         bar.setBackground(Color.DARK_GRAY);
         bar.setBorder(BorderFactory.createLineBorder(Color.BLACK));

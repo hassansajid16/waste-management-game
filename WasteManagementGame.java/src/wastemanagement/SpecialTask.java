@@ -71,20 +71,23 @@ public class SpecialTask {
         // Display question in game log
         gameLog.append("\n Special Task for " + player.getName() + ":\n");
         gameLog.append(QUESTIONS[index] + " (True/False)?\n");
-    
+        
         SwingUtilities.invokeLater(() -> {
             int choice = JOptionPane.showConfirmDialog(
-                null, QUESTIONS[index], "Special Task", JOptionPane.YES_NO_OPTION
+                null, QUESTIONS[index], "BinNovaters Initiative", JOptionPane.YES_NO_OPTION
             );
-    
+            
             boolean playerAnswer = (choice == JOptionPane.YES_OPTION);
             boolean correctAnswer = ANSWERS[index];
-    
+            
             if(playerAnswer == correctAnswer){
                 gameLog.append("Correct! " + player.getName() + " completes the special task.\n");
                 player.updateCash(1000);
                 gameLog.append(" Earned R1000 for your knowledge about waste management!\n");
                 // Removed player.buyProperty since we now do it in handleSpecialTask
+                
+                // If GameManager has a reference to update ownership visually, this would be called here
+                // But this is already done in handleSpecialTask
             } else {
                 gameLog.append("Incorrect. No reward for " + player.getName() + ".\n");
             }
