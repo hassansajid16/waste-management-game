@@ -65,37 +65,31 @@ public class SpecialTask {
     public static void askQuestion(Player player, JTextArea gameLog) {
         Random rand = new Random();
         
-        // 40% chance to launch waste sorting game instead of true/false question
-        if (rand.nextInt(100) < 40) {
-            launchWasteSortingGame(player, gameLog);
-            return;
-        }
-        
         // Otherwise, proceed with true/false question
         int index = rand.nextInt(QUESTIONS.length); // Pick a random question
         
         // Display question in game log
         gameLog.append("\n Special Task for " + player.getName() + ":\n");
         gameLog.append(QUESTIONS[index] + " (True/False)?\n");
-
+    
         SwingUtilities.invokeLater(() -> {
             int choice = JOptionPane.showConfirmDialog(
                 null, QUESTIONS[index], "Special Task", JOptionPane.YES_NO_OPTION
             );
-
+    
             boolean playerAnswer = (choice == JOptionPane.YES_OPTION);
             boolean correctAnswer = ANSWERS[index];
-
+    
             if(playerAnswer == correctAnswer){
                 gameLog.append("Correct! " + player.getName() + " completes the special task.\n");
                 player.updateCash(1000);
                 gameLog.append(" Earned R1000 for your knowledge about waste management!\n");
+                // Removed player.buyProperty since we now do it in handleSpecialTask
             } else {
                 gameLog.append("Incorrect. No reward for " + player.getName() + ".\n");
             }
         });
     }
-    
     /**
      * Launches the waste sorting mini-game
      */

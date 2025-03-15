@@ -56,16 +56,10 @@ public class GameTilePanel extends JPanel {
                 baseColor = new Color(89, 116, 89);  // Green for GO
                 break;
             case "SpecialTask":
-                baseColor = new Color(142, 92, 174);  // Purple
+                baseColor = new Color(142, 92, 174);  // Purple for Quiz Challenge
                 break;
             case "EcoChallenge":
-                baseColor = new Color(46, 139, 87);   // Sea Green - distinctive color for eco challenges
-                break;
-            case "Property":
-                baseColor = new Color(50, 57, 57);    // Dark slate for properties
-                break;
-            case "CommunityFund":
-                baseColor = new Color(89, 116, 89);   // Green for community funds
+                baseColor = new Color(46, 139, 87);   // Sea Green for Waste Sorting
                 break;
             default:
                 baseColor = new Color(70, 77, 77);    // Default dark slate
@@ -107,6 +101,85 @@ public class GameTilePanel extends JPanel {
         }
     }
     
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        // Fill background
+        g2d.setColor(baseColor);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+        
+        // Draw tile name
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(titleFont);
+        FontMetrics fm = g2d.getFontMetrics();
+        
+        // Break long names into multiple lines if needed
+        if (fm.stringWidth(tileName) > getWidth() - 10) {
+            String[] words = tileName.split(" ");
+            String line1 = "", line2 = "";
+            
+            for (String word : words) {
+                if (fm.stringWidth(line1 + word) < getWidth() - 10) {
+                    line1 += (line1.isEmpty() ? "" : " ") + word;
+                } else {
+                    line2 += (line2.isEmpty() ? "" : " ") + word;
+                }
+            }
+            
+            int line1X = (getWidth() - fm.stringWidth(line1)) / 2;
+            int line1Y = 15;
+            g2d.drawString(line1, line1X, line1Y);
+            
+            if (!line2.isEmpty()) {
+                int line2X = (getWidth() - fm.stringWidth(line2)) / 2;
+                g2d.drawString(line2, line2X, line1Y + fm.getHeight());
+            }
+        } else {
+            // Draw tile name on a single line
+            int textX = (getWidth() - fm.stringWidth(tileName)) / 2;
+            int textY = 15;
+            g2d.drawString(tileName, textX, textY);
+        }
+        
+        // Draw position number
+        g2d.setFont(positionFont);
+        String posText = "Position " + position;
+        fm = g2d.getFontMetrics();
+        int textX = (getWidth() - fm.stringWidth(posText)) / 2;
+        int textY = 40; // Fixed position regardless of title
+        g2d.drawString(posText, textX, textY);
+        
+        // Draw tile type
+        String displayType = "";
+        switch (tileType) {
+            case "SpecialTask": 
+                displayType = "Quiz Challenge - R200";
+                break;
+            case "EcoChallenge": 
+                displayType = "Waste Sorting - R200";
+                break;
+            case "StartSquare": 
+                displayType = "Start Square";
+                break;
+            default: 
+                displayType = tileType;
+        }
+        
+        if (!tileType.equals("StartSquare")) {
+            int typeX = (getWidth() - fm.stringWidth(displayType)) / 2;
+            g2d.drawString(displayType, typeX, textY + 15);
+        }
+        
+        // Draw all player tokens
+        for (PlayerToken token : playerTokens.values()) {
+            token.draw(g2d, 0, 0);
+        }
+    }
+        
+      
     public void removePlayerToken(Player player) {
         if (player == null) {
             System.err.println("Warning: Attempted to remove null player token from position " + position);
@@ -143,81 +216,7 @@ public class GameTilePanel extends JPanel {
         }
     }
     
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        // Fill background
-        g2d.setColor(baseColor);
-        g2d.fillRect(0, 0, getWidth(), getHeight());
-        
-        // Draw property ownership marker if applicable
-        if (isProperty && owner != null) {
-            // Draw a colored band at the top
-            g2d.setColor(owner.getPlayerColor());
-            g2d.fillRect(0, 0, getWidth(), 12);
-        }
-        
-        // Draw tile name
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(titleFont);
-        FontMetrics fm = g2d.getFontMetrics();
-        
-        // Break long names into multiple lines if needed
-        if (fm.stringWidth(tileName) > getWidth() - 10) {
-            String[] words = tileName.split(" ");
-            String line1 = "", line2 = "";
-            
-            for (String word : words) {
-                if (fm.stringWidth(line1 + word) < getWidth() - 10) {
-                    line1 += (line1.isEmpty() ? "" : " ") + word;
-                } else {
-                    line2 += (line2.isEmpty() ? "" : " ") + word;
-                }
-            }
-            
-            int line1X = (getWidth() - fm.stringWidth(line1)) / 2;
-            int line1Y = isProperty && owner != null ? 25 : 15;
-            g2d.drawString(line1, line1X, line1Y);
-            
-            if (!line2.isEmpty()) {
-                int line2X = (getWidth() - fm.stringWidth(line2)) / 2;
-                g2d.drawString(line2, line2X, line1Y + fm.getHeight());
-            }
-        } else {
-            // Draw tile name on a single line
-            int textX = (getWidth() - fm.stringWidth(tileName)) / 2;
-            int textY = isProperty && owner != null ? 25 : 15;
-            g2d.drawString(tileName, textX, textY);
-        }
-        
-        // Draw position number
-        g2d.setFont(positionFont);
-        String posText = "Position " + position;
-        fm = g2d.getFontMetrics();
-        int textX = (getWidth() - fm.stringWidth(posText)) / 2;
-        int textY = 40; // Fixed position regardless of title
-        g2d.drawString(posText, textX, textY);
-        
-        // Draw price for properties
-        if (isProperty) {
-            String priceText = "R" + propertyPrice;
-            g2d.drawString(priceText, textX, textY + 15);
-            
-            // Draw owner's name if owned
-            if (owner != null) {
-                String ownerText = "Owner: " + owner.getName();
-                g2d.drawString(ownerText, textX, textY + 30);
-            }
-        }
-        
-        // Draw all player tokens
-        for (PlayerToken token : playerTokens.values()) {
-            token.draw(g2d, 0, 0);
-        }
-    }
+   
     
     public int getPosition() {
         return position;

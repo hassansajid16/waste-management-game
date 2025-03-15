@@ -128,27 +128,30 @@ playerStatsPanel.revalidate();
 playerStatsPanel.repaint();
     }
     
-    private void initializeGame() {
-        if (!players.isEmpty()) {
-            // Welcome message and game start
-            gameLog.append("Welcome to the Makers Valley Waste Management Game!\n\n");
-            gameLog.append("This game simulates the challenges of implementing an effective\n");
-            gameLog.append("waste management system in Makers Valley, Johannesburg.\n\n");
-            gameLog.append("Game Objectives:\n");
-            gameLog.append("1. Role-specific goal: Build your Eco Score (Business Owner) or\n");
-            gameLog.append("   Public Influence (Community Leader) to 50 points\n");
-            gameLog.append("2. Acquire at least 3 properties to establish waste management infrastructure\n\n");
-            
-            gameLog.append("Starting the game with " + players.size() + " players...\n");
-            gameLog.append("\n----- " + players.get(0).getName() + "'s Turn (" + players.get(0).getRole() + ") -----\n");
-            
-            // Highlight starting position and update displays
-            boardManager.highlightTile(0);
-            gameManager.updateCurrentPlayerDisplay();
-            gameManager.updateAllPlayerStats();
-            updateObjectivesDisplay();
-        }
+    // Update the initializeGame method's game introduction text
+private void initializeGame() {
+    if (!players.isEmpty()) {
+        // Welcome message and game start
+        gameLog.append("Welcome to the Makers Valley Waste Management Game!\n\n");
+        gameLog.append("This game simulates the challenges of implementing an effective\n");
+        gameLog.append("waste management system in Makers Valley, Johannesburg.\n\n");
+        gameLog.append("Game Objectives:\n");
+        gameLog.append("1. Role-specific goal: Build your Eco Score (Business Owner) or\n");
+        gameLog.append("   Public Influence (Community Leader) to 50 points\n");
+        gameLog.append("2. Complete at least 7 waste management tasks (quizzes and sorting challenges)\n\n");
+        
+        gameLog.append("Starting the game with " + players.size() + " players...\n");
+        gameLog.append("\n----- " + players.get(0).getName() + "'s Turn (" + players.get(0).getRole() + ") -----\n");
+        
+        // Highlight starting position and update displays
+        boardManager.highlightTile(0);
+        gameManager.updateCurrentPlayerDisplay();
+        gameManager.updateAllPlayerStats();
+        updateObjectivesDisplay();
     }
+}
+
+
     
     /**
      * Setup the left sidebar with player information
@@ -474,10 +477,8 @@ playerStatsPanel.repaint();
         timerLabel.setText(String.format("Game Time: %02d:%02d", minutes, seconds));
     }
     
-    /**
-     * Update the objectives display for all players
-     */
-    private void updateObjectivesDisplay() {
+    public void updateObjectivesDisplay() {
+        // Don't call updatePlayerStats from here!
         for (Player player : players) {
             ObjectivesPanel panel = playerObjectivesPanels.get(player);
             if (panel != null) {
@@ -535,16 +536,15 @@ private void rollDice() {
                     // Update property ownership display
                     gameManager.updatePropertyDisplay(tilePanels);
                     
-                    // Use OUR method to update player stats
+                    // Update player stats
                     updatePlayerStats();
                     
                     // Update objectives and check for winners
-                    updateObjectivesDisplay();
                     checkForWinner(currentPlayer);
                     
                     // If game didn't end, move to next player
                     if (!gameEnded) {
-                        // Use our wrapper method instead
+                        // IMPORTANT: This advances to the next player's turn
                         handleNextTurn();
                     }
                 }
@@ -559,6 +559,7 @@ private void rollDice() {
         }
     }).start();
 }
+
     /**
  * Create a wrapper for GameManager's nextTurn method to prevent it from
  * destroying our player panels
@@ -586,9 +587,10 @@ public void handleNextTurn() {
     // Update current player label
     gameManager.updateCurrentPlayerDisplay();
     
-    // Use our method instead of gameManager.updateAllPlayerStats()
+    // Update player stats
     updatePlayerStats();
 }
+
     /**
      * Set the dice image for a specific value
      */
@@ -826,7 +828,7 @@ public void handleNextTurn() {
         return gameLog;
     }
     
-   // Replace or modify the updatePlayerStats() method
+ // Replace or modify the updatePlayerStats() method
 public void updatePlayerStats() {
     // Update each player's panel directly using our map
     for (Player player : players) {
@@ -836,8 +838,14 @@ public void updatePlayerStats() {
         }
     }
     
-    // Also update objectives display
-    updateObjectivesDisplay();
+    // Do NOT call updateObjectivesDisplay() here!
+    // Instead, update the objectives panels directly
+    for (Player player : players) {
+        ObjectivesPanel panel = playerObjectivesPanels.get(player);
+        if (panel != null) {
+            panel.updateProgress();
+        }
+    }
 }
     /**
      * Clean up resources when the game closes

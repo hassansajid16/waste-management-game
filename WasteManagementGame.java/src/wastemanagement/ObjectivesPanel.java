@@ -16,7 +16,7 @@ public class ObjectivesPanel extends JPanel {
     
     private static final int ECO_SCORE_THRESHOLD = 50;
     private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
-    private static final int PROPERTY_THRESHOLD = 3;
+    private static final int PROPERTY_THRESHOLD = 7;  // Changed from 3 to 7
     
     public ObjectivesPanel(Player player) {
         this.player = player;
@@ -58,8 +58,8 @@ public class ObjectivesPanel extends JPanel {
             publicInfluenceBar = objective1Bar;
         }
         
-        // Objective 2 - Properties (more compact)
-        objective2Label = new JLabel("Props: 0/" + PROPERTY_THRESHOLD);
+        // Objective 2 - Tasks (previously Properties) - CHANGED FROM "Props" TO "Tasks"
+        objective2Label = new JLabel("Tasks: 0/" + PROPERTY_THRESHOLD);
         objective2Label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         objective2Label.setForeground(Color.WHITE);
         
@@ -120,7 +120,7 @@ public class ObjectivesPanel extends JPanel {
         
         int propertyCount = player.getPropertyCount();
         propertiesBar.setValue(propertyCount);
-        objective2Label.setText("Props: " + propertyCount + "/" + PROPERTY_THRESHOLD);
+        objective2Label.setText("Tasks: " + propertyCount + "/" + PROPERTY_THRESHOLD);  // CHANGED FROM "Props" TO "Tasks"
         
         if (propertyCount >= PROPERTY_THRESHOLD) {
             objective2Label.setForeground(Color.GREEN);

@@ -22,12 +22,20 @@ public class GameManager {
     private JLabel[] playerLabels;
     private JPanel playerStatsPanel;
     
-    // Game constants
-    private static final int ECO_SCORE_THRESHOLD = 50;
-    private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
-    private static final int PROPERTY_BASE_PRICE = 1000;
-    private static final int PROPERTY_BASE_RENT = 50;
-    private static final int GO_MONEY = 2000;
+    
+ 
+    // Update the property threshold constant
+private static final int ECO_SCORE_THRESHOLD = 50;
+private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
+private static final int PROPERTY_THRESHOLD = 7; // Changed from 3 to 7
+
+// Update these constants for higher costs
+private static final int GAME_COST = 500; // Increased from 200
+private static final int PROPERTY_BASE_PRICE = 2000; // Increased from 1000
+private static final int PROPERTY_BASE_RENT = 100; // Increased from 50
+private static final int GO_MONEY = 3000; // Increased from 2000
+
+
     
     // Property ownership tracking
     private Map<Integer, Player> propertyOwners;
@@ -203,114 +211,168 @@ public class GameManager {
     /**
      * Check if a player has completed their objectives
      */
-    private void checkObjectiveCompletion(Player player) {
-        // Check role-specific objective
-        if (player.getRole().equalsIgnoreCase("Business Owner") && 
-            player.getEcoScore() >= ECO_SCORE_THRESHOLD && 
-            !player.hasCompletedObjective1()) {
-            
-            player.completeObjective1();
-            gameLog.append("🏆 " + player.getName() + " completed the Eco-friendly Business objective!\n");
-        }
+    // Update the checkObjectiveCompletion method
+private void checkObjectiveCompletion(Player player) {
+    // Check role-specific objective
+    if (player.getRole().equalsIgnoreCase("Business Owner") && 
+        player.getEcoScore() >= ECO_SCORE_THRESHOLD && 
+        !player.hasCompletedObjective1()) {
         
-        if (player.getRole().equalsIgnoreCase("Community Leader") && 
-            player.getPublicInfluence() >= PUBLIC_INFLUENCE_THRESHOLD && 
-            !player.hasCompletedObjective1()) {
-            
-            player.completeObjective1();
-            gameLog.append("🏆 " + player.getName() + " completed the Community Influence objective!\n");
-        }
+        player.completeObjective1();
+        gameLog.append("🏆 " + player.getName() + " completed the Eco-friendly Business objective!\n");
+    }
+    
+    if (player.getRole().equalsIgnoreCase("Community Leader") && 
+        player.getPublicInfluence() >= PUBLIC_INFLUENCE_THRESHOLD && 
+        !player.hasCompletedObjective1()) {
         
-        // Check property objective (requires owning at least 3 properties)
-        if (player.getPropertyCount() >= 3 && !player.hasCompletedObjective2()) {
-            player.completeObjective2();
-            gameLog.append("🏆 " + player.getName() + " completed the Property Developer objective!\n");
-        }
-        
-        // Check if all objectives are complete for game end condition
-        if (player.hasCompletedAllObjectives()) {
-            gameLog.append("🎉 CONGRATULATIONS! " + player.getName() + " has completed all objectives and won the game!\n");
-        }
+        player.completeObjective1();
+        gameLog.append("🏆 " + player.getName() + " completed the Community Influence objective!\n");
+    }
+    
+    // Check task objective (requires completing at least 7 tasks) - CHANGED FROM "Property Developer" TO "Task Master"
+    if (player.getPropertyCount() >= PROPERTY_THRESHOLD && !player.hasCompletedObjective2()) {
+        player.completeObjective2();
+        gameLog.append("🏆 " + player.getName() + " completed the Task Master objective!\n");
+    }
+    
+    // Check if all objectives are complete for game end condition
+    if (player.hasCompletedAllObjectives()) {
+        gameLog.append("🎉 CONGRATULATIONS! " + player.getName() + " has completed all objectives and won the game!\n");
+    }
+}
+/**
+ * Process a player's turn based on dice roll and position
+ */
+public void processTurn(Player player, int diceRoll, int oldPosition, int newPosition, JTextArea gameLog) {
+    if (player == null) {
+        return;
     }
 
-    /**
-     * Process a player's turn based on dice roll and position
-     */
-    public void processTurn(Player player, int diceRoll, int oldPosition, int newPosition, JTextArea gameLog) {
-        if (player == null) {
-            return;
-        }
-
-        Tile currentTile = board.getTile(newPosition);
-        String tileType = currentTile.getType();
-        
-        gameLog.append(player.getName() + " rolled a " + diceRoll + " and moved from position " + 
-                     oldPosition + " to " + newPosition + " (" + currentTile.getName() + ")\n");
-        
-        // Check if player passed GO
-        if (oldPosition > newPosition && oldPosition != 0) {
-            // Player has passed GO (wrapped around the board)
+    Tile currentTile = board.getTile(newPosition);
+    String tileType = currentTile.getType();
+    
+    gameLog.append(player.getName() + " rolled a " + diceRoll + " and moved from position " + 
+                 oldPosition + " to " + newPosition + " (" + currentTile.getName() + ")\n");
+    
+    // Check if player passed GO
+    if (oldPosition > newPosition && oldPosition != 0) {
+        // Player has passed GO (wrapped around the board)
+        player.updateCash(GO_MONEY);
+        gameLog.append("💰 " + player.getName() + " passed GO and collected R" + GO_MONEY + "!\n");
+    }
+    
+    // Process based on tile type
+    switch (tileType) {
+        case "StartSquare":
+            // Landing on GO - Collect additional money
             player.updateCash(GO_MONEY);
-            gameLog.append("💰 " + player.getName() + " passed GO and collected R" + GO_MONEY + "!\n");
-        }
-        
-        // Process based on tile type
-        switch (tileType) {
-            case "Property":
-                handlePropertyTile(player, newPosition, currentTile.getName());
-                break;
-                
-            case "StartSquare":
-                // Landing on GO - Collect additional money
-                player.updateCash(GO_MONEY);
-                gameLog.append("💰 " + player.getName() + " landed on GO and collected R" + GO_MONEY + "!\n");
-                break;
-                
-            case "CommunityFund":
-                handleCommunityFund(player);
-                break;
-                
-            case "SpecialTask":
-                gameLog.append(player.getName() + " landed on a Special Task square!\n");
-                SpecialTask.askQuestion(player, gameLog);
-                
-                // Special increase to role-specific scores for challenges
-                if (player.getRole().equalsIgnoreCase("Business Owner")) {
-                    player.increaseEcoScore(5);
-                    gameLog.append("♻️ Eco Score increased to " + player.getEcoScore() + "\n");
-                } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-                    player.increasePublicInfluence(5);
-                    gameLog.append("👥 Public Influence increased to " + player.getPublicInfluence() + "\n");
-                }
-                break;
-                
-            case "EcoChallenge":
-                gameLog.append("🌱 " + player.getName() + " landed on an Eco Challenge square!\n");
-                
-                // Launch the eco challenge (waste sorting game)
-                WasteSortingLauncher.launchSortingGame(player, gameLog);
-                
-                // Special increase to role-specific scores for challenges
-                if (player.getRole().equalsIgnoreCase("Business Owner")) {
-                    player.increaseEcoScore(8);
-                    gameLog.append("♻️ Eco Score significantly increased to " + player.getEcoScore() + "\n");
-                } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-                    player.increasePublicInfluence(8);
-                    gameLog.append("👥 Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
-                }
-                break;
-                
-            default:
-                gameLog.append(player.getName() + " is on a neutral tile.\n");
-                break;
-        }
-
-        // Update UI
-        updateAllPlayerStats();
-        
-        // Check if objectives have been completed
-        checkObjectiveCompletion(player);
+            gameLog.append("💰 " + player.getName() + " landed on GO and collected R" + GO_MONEY + "!\n");
+            break;
+            
+        case "SpecialTask":
+            handleSpecialTask(player, gameLog);
+            break;
+            
+        case "EcoChallenge":
+            handleEcoChallenge(player, gameLog);
+            break;
+            
+        default:
+            gameLog.append(player.getName() + " is on a neutral tile.\n");
+            break;
     }
+
+    // Update UI
+    updateAllPlayerStats();
+    
+    // Check if objectives have been completed
+    checkObjectiveCompletion(player);
+}
+
+private void handleSpecialTask(Player player, JTextArea gameLog) {
+    gameLog.append("🎓 " + player.getName() + " landed on a Special Task square!\n");
+    
+    // Ask if player wants to play the quiz
+    int choice = JOptionPane.showConfirmDialog(
+        null,
+        "Would you like to play the Quiz Challenge for R200?",
+        "Special Task",
+        JOptionPane.YES_NO_OPTION
+    );
+    
+    if (choice == JOptionPane.YES_OPTION) {
+        if (player.getCash() >= 200) {
+            // Deduct cost
+            player.updateCash(-200);
+            gameLog.append("💰 " + player.getName() + " spent R200 to play the Quiz Challenge!\n");
+            
+            // IMPORTANT: Mark task as completed BEFORE launching the quiz
+            player.buyProperty(player.getPosition());
+            
+            // Launch the quiz
+            SpecialTask.askQuestion(player, gameLog);
+            
+            // Special increase to role-specific scores for challenges
+            if (player.getRole().equalsIgnoreCase("Business Owner")) {
+                player.increaseEcoScore(5);
+                gameLog.append("♻️ Eco Score increased to " + player.getEcoScore() + "\n");
+            } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+                player.increasePublicInfluence(5);
+                gameLog.append("👥 Public Influence increased to " + player.getPublicInfluence() + "\n");
+            }
+            
+            // Update stats to refresh UI
+            updateAllPlayerStats();
+        } else {
+            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to play!\n");
+        }
+    } else {
+        gameLog.append("❌ " + player.getName() + " declined to play the Quiz Challenge.\n");
+    }
+}
+private void handleEcoChallenge(Player player, JTextArea gameLog) {
+    gameLog.append("🌱 " + player.getName() + " landed on an Eco Challenge square!\n");
+    
+    // Ask if player wants to play the waste sorting game
+    int choice = JOptionPane.showConfirmDialog(
+        null,
+        "Would you like to play the Waste Sorting Challenge for R200?",
+        "Eco Challenge",
+        JOptionPane.YES_NO_OPTION
+    );
+    
+    if (choice == JOptionPane.YES_OPTION) {
+        if (player.getCash() >= 200) {
+            // Deduct cost
+            player.updateCash(-200);
+            gameLog.append("💰 " + player.getName() + " spent R200 to play the Waste Sorting Challenge!\n");
+            
+            // IMPORTANT: Mark task as completed BEFORE launching the game
+            player.buyProperty(player.getPosition());
+            
+            // Launch the waste sorting game
+            WasteSortingLauncher.launchSortingGame(player, gameLog);
+            
+            // Special increase to role-specific scores for challenges
+            if (player.getRole().equalsIgnoreCase("Business Owner")) {
+                player.increaseEcoScore(8);
+                gameLog.append("♻️ Eco Score significantly increased to " + player.getEcoScore() + "\n");
+            } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+                player.increasePublicInfluence(8);
+                gameLog.append("👥 Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
+            }
+            
+            // Update stats to refresh UI
+            updateAllPlayerStats();
+        } else {
+            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to play!\n");
+        }
+    } else {
+        gameLog.append("❌ " + player.getName() + " declined to play the Waste Sorting Challenge.\n");
+    }
+}
+
     // Add these methods to the GameManager class
 
 /**
@@ -328,75 +390,75 @@ public void setCurrentPlayerIndex(int index) {
         currentPlayerIndex = index;
     }
 }
-    /**
-     * Handle landing on a property tile
-     */
-    private void handlePropertyTile(Player player, int position, String propertyName) {
-        Player propertyOwner = propertyOwners.get(position);
+    // Fix #5: Update property selling/buying text in GameManager.java - handlePropertyTile
+private void handlePropertyTile(Player player, int position, String propertyName) {
+    Player propertyOwner = propertyOwners.get(position);
+    
+    if (propertyOwner == null) {
+        // Property is not owned, player can buy it
+        int propertyPrice = getPropertyPrice(position);
         
-        if (propertyOwner == null) {
-            // Property is not owned, player can buy it
-            int propertyPrice = getPropertyPrice(position);
+        gameLog.append(" " + player.getName() + " landed on " + propertyName + " (Price: R" + propertyPrice + ")\n");
+        
+        // Check if player has enough money
+        if (player.getCash() >= propertyPrice) {
+            // Ask if player wants to buy the property
+            int choice = JOptionPane.showConfirmDialog(
+                null,
+                "Would you like to buy " + propertyName + " for R" + propertyPrice + "?",
+                "Property Purchase",
+                JOptionPane.YES_NO_OPTION
+            );
             
-            gameLog.append(" " + player.getName() + " landed on " + propertyName + " (Price: R" + propertyPrice + ")\n");
-            
-            // Check if player has enough money
-            if (player.getCash() >= propertyPrice) {
-                // Ask if player wants to buy the property
-                int choice = JOptionPane.showConfirmDialog(
-                    null,
-                    "Would you like to buy " + propertyName + " for R" + propertyPrice + "?",
-                    "Property Purchase",
-                    JOptionPane.YES_NO_OPTION
-                );
+            if (choice == JOptionPane.YES_OPTION) {
+                player.updateCash(-propertyPrice);
+                player.buyProperty(position);
+                propertyOwners.put(position, player);
                 
-                if (choice == JOptionPane.YES_OPTION) {
-                    player.updateCash(-propertyPrice);
-                    player.buyProperty(position);
-                    propertyOwners.put(position, player);
-                    
-                    gameLog.append("💰 " + player.getName() + " purchased " + propertyName + " for R" + propertyPrice + "!\n");
-                    
-                    // Increase role-specific scores when buying property
-                    if (player.getRole().equalsIgnoreCase("Business Owner")) {
-                        player.increaseEcoScore(5);
-                        gameLog.append("♻️ Eco Score increased to " + player.getEcoScore() + "\n");
-                    } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-                        player.increasePublicInfluence(5);
-                        gameLog.append("👥 Public Influence increased to " + player.getPublicInfluence() + "\n");
-                    }
-                } else {
-                    gameLog.append("❌ " + player.getName() + " decided not to buy " + propertyName + ".\n");
+                gameLog.append("💰 " + player.getName() + " purchased " + propertyName + " for R" + propertyPrice + "!\n");
+                
+                // Increase role-specific scores when buying property
+                if (player.getRole().equalsIgnoreCase("Business Owner")) {
+                    player.increaseEcoScore(5);
+                    gameLog.append("♻️ Eco Score increased to " + player.getEcoScore() + "\n");
+                } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+                    player.increasePublicInfluence(5);
+                    gameLog.append("👥 Public Influence increased to " + player.getPublicInfluence() + "\n");
                 }
-            } else {
-                gameLog.append("❌ " + player.getName() + " doesn't have enough money to buy " + propertyName + ".\n");
-            }
-        } else if (propertyOwner != player) {
-            // Property is owned by another player, pay rent
-            int rent = getPropertyRent(position);
-            gameLog.append("💸 " + player.getName() + " landed on " + propertyOwner.getName() + "'s property " + 
-                         propertyName + ". Must pay R" + rent + " rent.\n");
-            
-            if (player.getCash() >= rent) {
-                player.updateCash(-rent);
-                propertyOwner.updateCash(rent);
                 
-                gameLog.append("💰 " + player.getName() + " paid R" + rent + " to " + propertyOwner.getName() + ".\n");
+                // Update UI
+                updateAllPlayerStats();
             } else {
-                // Player can't pay full rent
-                int availableCash = player.getCash();
-                player.updateCash(-availableCash);
-                propertyOwner.updateCash(availableCash);
-                
-                gameLog.append("⚠️ " + player.getName() + " could only pay R" + availableCash + " to " + 
-                             propertyOwner.getName() + ".\n");
+                gameLog.append("❌ " + player.getName() + " decided not to buy " + propertyName + ".\n");
             }
         } else {
-            // Player owns this property
-            gameLog.append("✅ " + player.getName() + " landed on their own property " + propertyName + ".\n");
+            gameLog.append("❌ " + player.getName() + " doesn't have enough money to buy " + propertyName + ".\n");
         }
+    } else if (propertyOwner != player) {
+        // Property is owned by another player, make a donation
+        int donation = getPropertyRent(position);
+        gameLog.append("🤝 " + player.getName() + " landed on " + propertyOwner.getName() + "'s property " + 
+                     propertyName + ". Must donate R" + donation + ".\n");
+        
+        if (player.getCash() >= donation) {
+            player.updateCash(-donation);
+            propertyOwner.updateCash(donation);
+            
+            gameLog.append("💰 " + player.getName() + " donated R" + donation + " to " + propertyOwner.getName() + ".\n");
+        } else {
+            // Player can't pay full donation
+            int availableCash = player.getCash();
+            player.updateCash(-availableCash);
+            propertyOwner.updateCash(availableCash);
+            
+            gameLog.append("⚠️ " + player.getName() + " could only donate R" + availableCash + " to " + 
+                         propertyOwner.getName() + ".\n");
+        }
+    } else {
+        // Player owns this property
+        gameLog.append("✅ " + player.getName() + " landed on their own property " + propertyName + ".\n");
     }
-    
+}
     /**
      * Handle landing on a Community Fund square
      */

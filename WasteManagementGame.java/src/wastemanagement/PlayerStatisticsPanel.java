@@ -85,8 +85,8 @@ public class PlayerStatisticsPanel extends JPanel {
         startObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         startObjectiveButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 20)); // Shorter button
         
-        // Enable button only if player has enough cash
-        startObjectiveButton.setEnabled(player.getCash() >= GAME_COST);
+        // Hide button initially - THIS IS THE CHANGE
+        startObjectiveButton.setVisible(false);
         
         // Add button action with improved implementation
         startObjectiveButton.addActionListener(new ActionListener() {
@@ -187,8 +187,8 @@ public class PlayerStatisticsPanel extends JPanel {
         recyclablesLabel.setText("Recyc: " + player.getRecyclables());
         foodWasteLabel.setText("Food: " + player.getFoodWaste());
         
-        // IMPORTANT: Make sure button is always visible and enable/disable based on cash
-        startObjectiveButton.setVisible(true); // Ensure button is always visible
+        // IMPORTANT: Keep button hidden - THIS IS THE CHANGE
+        startObjectiveButton.setVisible(false);
         startObjectiveButton.setEnabled(player.getCash() >= GAME_COST);
         
         // Update button text to show the cost and whether player can afford it

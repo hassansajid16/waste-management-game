@@ -23,22 +23,28 @@ public class WasteSortingLauncher {
                 // Launch on the EDT
                 SwingUtilities.invokeLater(() -> {
                     try {
-                        // Create dialog instead of frame
-                        JDialog dialog = new JDialog();
-                        dialog.setTitle("Waste Sorting Challenge - " + player.getName());
-                        dialog.setModal(false);
-                        dialog.setSize(600, 500);
+                        // Find the parent frame first
+                        Frame[] frames = Frame.getFrames();
+                        Frame parentFrame = null;
+                        for (Frame frame : frames) {
+                            if (frame.isVisible() && frame instanceof JFrame) {
+                                parentFrame = frame;
+                                break;
+                            }
+                        }
+                        
+                        // Create dialog with parent frame reference
+                        JDialog dialog = new JDialog(parentFrame, "Waste Sorting Challenge - " + player.getName(), true);
                         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                        dialog.setLocationRelativeTo(null);
+                        dialog.setSize(600, 500);
+                        dialog.setLocationRelativeTo(parentFrame);
                         
                         // Create simplified mini-game panel
                         JPanel gamePanel = createSimplifiedGamePanel(player, gameLog, dialog);
                         dialog.setContentPane(gamePanel);
                         
-                        // Force visibility
+                        // Force visibility (with modal true, this will block until dialog closes)
                         dialog.setVisible(true);
-                        dialog.toFront();
-                        dialog.requestFocus();
                         
                         System.out.println("Waste Sorting dialog displayed successfully for: " + player.getName());
                     } catch (Exception e) {
@@ -64,7 +70,7 @@ public class WasteSortingLauncher {
         gameThread.setDaemon(true);
         gameThread.start();
     }
-    
+
     /**
      * Creates a simplified waste sorting game panel
      */
