@@ -10,7 +10,7 @@ public class Board {
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (i == 0) {
                 // GO square - keep this unchanged
-                tiles[i] = new Tile("StartSquare", "StartSquare");
+                tiles[i] = new Tile("Waste Management Facility", "StartSquare");
             } else {
                 // Alternating between SpecialTask and EcoChallenge
                 String tileType;

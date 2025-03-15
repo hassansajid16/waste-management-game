@@ -30,7 +30,7 @@ private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
 private static final int PROPERTY_THRESHOLD = 7; // Changed from 3 to 7
 
 // Update these constants for higher costs
-private static final int GAME_COST = 500; // Increased from 200
+private static final int GAME_COST = 2000; // Increased from 200 to 2000
 private static final int PROPERTY_BASE_PRICE = 2000; // Increased from 1000
 private static final int PROPERTY_BASE_RENT = 100; // Increased from 50
 private static final int GO_MONEY = 3000; // Increased from 2000
@@ -245,7 +245,49 @@ private void checkObjectiveCompletion(Player player) {
     }
 }
 /**
+ * Process waste deposits at the Waste Management Facility
+ * Add this method to your GameManager class
+ */
+private void processWasteDeposits(Player player, JTextArea gameLog) {
+    int recyclables = player.getRecyclables();
+    int foodWaste = player.getFoodWaste();
+    
+    if (recyclables > 0 || foodWaste > 0) {
+        gameLog.append("♻️ " + player.getName() + " deposits " + recyclables + 
+                     " recyclables and " + foodWaste + " food waste at the Waste Management Facility!\n");
+        
+        // Award role-specific points based on waste deposits
+        if (player.getRole().equalsIgnoreCase("Business Owner")) {
+            int ecoPoints = (recyclables + foodWaste) * 2;
+            player.increaseEcoScore(ecoPoints);
+            gameLog.append("♻️ Eco Score increased by " + ecoPoints + " to " + player.getEcoScore() + "\n");
+        } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+            int influencePoints = (recyclables + foodWaste) * 2;
+            player.increasePublicInfluence(influencePoints);
+            gameLog.append("👥 Public Influence increased by " + influencePoints + " to " + player.getPublicInfluence() + "\n");
+        }
+        
+        // Reset player's waste storage
+        while (player.getRecyclables() > 0) {
+            player.collectWaste("useRecyclables");
+        }
+        
+        while (player.getFoodWaste() > 0) {
+            player.collectWaste("useFoodWaste");
+        }
+    } else {
+        gameLog.append("🗑️ " + player.getName() + " has no waste to deposit at the Waste Management Facility.\n");
+    }
+}
+/**
  * Process a player's turn based on dice roll and position
+ */
+/**
+ * Process a player's turn based on dice roll and position
+ */
+/**
+ * Process a player's turn based on dice roll and position
+ * Update this method in your GameManager class
  */
 public void processTurn(Player player, int diceRoll, int oldPosition, int newPosition, JTextArea gameLog) {
     if (player == null) {
@@ -258,19 +300,25 @@ public void processTurn(Player player, int diceRoll, int oldPosition, int newPos
     gameLog.append(player.getName() + " rolled a " + diceRoll + " and moved from position " + 
                  oldPosition + " to " + newPosition + " (" + currentTile.getName() + ")\n");
     
-    // Check if player passed GO
+    // Check if player passed GO (Waste Management Facility)
     if (oldPosition > newPosition && oldPosition != 0) {
         // Player has passed GO (wrapped around the board)
         player.updateCash(GO_MONEY);
-        gameLog.append("💰 " + player.getName() + " passed GO and collected R" + GO_MONEY + "!\n");
+        gameLog.append("💰 " + player.getName() + " passed Waste Management Facility and collected R" + GO_MONEY + "!\n");
+        
+        // Process waste deposits when passing GO
+        processWasteDeposits(player, gameLog);
     }
     
     // Process based on tile type
     switch (tileType) {
         case "StartSquare":
-            // Landing on GO - Collect additional money
+            // Landing on Waste Management Facility - Collect additional money
             player.updateCash(GO_MONEY);
-            gameLog.append("💰 " + player.getName() + " landed on GO and collected R" + GO_MONEY + "!\n");
+            gameLog.append("💰 " + player.getName() + " landed on Waste Management Facility and collected R" + GO_MONEY + "!\n");
+            
+            // Process waste deposits when landing on GO
+            processWasteDeposits(player, gameLog);
             break;
             
         case "SpecialTask":
@@ -291,11 +339,12 @@ public void processTurn(Player player, int diceRoll, int oldPosition, int newPos
     
     // Check if objectives have been completed
     checkObjectiveCompletion(player);
-      // After processing turn, update property ownership display
-      if (tilePanels != null) {
+    
+    // After processing turn, update property ownership display
+    if (tilePanels != null) {
         updatePropertyDisplay(tilePanels);
-}}
-
+    }
+}
 private void handleSpecialTask(Player player, JTextArea gameLog) {
     int position = player.getPosition();
     String tileName = board.getTile(position).getName();

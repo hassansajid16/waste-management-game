@@ -171,22 +171,21 @@ public class GameTilePanel extends JPanel {
         int textY = 40; // Fixed position regardless of title
         g2d.drawString(posText, textX, textY);
         
-        // Draw tile type
-        String displayType = "";
-        switch (tileType) {
-            case "SpecialTask": 
-                displayType = "Quiz Challenge - R200";
-                break;
-            case "EcoChallenge": 
-                displayType = "Waste Sorting - R200";
-                break;
-            case "StartSquare": 
-                displayType = "Start Square";
-                break;
-            default: 
-                displayType = tileType;
-        }
-        
+      // Draw tile type with special handling for StartSquare
+      String displayType = "";
+      switch (tileType) {
+          case "SpecialTask": 
+              displayType = "Quiz Challenge - R200";
+              break;
+          case "EcoChallenge": 
+              displayType = "Waste Sorting - R200";
+              break;
+          case "StartSquare": 
+              displayType = "Deposit Waste Here";
+              break;
+          default: 
+              displayType = tileType;
+      }
         if (!tileType.equals("StartSquare")) {
             int typeX = (getWidth() - fm.stringWidth(displayType)) / 2;
             g2d.drawString(displayType, typeX, textY + 15);

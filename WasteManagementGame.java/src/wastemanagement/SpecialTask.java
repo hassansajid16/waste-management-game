@@ -82,8 +82,37 @@ public class SpecialTask {
             
             if(playerAnswer == correctAnswer){
                 gameLog.append("Correct! " + player.getName() + " completes the special task.\n");
+                
+                // Award cash for correct answer
                 player.updateCash(1000);
-                gameLog.append(" Earned R1000 for your knowledge about waste management!\n");
+                gameLog.append("💰 Earned R1000 for your knowledge about waste management!\n");
+                
+                // NEW: Award recyclables and food waste for correct answers
+                // Random amount between 1-3 for each type
+                int recyclablesEarned = rand.nextInt(3) + 1;
+                int foodWasteEarned = rand.nextInt(3) + 1;
+                
+                // Add the earned resources to the player
+                for(int i = 0; i < recyclablesEarned; i++) {
+                    player.collectWaste("recyclables");
+                }
+                
+                for(int i = 0; i < foodWasteEarned; i++) {
+                    player.collectWaste("foodWaste");
+                }
+                
+                gameLog.append("♻️ Also collected " + recyclablesEarned + " recyclables and " + 
+                             foodWasteEarned + " units of food waste!\n");
+                
+                // Role-specific bonus
+                if (player.getRole().equalsIgnoreCase("Business Owner")) {
+                    player.increaseEcoScore(5);
+                    gameLog.append("♻️ Eco Score increased to " + player.getEcoScore() + "\n");
+                } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+                    player.increasePublicInfluence(5);
+                    gameLog.append("👥 Public Influence increased to " + player.getPublicInfluence() + "\n");
+                }
+                
                 // Removed player.buyProperty since we now do it in handleSpecialTask
                 
                 // If GameManager has a reference to update ownership visually, this would be called here
