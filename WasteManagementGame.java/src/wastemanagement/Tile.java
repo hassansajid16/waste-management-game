@@ -2,8 +2,8 @@ package wastemanagement;
 public class Tile {
     private String name;
     private String type;
-    private int cost;  // Property cost
-    private int rent;  // Rent amount
+    final private int cost;  // Property cost
+    final private int rent;  // Rent amount
 
     public Tile(String name, String type) {
         this.name = name;

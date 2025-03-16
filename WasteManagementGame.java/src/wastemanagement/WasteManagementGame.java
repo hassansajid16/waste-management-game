@@ -494,6 +494,9 @@ private void initializeGame() {
     /**
  * Roll the dice and process the player's turn
  */
+/**
+ * Roll the dice and process the player's turn
+ */
 private void rollDice() {
     if (gameEnded) return;
     
@@ -543,9 +546,9 @@ private void rollDice() {
                     // Update objectives and check for winners
                     checkForWinner(currentPlayer);
                     
-                    // If game didn't end, move to next player
-                    if (!gameEnded) {
-                        // IMPORTANT: This advances to the next player's turn
+                    // If game didn't end and no task is in progress, move to next player
+                    if (!gameEnded && !gameManager.isTaskInProgress()) {
+                        // This advances to the next player's turn
                         handleNextTurn();
                     }
                 }
@@ -697,26 +700,24 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
      */
     private void showGameHelp() {
         JOptionPane.showMessageDialog(this,
-            "Makers Valley Waste Management Game - Help\n\n" +
-            "Goal: Complete your objectives by buying properties and enhancing your role scores.\n\n" +
-            "Tile Types:\n" +
-            "• GO: Collect R200 when passing or landing\n" +
-            "• Properties: Buy to earn rent from other players\n" +
-            "• Community Fund: Get cash and score bonuses\n" +
-            "• Opportunity: Answer questions for score bonuses\n" +
-            "• Eco Challenge: Complete eco challenges for big bonuses\n\n" +
-            "Player Roles:\n" +
-            "• Business Owner: Track Eco Score, starts with R300\n" +
-            "• Community Leader: Track Public Influence, starts with R200\n\n" +
-            "Objectives:\n" +
-            "1. Role Objective: Reach 50 points in your role-specific score\n" +
-            "2. Property Objective: Acquire at least 3 properties\n\n" +
-            "How to Play:\n" +
-            "1. Roll the dice on your turn to move around the board\n" +
-            "2. Buy properties when you land on them\n" +
-            "3. Complete challenges to increase your role score\n" +
-            "4. Pay rent when landing on others' properties\n" +
-            "5. First player to complete both objectives wins!",
+            "<html><h2>Makers Valley Waste Management Game - Help</h2>" +
+            "<p><b>Goal:</b> Complete your objectives by buying properties and enhancing your role scores.</p>" +
+            "<p><b>Tile Types:</b><ul>" +
+            "<li><b>Waste Management Facility:</b> Collect R3000 when passing. Also deposit any food waste and recyclables you have collected to boost your role score</li>" +
+            "<li><b>Waste Sorting Property:</b> Pay a fee of R2000 to play a waste sorting mini game where you are rewarded based on the amount of correctly sorted waste in 60 seconds. Once the minigame is complete take charge of the square and if another player lands on it they will have the option to donate to support the property.</li>" +
+            "<li><b>Quiz Challenge Property:</b> Pay a fee of R2000 to answer a question. Answer correctly to receive cash, food waste, recyclables and an increase in role score. Once the question has been attempted take charge of the square and if another player lands on it they will have the option to donate to support the property.</li></ul></p>" +
+            "<p><b>Player Roles:</b><ul>" +
+            "<li><b>Business Owner:</b> Track Eco Score, starts with R7000</li>" +
+            "<li><b>Community Leader:</b> Track Public Influence, starts with R4000</li></ul></p>" +
+            "<p><b>Objectives:</b><ol>" +
+            "<li>Role Objective: Reach 50 points in your role-specific score</li>" +
+            "<li>Property Objective: Acquire 7 properties by engaging with their various tasks</li></ol></p>" +
+            "<p><b>How to Play:</b><ol>" +
+            "<li>Roll the dice on your turn to move around the board</li>" +
+            "<li>Buy properties when you land on them</li>" +
+            "<li>Complete challenges to increase your role score</li>" +
+            "<li>Pay rent when landing on others' properties</li>" +
+            "<li>First player to complete both objectives wins!</li></ol></p></html>",
             "Game Help",
             JOptionPane.INFORMATION_MESSAGE
         );

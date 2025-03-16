@@ -22,12 +22,13 @@ public class GameManager {
     private JLabel[] playerLabels;
     private JPanel playerStatsPanel;
     private GameTilePanel[] tilePanels;
-    
+    private boolean taskInProgress = false;
+   
  
     // Update the property threshold constant
 private static final int ECO_SCORE_THRESHOLD = 50;
 private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
-private static final int PROPERTY_THRESHOLD = 7; // Changed from 3 to 7
+private static final int PROPERTY_THRESHOLD = 4; // Changed from 3 to 7
 
 // Update these constants for higher costs
 private static final int GAME_COST = 2000; // Increased from 200 to 2000
@@ -66,6 +67,7 @@ private static final int GO_MONEY = 3000; // Increased from 2000
 public void setTilePanels(GameTilePanel[] tilePanels) {
     this.tilePanels = tilePanels;
 }
+
     /**
      * Get all players
      */
@@ -233,7 +235,7 @@ private void checkObjectiveCompletion(Player player) {
         gameLog.append(player.getName() + " completed the Community Influence objective!\n");
     }
     
-    // Check task objective (requires completing at least 7 tasks) - CHANGED FROM "Property Developer" TO "Task Master"
+    // Check task objective
     if (player.getPropertyCount() >= PROPERTY_THRESHOLD && !player.hasCompletedObjective2()) {
         player.completeObjective2();
         gameLog.append(player.getName() + " completed the Task Master objective!\n");
@@ -345,6 +347,10 @@ public void processTurn(Player player, int diceRoll, int oldPosition, int newPos
         updatePropertyDisplay(tilePanels);
     }
 }
+
+
+
+// Full handleSpecialTask method
 private void handleSpecialTask(Player player, JTextArea gameLog) {
     int position = player.getPosition();
     String tileName = board.getTile(position).getName();
@@ -359,12 +365,12 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     }
     
     // Original code continues for unowned squares
-    gameLog.append(player.getName() + " landed on a Special Task square!\n");
+    gameLog.append("[QUIZ] " + player.getName() + " landed on a Special Task square!\n");
     
-    // FIXED: Check if player has enough money BEFORE showing the dialog
+    // Check if player has enough money BEFORE showing the dialog
     if (player.getCash() < 2000) {
         // Not enough money - just log the message and return
-        gameLog.append(player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
         return;
     }
     
@@ -379,12 +385,12 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append(player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
         
-        // IMPORTANT: Update ownership display immediately
+        // Update ownership display immediately
         if (tilePanels != null && position < tilePanels.length) {
             tilePanels[position].setOwner(player);
             // Force the tile to repaint
@@ -397,27 +403,39 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
         // Store property ownership
         propertyOwners.put(position, player);
         
-        // Launch the quiz
-        SpecialTask.askQuestion(player, gameLog);
+        // Set flag to prevent turn advancement
+        taskInProgress = true;
         
-        // Special increase to role-specific scores for challenges
-        if (player.getRole().equalsIgnoreCase("Business Owner")) {
-            player.increaseEcoScore(5);
-            gameLog.append("Eco Score increased to " + player.getEcoScore() + "\n");
-        } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-            player.increasePublicInfluence(5);
-            gameLog.append("Public Influence increased to " + player.getPublicInfluence() + "\n");
-        }
-        
-        // Update stats to refresh UI
-        updateAllPlayerStats();
-        
-        // Update property display again after the quiz completion
-        updatePropertyDisplay(tilePanels);
+        // Launch the quiz with callback for when it completes
+        SpecialTask.askQuestion(player, gameLog, () -> {
+            // Special increase to role-specific scores for challenges
+            if (player.getRole().equalsIgnoreCase("Business Owner")) {
+                player.increaseEcoScore(5);
+                gameLog.append("Eco Score increased to " + player.getEcoScore() + "\n");
+            } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+                player.increasePublicInfluence(5);
+                gameLog.append("Public Influence increased to " + player.getPublicInfluence() + "\n");
+            }
+            
+            // Update stats to refresh UI
+            updateAllPlayerStats();
+            
+            // Update property display again after the quiz completion
+            updatePropertyDisplay(tilePanels);
+            
+            // Release turn lock and advance turn
+            taskInProgress = false;
+            advanceToNextPlayer();
+        });
     } else {
-        gameLog.append(player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
+// Add this method to GameManager class
+public boolean isTaskInProgress() {
+    return taskInProgress;
+}
+// Full handleEcoChallenge method
 private void handleEcoChallenge(Player player, JTextArea gameLog) {
     int position = player.getPosition();
     String tileName = board.getTile(position).getName();
@@ -432,12 +450,12 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     }
     
     // Original code continues for unowned squares
-    gameLog.append(player.getName() + " landed on an Eco Challenge square!\n");
+    gameLog.append("[SORTING] " + player.getName() + " landed on an Eco Challenge square!\n");
     
-    // FIXED: Check if player has enough money BEFORE showing the dialog
+    // Check if player has enough money BEFORE showing the dialog
     if (player.getCash() < 2000) {
         // Not enough money - just log the message and return
-        gameLog.append(player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
         return;
     }
     
@@ -452,12 +470,12 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append(player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
         
-        // IMPORTANT: Update ownership display immediately
+        // Update ownership display immediately
         if (tilePanels != null && position < tilePanels.length) {
             tilePanels[position].setOwner(player);
             // Force the tile to repaint
@@ -470,27 +488,46 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
         // Store property ownership
         propertyOwners.put(position, player);
         
-        // Launch the waste sorting game
-        WasteSortingLauncher.launchSortingGame(player, gameLog);
+        // Set flag to prevent turn advancement
+        taskInProgress = true;
         
-        // Special increase to role-specific scores for challenges
-        if (player.getRole().equalsIgnoreCase("Business Owner")) {
-            player.increaseEcoScore(8);
-            gameLog.append("Eco Score significantly increased to " + player.getEcoScore() + "\n");
-        } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-            player.increasePublicInfluence(8);
-            gameLog.append("Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
-        }
-        
-        // Update stats to refresh UI
-        updateAllPlayerStats();
-        
-        // Update property display again after the game completion
-        updatePropertyDisplay(tilePanels);
+        // Launch the waste sorting game with callback
+        WasteSortingLauncher.launchSortingGame(player, gameLog, () -> {
+            // Special increase to role-specific scores for challenges
+            if (player.getRole().equalsIgnoreCase("Business Owner")) {
+                player.increaseEcoScore(8);
+                gameLog.append("[ECO] Eco Score significantly increased to " + player.getEcoScore() + "\n");
+            } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+                player.increasePublicInfluence(8);
+                gameLog.append("[INFLUENCE] Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
+            }
+            
+            // Update stats to refresh UI
+            updateAllPlayerStats();
+            
+            // Update property display again after the game completion
+            updatePropertyDisplay(tilePanels);
+            
+            // Release turn lock and advance turn
+            taskInProgress = false;
+            advanceToNextPlayer();
+        });
     } else {
-        gameLog.append(player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
+// Method to advance to next player's turn
+public void advanceToNextPlayer() {
+    if (taskInProgress) {
+        return; // Don't advance turn while task is in progress
+    }currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+    Player nextPlayer = getCurrentPlayer();
+    
+    gameLog.append("\n----- " + nextPlayer.getName() + "'s Turn (" + nextPlayer.getRole() + ") -----\n");
+    updateCurrentPlayerDisplay();
+    updateAllPlayerStats();
+}
+
     // Add these methods to the GameManager class
 
 /**

@@ -62,7 +62,7 @@ public class SpecialTask {
         true, false, true, true, true, true, true, true, true, true
     };
 
-    public static void askQuestion(Player player, JTextArea gameLog) {
+    public static void askQuestion(Player player, JTextArea gameLog, Runnable onCompleted) {
         Random rand = new Random();
         
         // Pick a random question
@@ -83,40 +83,23 @@ public class SpecialTask {
             if(playerAnswer == correctAnswer){
                 gameLog.append("Correct! " + player.getName() + " completes the special task.\n");
                 
-                // Award cash for correct answer
-                player.updateCash(1000);
-                gameLog.append(" Earned R1000 for your knowledge about waste management!\n");
+                // Existing reward code...
                 
-                // Random amount of recyclables and food waste
-                int recyclablesEarned = rand.nextInt(3) + 1;
-                int foodWasteEarned = rand.nextInt(3) + 1;
-                
-                // Add the earned resources to the player
-                for(int i = 0; i < recyclablesEarned; i++) {
-                    player.collectWaste("recyclables");
-                }
-                
-                for(int i = 0; i < foodWasteEarned; i++) {
-                    player.collectWaste("foodWaste");
-                }
-                
-                gameLog.append("Also Collected " + recyclablesEarned + " recyclables and " + 
-                             foodWasteEarned + " units of food waste!\n");
-                
-                // Role-specific bonus
-                if (player.getRole().equalsIgnoreCase("Business Owner")) {
-                    player.increaseEcoScore(5);
-                    gameLog.append("Eco Score increased to " + player.getEcoScore() + "\n");
-                } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-                    player.increasePublicInfluence(5);
-                    gameLog.append("Public Influence increased to " + player.getPublicInfluence() + "\n");
-                }
             } else {
                 gameLog.append("Incorrect. No reward for " + player.getName() + ".\n");
             }
+            
+            // Call the completion callback
+            if (onCompleted != null) {
+                onCompleted.run();
+            }
         });
     }
-
+    
+    // Add original method for backward compatibility
+    public static void askQuestion(Player player, JTextArea gameLog) {
+        askQuestion(player, gameLog, null);
+    }
     /**
      * Launches the waste sorting mini-game
      */

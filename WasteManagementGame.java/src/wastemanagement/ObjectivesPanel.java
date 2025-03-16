@@ -16,7 +16,7 @@ public class ObjectivesPanel extends JPanel {
     
     private static final int ECO_SCORE_THRESHOLD = 50;
     private static final int PUBLIC_INFLUENCE_THRESHOLD = 50;
-    private static final int PROPERTY_THRESHOLD = 7;  // Changed from 3 to 7
+    private static final int PROPERTY_THRESHOLD = 4;  // Changed from 3 to 7
     
     public ObjectivesPanel(Player player) {
         this.player = player;

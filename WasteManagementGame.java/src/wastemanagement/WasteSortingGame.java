@@ -33,6 +33,7 @@ public class WasteSortingGame extends JFrame {
     private int correctAnswers = 0;
     private int incorrectAnswers = 0;
     private final JTextArea gameLog;
+    private Runnable onCompletedCallback; // Added callback field
     
     // UI Components
     private JLabel timeLabel;
@@ -73,14 +74,15 @@ public class WasteSortingGame extends JFrame {
     }
     
     /**
-     * Creates a new waste sorting game for the specified player
+     * Creates a new waste sorting game for the specified player with callback
      */
-    public WasteSortingGame(Player player, JTextArea gameLog) {
+    public WasteSortingGame(Player player, JTextArea gameLog, Runnable onCompletedCallback) {
         super("Waste Sorting Challenge");
         System.out.println("Creating Waste Sorting game for player: " + player.getName());
         
         this.currentPlayer = player;
         this.gameLog = gameLog;
+        this.onCompletedCallback = onCompletedCallback;
         
         // Make this window appear on top
         setAlwaysOnTop(true);
@@ -99,7 +101,19 @@ public class WasteSortingGame extends JFrame {
             System.err.println("Error setting up Waste Sorting game: " + e.getMessage());
             e.printStackTrace();
             dispose(); // Clean up if setup fails
+            
+            // Call the callback even if setup fails
+            if (onCompletedCallback != null) {
+                onCompletedCallback.run();
+            }
         }
+    }
+    
+    /**
+     * Creates a new waste sorting game for the specified player (original constructor)
+     */
+    public WasteSortingGame(Player player, JTextArea gameLog) {
+        this(player, gameLog, null);
     }
     
     /**
@@ -532,11 +546,15 @@ public class WasteSortingGame extends JFrame {
                 "Challenge Complete!",
                 JOptionPane.INFORMATION_MESSAGE);
             
+            // Call the callback before disposing the window
+            if (onCompletedCallback != null) {
+                onCompletedCallback.run();
+            }
+            
             dispose();
         });
     }
 
-    
     // For testing without the main game
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
