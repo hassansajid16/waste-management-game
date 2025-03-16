@@ -15,7 +15,7 @@ public class GameManager {
     // Game components
     private ArrayList<Player> players;
     private Board board;
-    private Dice dice;
+    // private Dice dice;
     private JTextArea gameLog;
     private int currentPlayerIndex;
     private JLabel currentPlayerLabel;
@@ -47,7 +47,7 @@ private static final int GO_MONEY = 3000; // Increased from 2000
     public GameManager(JTextArea gameLog, JLabel currentPlayerLabel, JLabel[] playerLabels, JPanel playerStatsPanel) {
         players = new ArrayList<>();
         board = new Board();
-        dice = new Dice();
+        // dice = new Dice();
         this.gameLog = gameLog;
         this.currentPlayerLabel = currentPlayerLabel;
         this.playerLabels = playerLabels;
@@ -359,12 +359,12 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     }
     
     // Original code continues for unowned squares
-    gameLog.append("[QUIZ] " + player.getName() + " landed on a Special Task square!\n");
+    gameLog.append(player.getName() + " landed on a Special Task square!\n");
     
     // FIXED: Check if player has enough money BEFORE showing the dialog
     if (player.getCash() < 2000) {
         // Not enough money - just log the message and return
-        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        gameLog.append(player.getName() + " doesn't have enough money (R2000) to participate!\n");
         return;
     }
     
@@ -379,7 +379,7 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        gameLog.append(player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
@@ -403,10 +403,10 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
         // Special increase to role-specific scores for challenges
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
             player.increaseEcoScore(5);
-            gameLog.append("[ECO] Eco Score increased to " + player.getEcoScore() + "\n");
+            gameLog.append("Eco Score increased to " + player.getEcoScore() + "\n");
         } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
             player.increasePublicInfluence(5);
-            gameLog.append("[INFLUENCE] Public Influence increased to " + player.getPublicInfluence() + "\n");
+            gameLog.append("Public Influence increased to " + player.getPublicInfluence() + "\n");
         }
         
         // Update stats to refresh UI
@@ -415,7 +415,7 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
         // Update property display again after the quiz completion
         updatePropertyDisplay(tilePanels);
     } else {
-        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append(player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
 private void handleEcoChallenge(Player player, JTextArea gameLog) {
@@ -432,12 +432,12 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     }
     
     // Original code continues for unowned squares
-    gameLog.append("[SORTING] " + player.getName() + " landed on an Eco Challenge square!\n");
+    gameLog.append(player.getName() + " landed on an Eco Challenge square!\n");
     
     // FIXED: Check if player has enough money BEFORE showing the dialog
     if (player.getCash() < 2000) {
         // Not enough money - just log the message and return
-        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        gameLog.append(player.getName() + " doesn't have enough money (R2000) to participate!\n");
         return;
     }
     
@@ -452,7 +452,7 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        gameLog.append(player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
@@ -476,10 +476,10 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
         // Special increase to role-specific scores for challenges
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
             player.increaseEcoScore(8);
-            gameLog.append("[ECO] Eco Score significantly increased to " + player.getEcoScore() + "\n");
+            gameLog.append("Eco Score significantly increased to " + player.getEcoScore() + "\n");
         } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
             player.increasePublicInfluence(8);
-            gameLog.append("[INFLUENCE] Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
+            gameLog.append("Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
         }
         
         // Update stats to refresh UI
@@ -488,7 +488,7 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
         // Update property display again after the game completion
         updatePropertyDisplay(tilePanels);
     } else {
-        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append(player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
     // Add these methods to the GameManager class
