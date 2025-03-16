@@ -446,9 +446,6 @@ public class WasteSortingGame extends JFrame {
         }
     }
     
-    /**
-     * Ends the game and awards resources based on performance
-     */
     private void endGame() {
         if (gameTimer != null) {
             gameTimer.cancel();
@@ -475,6 +472,7 @@ public class WasteSortingGame extends JFrame {
         
         // Update game log in main game
         gameLog.append("\n " + currentPlayer.getName() + " completed the Waste Sorting Challenge!\n");
+        gameLog.append("\n " + currentPlayer.getName() + " completed the Waste Sorting Challenge!\n");
         gameLog.append(" Items sorted: " + itemsProcessed + " | Correct: " + correctAnswers + 
                       " | Incorrect: " + incorrectAnswers + " | Accuracy: " + accuracy + "%\n");
         gameLog.append(" Final score: " + score + "\n");
@@ -485,11 +483,11 @@ public class WasteSortingGame extends JFrame {
         if (currentPlayer.getRole().equalsIgnoreCase("Business Owner")) {
             int ecoBonus = Math.max(1, accuracy / 20);
             currentPlayer.increaseEcoScore(ecoBonus);
-            gameLog.append(" ♻️ " + currentPlayer.getName() + " gained " + ecoBonus + " Eco Score points!\n");
+            gameLog.append(currentPlayer.getName() + " gained " + ecoBonus + " Eco Score points!\n");
         } else if (currentPlayer.getRole().equalsIgnoreCase("Community Leader")) {
             int influenceBonus = Math.max(1, accuracy / 20);
             currentPlayer.increasePublicInfluence(influenceBonus);
-            gameLog.append(" 👥 " + currentPlayer.getName() + " gained " + influenceBonus + " Public Influence points!\n");
+            gameLog.append(currentPlayer.getName() + " gained " + influenceBonus + " Public Influence points!\n");
         }
         
         // Show results dialog with more details
@@ -537,6 +535,7 @@ public class WasteSortingGame extends JFrame {
             dispose();
         });
     }
+
     
     // For testing without the main game
     public static void main(String[] args) {
