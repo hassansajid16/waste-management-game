@@ -175,10 +175,10 @@ public class GameTilePanel extends JPanel {
       String displayType = "";
       switch (tileType) {
           case "SpecialTask": 
-              displayType = "Quiz Challenge - R200";
+              displayType = "Quiz Challenge - R2000";
               break;
           case "EcoChallenge": 
-              displayType = "Waste Sorting - R200";
+              displayType = "Waste Sorting - R2000";
               break;
           case "StartSquare": 
               displayType = "Deposit Waste Here";

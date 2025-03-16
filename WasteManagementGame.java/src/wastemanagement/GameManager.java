@@ -359,63 +359,65 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     }
     
     // Original code continues for unowned squares
-    gameLog.append("🎓 " + player.getName() + " landed on a Special Task square!\n");
+    gameLog.append("[QUIZ] " + player.getName() + " landed on a Special Task square!\n");
     
-    // Ask if player wants to play the quiz with thematic language
+    // FIXED: Check if player has enough money BEFORE showing the dialog
+    if (player.getCash() < 2000) {
+        // Not enough money - just log the message and return
+        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        return;
+    }
+    
+    // Only show dialog if they have enough money
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to take part in the BinNovaters Initiative for R200?",
+        "Would you like to take part in the BinNovaters Initiative for R2000?",
         "Special Task",
         JOptionPane.YES_NO_OPTION
     );
     
     if (choice == JOptionPane.YES_OPTION) {
-        if (player.getCash() >= 200) {
-            // Deduct cost
-            player.updateCash(-200);
-            gameLog.append("💰 " + player.getName() + " spent R200 to join the BinNovaters Initiative!\n");
-            
-            // Mark task as completed
-            player.buyProperty(position);
-            
-            // IMPORTANT: Update ownership display immediately
-            if (tilePanels != null && position < tilePanels.length) {
-                tilePanels[position].setOwner(player);
-                // Force the tile to repaint
-                tilePanels[position].repaint();
-                System.out.println("Set owner for position " + position + " to " + player.getName());
-            } else {
-                System.out.println("Failed to set owner - tilePanels null or invalid position: " + position);
-            }
-            
-            // Store property ownership
-            propertyOwners.put(position, player);
-            
-            // Launch the quiz
-            SpecialTask.askQuestion(player, gameLog);
-            
-            // Special increase to role-specific scores for challenges
-            if (player.getRole().equalsIgnoreCase("Business Owner")) {
-                player.increaseEcoScore(5);
-                gameLog.append("♻️ Eco Score increased to " + player.getEcoScore() + "\n");
-            } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-                player.increasePublicInfluence(5);
-                gameLog.append("👥 Public Influence increased to " + player.getPublicInfluence() + "\n");
-            }
-            
-            // Update stats to refresh UI
-            updateAllPlayerStats();
-            
-            // Update property display again after the quiz completion
-            updatePropertyDisplay(tilePanels);
+        // We already checked they have enough money, so we can proceed
+        player.updateCash(-2000);
+        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        
+        // Mark task as completed
+        player.buyProperty(position);
+        
+        // IMPORTANT: Update ownership display immediately
+        if (tilePanels != null && position < tilePanels.length) {
+            tilePanels[position].setOwner(player);
+            // Force the tile to repaint
+            tilePanels[position].repaint();
+            System.out.println("Set owner for position " + position + " to " + player.getName());
         } else {
-            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to participate!\n");
+            System.out.println("Failed to set owner - tilePanels null or invalid position: " + position);
         }
+        
+        // Store property ownership
+        propertyOwners.put(position, player);
+        
+        // Launch the quiz
+        SpecialTask.askQuestion(player, gameLog);
+        
+        // Special increase to role-specific scores for challenges
+        if (player.getRole().equalsIgnoreCase("Business Owner")) {
+            player.increaseEcoScore(5);
+            gameLog.append("[ECO] Eco Score increased to " + player.getEcoScore() + "\n");
+        } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+            player.increasePublicInfluence(5);
+            gameLog.append("[INFLUENCE] Public Influence increased to " + player.getPublicInfluence() + "\n");
+        }
+        
+        // Update stats to refresh UI
+        updateAllPlayerStats();
+        
+        // Update property display again after the quiz completion
+        updatePropertyDisplay(tilePanels);
     } else {
-        gameLog.append("❌ " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
-
 private void handleEcoChallenge(Player player, JTextArea gameLog) {
     int position = player.getPosition();
     String tileName = board.getTile(position).getName();
@@ -430,60 +432,63 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     }
     
     // Original code continues for unowned squares
-    gameLog.append("🌱 " + player.getName() + " landed on an Eco Challenge square!\n");
+    gameLog.append("[SORTING] " + player.getName() + " landed on an Eco Challenge square!\n");
     
-    // Ask if player wants to play the waste sorting game with thematic language
+    // FIXED: Check if player has enough money BEFORE showing the dialog
+    if (player.getCash() < 2000) {
+        // Not enough money - just log the message and return
+        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        return;
+    }
+    
+    // Only show dialog if they have enough money
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to take part in the BinNovaters Initiative for R200?",
+        "Would you like to take part in the BinNovaters Initiative for R2000?",
         "Eco Challenge",
         JOptionPane.YES_NO_OPTION
     );
     
     if (choice == JOptionPane.YES_OPTION) {
-        if (player.getCash() >= 200) {
-            // Deduct cost
-            player.updateCash(-200);
-            gameLog.append("💰 " + player.getName() + " spent R200 to join the BinNovaters Initiative!\n");
-            
-            // Mark task as completed
-            player.buyProperty(position);
-            
-            // IMPORTANT: Update ownership display immediately
-            if (tilePanels != null && position < tilePanels.length) {
-                tilePanels[position].setOwner(player);
-                // Force the tile to repaint
-                tilePanels[position].repaint();
-                System.out.println("Set owner for position " + position + " to " + player.getName());
-            } else {
-                System.out.println("Failed to set owner - tilePanels null or invalid position: " + position);
-            }
-            
-            // Store property ownership
-            propertyOwners.put(position, player);
-            
-            // Launch the waste sorting game
-            WasteSortingLauncher.launchSortingGame(player, gameLog);
-            
-            // Special increase to role-specific scores for challenges
-            if (player.getRole().equalsIgnoreCase("Business Owner")) {
-                player.increaseEcoScore(8);
-                gameLog.append("♻️ Eco Score significantly increased to " + player.getEcoScore() + "\n");
-            } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
-                player.increasePublicInfluence(8);
-                gameLog.append("👥 Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
-            }
-            
-            // Update stats to refresh UI
-            updateAllPlayerStats();
-            
-            // Update property display again after the game completion
-            updatePropertyDisplay(tilePanels);
+        // We already checked they have enough money, so we can proceed
+        player.updateCash(-2000);
+        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        
+        // Mark task as completed
+        player.buyProperty(position);
+        
+        // IMPORTANT: Update ownership display immediately
+        if (tilePanels != null && position < tilePanels.length) {
+            tilePanels[position].setOwner(player);
+            // Force the tile to repaint
+            tilePanels[position].repaint();
+            System.out.println("Set owner for position " + position + " to " + player.getName());
         } else {
-            gameLog.append("❌ " + player.getName() + " doesn't have enough money (R200) to participate!\n");
+            System.out.println("Failed to set owner - tilePanels null or invalid position: " + position);
         }
+        
+        // Store property ownership
+        propertyOwners.put(position, player);
+        
+        // Launch the waste sorting game
+        WasteSortingLauncher.launchSortingGame(player, gameLog);
+        
+        // Special increase to role-specific scores for challenges
+        if (player.getRole().equalsIgnoreCase("Business Owner")) {
+            player.increaseEcoScore(8);
+            gameLog.append("[ECO] Eco Score significantly increased to " + player.getEcoScore() + "\n");
+        } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
+            player.increasePublicInfluence(8);
+            gameLog.append("[INFLUENCE] Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
+        }
+        
+        // Update stats to refresh UI
+        updateAllPlayerStats();
+        
+        // Update property display again after the game completion
+        updatePropertyDisplay(tilePanels);
     } else {
-        gameLog.append("❌ " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
     // Add these methods to the GameManager class
