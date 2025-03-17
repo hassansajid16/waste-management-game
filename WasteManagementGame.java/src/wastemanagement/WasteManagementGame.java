@@ -130,27 +130,27 @@ playerStatsPanel.repaint();
     }
     
     // Update the initializeGame method's game introduction text
-private void initializeGame() {
-    if (!players.isEmpty()) {
-        // Welcome message and game start
-        gameLog.append("Welcome to the Makers Valley Waste Management Game!\n\n");
-        gameLog.append("This game simulates the challenges of implementing an effective\n");
-        gameLog.append("waste management system in Makers Valley, Johannesburg.\n\n");
-        gameLog.append("Game Objectives:\n");
-        gameLog.append("1. Role-specific goal: Build your Eco Score (Business Owner) or\n");
-        gameLog.append("   Public Influence (Community Leader) to 50 points\n");
-        gameLog.append("2. Complete at least 7 waste management tasks (quizzes and sorting challenges)\n\n");
+// private void initializeGame() {
+//     if (!players.isEmpty()) {
+//         // Welcome message and game start
+//         gameLog.append("Welcome to the Makers Valley Waste Management Game!\n\n");
+//         gameLog.append("This game simulates the challenges of implementing an effective\n");
+//         gameLog.append("waste management system in Makers Valley, Johannesburg.\n\n");
+//         gameLog.append("Game Objectives:\n");
+//         gameLog.append("1. Role-specific goal: Build your Eco Score (Business Owner) or\n");
+//         gameLog.append("   Public Influence (Community Leader) to 50 points\n");
+//         gameLog.append("2. Complete at least 7 waste management tasks (quizzes and sorting challenges)\n\n");
         
-        gameLog.append("Starting the game with " + players.size() + " players...\n");
-        gameLog.append("\n----- " + players.get(0).getName() + "'s Turn (" + players.get(0).getRole() + ") -----\n");
+//         gameLog.append("Starting the game with " + players.size() + " players...\n");
+//         gameLog.append("\n----- " + players.get(0).getName() + "'s Turn (" + players.get(0).getRole() + ") -----\n");
         
-        // Highlight starting position and update displays
-        boardManager.highlightTile(0);
-        gameManager.updateCurrentPlayerDisplay();
-        gameManager.updateAllPlayerStats();
-        updateObjectivesDisplay();
-    }
-}
+//         // Highlight starting position and update displays
+//         boardManager.highlightTile(0);
+//         gameManager.updateCurrentPlayerDisplay();
+//         gameManager.updateAllPlayerStats();
+//         updateObjectivesDisplay();
+//     }
+// }
 
 
     
@@ -632,68 +632,129 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
     /**
      * Show the end game results with a future headlines feature
      */
-    private void showEndGameResults(Player winner) {
-        // Stop the timer
-        if (gameTimer != null) {
-            gameTimer.stop();
-        }
-        
-        // Build headline sequence
-        StringBuilder headlines = new StringBuilder();
-        headlines.append(" MAKERS VALLEY TRANSFORMATION: 2025-2030 \n\n");
-        
-        headlines.append("2025: ").append(winner.getName())
-                .append(" leads waste management initiative in Makers Valley\n\n");
-        
-        headlines.append(" 2026: Recycling rates increase by 35% in Makers Valley\n\n");
-        
-        headlines.append(" 2027: New composting facility opens, diverting 500 tons of organic waste from landfills\n\n");
-        
-        headlines.append(" 2028: Makers Valley waste collection coverage reaches 95% of households\n\n");
-        
-        headlines.append(" 2029: Community income from recycling enterprises tops R2 million\n\n");
-        
-        headlines.append(" 2030: Makers Valley recognized as South Africa's model for sustainable waste management\n\n");
-        
-        headlines.append("FINAL STATE OF PLAY:\n");
-        
-        // Add player statistics
-        for (Player p : players) {
-            headlines.append(p.getName()).append(" \n");
-            
-            headlines.append("• Cash: R").append(p.getCash()).append("\n");
-            headlines.append("• Properties: ").append(p.getPropertyCount()).append("\n");
-            
-            if (p.getRole().equalsIgnoreCase("Business Owner")) {
-                headlines.append("• Eco Score: ").append(p.getEcoScore()).append("\n");
-            } else {
-                headlines.append("• Public Influence: ").append(p.getPublicInfluence()).append("\n");
-            }
-            
-            headlines.append("\n");
-        }
-        
-        JTextArea resultText = new JTextArea(headlines.toString());
-        resultText.setEditable(false);
-        resultText.setFont(new Font("Arial", Font.BOLD, 14));
-        resultText.setLineWrap(true);
-        resultText.setWrapStyleWord(true);
-        resultText.setBackground(new Color(45, 65, 45)); // Match board's dark green
-        resultText.setForeground(Color.WHITE); // White text
-        resultText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JScrollPane scrollPane = new JScrollPane(resultText);
-        scrollPane.setPreferredSize(new Dimension(500, 400));
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(50, 70, 50), 2));
-
-        // Apply UI background color consistency
-        UIManager.put("OptionPane.background", new Color(45, 65, 45));
-        UIManager.put("Panel.background", new Color(45, 65, 45));
-
-        JOptionPane.showMessageDialog(this, scrollPane, 
-                                     "Game Over - " + winner.getName() + " Wins!", 
-                                     JOptionPane.INFORMATION_MESSAGE);
+    // Add this method to your WasteManagementGame class to create a scrolling headlines animation
+private void showEndGameResults(Player winner) {
+    // Stop the timer
+    if (gameTimer != null) {
+        gameTimer.stop();
     }
+    
+    // Create a specialized dialog for the scrolling animation
+    JDialog endGameDialog = new JDialog(this, "Game Over - " + winner.getName() + " Wins!", true);
+    endGameDialog.setSize(900, 700);
+    endGameDialog.setLocationRelativeTo(this);
+    endGameDialog.setLayout(new BorderLayout());
+    
+    // Create content panel with dark green background to match the game
+    JPanel contentPanel = new JPanel(new BorderLayout());
+    contentPanel.setBackground(new Color(45, 65, 45));
+    contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    
+    // Create headlines panel that will hold all the headlines
+    JPanel headlinesPanel = new JPanel();
+    headlinesPanel.setLayout(new BoxLayout(headlinesPanel, BoxLayout.Y_AXIS));
+    headlinesPanel.setBackground(new Color(45, 65, 45));
+    
+    // List of headlines to display
+    String[] headlines = {
+        "<html><h1 style='color:white;'>MAKERS VALLEY TRANSFORMATION: 2025-2030</h1></html>",
+        "<html><h2 style='color:white;'>2025: " + winner.getName() + " leads waste management initiative in Makers Valley</h2></html>",
+        "<html><h2 style='color:white;'>2026: Recycling rates increase by 35% in Makers Valley</h2></html>",
+        "<html><h2 style='color:white;'>2027: New composting facility opens, diverting 500 tons of organic waste from landfills</h2></html>",
+        "<html><h2 style='color:white;'>2028: Makers Valley waste collection coverage reaches 95% of households</h2></html>",
+        "<html><h2 style='color:white;'>2029: Community income from recycling enterprises tops R2 million</h2></html>",
+        "<html><h2 style='color:white;'>2030: Makers Valley recognized as South Africa's model for sustainable waste management</h2></html>",
+        "<html><h1 style='color:white;'>FINAL STATE OF PLAY:</h1></html>"
+    };
+    
+    // Add space at the top for smooth scrolling start
+    headlinesPanel.add(Box.createVerticalStrut(300));
+    
+    // Add each headline with spacing
+    for (String headline : headlines) {
+        JLabel headlineLabel = new JLabel(headline);
+        headlineLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headlinesPanel.add(headlineLabel);
+        headlinesPanel.add(Box.createVerticalStrut(50)); // Space between headlines
+    }
+    
+    // Add player statistics
+    JPanel statsPanel = new JPanel();
+    statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
+    statsPanel.setBackground(new Color(45, 65, 45));
+    statsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+    
+    for (Player p : players) {
+        String playerStats = "<html><h3 style='color:white;'>" + p.getName() + "</h3>" +
+                             "<p style='color:white;'>• Cash: R" + p.getCash() + "<br>" +
+                             "• Properties: " + p.getPropertyCount() + "<br>";
+                             
+        if (p.getRole().equalsIgnoreCase("Business Owner")) {
+            playerStats += "• Eco Score: " + p.getEcoScore() + "</p></html>";
+        } else {
+            playerStats += "• Public Influence: " + p.getPublicInfluence() + "</p></html>";
+        }
+        
+        JLabel statsLabel = new JLabel(playerStats);
+        statsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        statsPanel.add(statsLabel);
+        statsPanel.add(Box.createVerticalStrut(20));
+    }
+    
+    headlinesPanel.add(statsPanel);
+    
+    // Add bottom padding for smooth scrolling end
+    headlinesPanel.add(Box.createVerticalStrut(300));
+    
+    // Create scrollable pane
+    JScrollPane scrollPane = new JScrollPane(headlinesPanel);
+    scrollPane.setBorder(null);
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smoother scrolling
+    scrollPane.setBackground(new Color(45, 65, 45));
+    scrollPane.getViewport().setBackground(new Color(45, 65, 45));
+    
+    // Add a "Close" button at the bottom
+    JButton closeButton = new JButton("Close");
+    closeButton.setFont(new Font("Arial", Font.BOLD, 14));
+    closeButton.addActionListener(e -> endGameDialog.dispose());
+    
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    buttonPanel.setBackground(new Color(45, 65, 45));
+    buttonPanel.add(closeButton);
+    
+    // Add all components to the dialog
+    contentPanel.add(scrollPane, BorderLayout.CENTER);
+    contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+    endGameDialog.add(contentPanel);
+    
+    // Automatic scrolling animation
+    Timer scrollTimer = new Timer(50, null);
+    final int[] position = {0};
+    final JScrollBar vBar = scrollPane.getVerticalScrollBar();
+    
+    scrollTimer.addActionListener(e -> {
+        position[0] += 1;
+        vBar.setValue(position[0]);
+        
+        // Stop when reaching the bottom
+        if (position[0] >= vBar.getMaximum() - vBar.getVisibleAmount()) {
+            scrollTimer.stop();
+        }
+    });
+    
+    // Start the animation after the dialog is shown
+    endGameDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
+        @Override
+        public void componentShown(java.awt.event.ComponentEvent e) {
+            // Start at the top and begin scrolling animation after a short delay
+            vBar.setValue(0);
+            new Timer(1000, evt -> scrollTimer.start()).start();
+        }
+    });
+    
+    // Show the dialog
+    endGameDialog.setVisible(true);
+}
     
     /**
      * Show game help dialog
