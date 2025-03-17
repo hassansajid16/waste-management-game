@@ -39,7 +39,7 @@ public class PlayerStatisticsPanel extends JPanel {
         
         // Create statistics labels
         positionLabel = new JLabel("Pos: " + player.getPosition());
-        cashLabel = new JLabel("Cash: R" + player.getCash());
+        cashLabel = new JLabel("Cash: Rand " + player.getCash());
         propertiesLabel = new JLabel("Props: " + player.getPropertyCount());
         
         // Role-specific label
@@ -175,7 +175,7 @@ public class PlayerStatisticsPanel extends JPanel {
     public void update() {
         // Update all labels with current player data - Fixed to match constructor labels
         positionLabel.setText("Pos: " + player.getPosition());
-        cashLabel.setText("Cash: R" + player.getCash());
+        cashLabel.setText("Cash: Rand " + player.getCash());
         propertiesLabel.setText("Props: " + player.getPropertyCount());
         
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
@@ -193,10 +193,10 @@ public class PlayerStatisticsPanel extends JPanel {
         
         // Update button text to show the cost and whether player can afford it
         if (player.getCash() >= GAME_COST) {
-            startObjectiveButton.setText("Play Mini-Game (R" + GAME_COST + ")");
+            startObjectiveButton.setText("Play Mini-Game (Rand " + GAME_COST + ")");
             startObjectiveButton.setBackground(new Color(100, 180, 100)); // Green
         } else {
-            startObjectiveButton.setText("Need R" + GAME_COST + " to Play");
+            startObjectiveButton.setText("Need Rand " + GAME_COST + " to Play");
             startObjectiveButton.setBackground(new Color(150, 150, 150)); // Gray
         }
     }

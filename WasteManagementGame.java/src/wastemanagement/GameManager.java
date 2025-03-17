@@ -160,7 +160,7 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
             
             // Player stats
             JLabel posLabel = new JLabel("Position: " + player.getPosition());
-            JLabel cashLabel = new JLabel("Cash: R" + player.getCash());
+            JLabel cashLabel = new JLabel("Cash: Rand" + player.getCash());
             
             // Property count
             JLabel propsLabel = new JLabel("Properties: " + player.getPropertyCount());
@@ -306,7 +306,7 @@ public void processTurn(Player player, int diceRoll, int oldPosition, int newPos
     if (oldPosition > newPosition && oldPosition != 0) {
         // Player has passed GO (wrapped around the board)
         player.updateCash(GO_MONEY);
-        gameLog.append(player.getName() + " passed Waste Management Facility and collected R" + GO_MONEY + "!\n");
+        gameLog.append(player.getName() + " passed Waste Management Facility and collected Rand" + GO_MONEY + "!\n");
         
         // Process waste deposits when passing GO
         processWasteDeposits(player, gameLog);
@@ -317,7 +317,7 @@ public void processTurn(Player player, int diceRoll, int oldPosition, int newPos
         case "StartSquare":
             // Landing on Waste Management Facility - Collect additional moneyF
             player.updateCash(GO_MONEY);
-            gameLog.append(player.getName() + " landed on Waste Management Facility and collected R" + GO_MONEY + "!\n");
+            gameLog.append(player.getName() + " landed on Waste Management Facility and collected Rand" + GO_MONEY + "!\n");
             
             // Process waste deposits when landing on GO
             processWasteDeposits(player, gameLog);
@@ -370,14 +370,14 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     // Check if player has enough money BEFORE showing the dialog
     if (player.getCash() < 2000) {
         // Not enough money - just log the message and return
-        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (Rand 2000) to participate!\n");
         return;
     }
     
     // Only show dialog if they have enough money
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to take part in the BinNovaters Initiative for R2000?",
+        "Would you like to take part in the BinNovaters Initiative for Rand 2000?",
         "Special Task",
         JOptionPane.YES_NO_OPTION
     );
@@ -385,7 +385,7 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        gameLog.append("[CASH] " + player.getName() + " spent Rand 2000 to join the BinNovaters Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
@@ -455,14 +455,14 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     // Check if player has enough money BEFORE showing the dialog
     if (player.getCash() < 2000) {
         // Not enough money - just log the message and return
-        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (R2000) to participate!\n");
+        gameLog.append("[FAILED] " + player.getName() + " doesn't have enough money (Rand 2000) to participate!\n");
         return;
     }
     
     // Only show dialog if they have enough money
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to take part in the BinNovaters Initiative for R2000?",
+        "Would you like to take part in the BinNovaters Initiative for Rand 2000?",
         "Eco Challenge",
         JOptionPane.YES_NO_OPTION
     );
@@ -470,7 +470,7 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append("[CASH] " + player.getName() + " spent R2000 to join the BinNovaters Initiative!\n");
+        gameLog.append("[CASH] " + player.getName() + " spent Rand 2000 to join the BinNovaters Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
@@ -496,10 +496,10 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
             // Special increase to role-specific scores for challenges
             if (player.getRole().equalsIgnoreCase("Business Owner")) {
                 player.increaseEcoScore(8);
-                gameLog.append("[ECO] Eco Score significantly increased to " + player.getEcoScore() + "\n");
+                gameLog.append("Eco Score significantly increased to " + player.getEcoScore() + "\n");
             } else if (player.getRole().equalsIgnoreCase("Community Leader")) {
                 player.increasePublicInfluence(8);
-                gameLog.append("[INFLUENCE] Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
+                gameLog.append("Public Influence significantly increased to " + player.getPublicInfluence() + "\n");
             }
             
             // Update stats to refresh UI
@@ -513,7 +513,7 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
             advanceToNextPlayer();
         });
     } else {
-        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append(player.getName() + " declined to participate in the BinNovaters Initiative.\n");
     }
 }
 // Method to advance to next player's turn
@@ -545,8 +545,8 @@ private void handleDonation(Player player, Player owner, int position, String ti
     
     // Show dialog to ask for donation amount
     String[] options = {
-        "Donate R" + suggestedDonation, 
-        "Donate R" + (suggestedDonation/2), 
+        "Donate Rand" + suggestedDonation, 
+        "Donate Rand" + (suggestedDonation/2), 
         "Donate Custom Amount", 
         "Skip Donation"
     };
@@ -575,7 +575,7 @@ private void handleDonation(Player player, Player owner, int position, String ti
         case 2: // Custom donation
             String input = JOptionPane.showInputDialog(
                 null,
-                "Enter donation amount (R0-R" + player.getCash() + "):",
+                "Enter donation amount (In numbers)" + player.getCash() + "):",
                 "Custom Donation",
                 JOptionPane.PLAIN_MESSAGE
             );
@@ -599,7 +599,7 @@ private void handleDonation(Player player, Player owner, int position, String ti
             player.updateCash(-donationAmount);
             owner.updateCash(donationAmount);
             
-            gameLog.append(player.getName() + " donated R" + donationAmount + " to " + 
+            gameLog.append(player.getName() + " donated Rand " + donationAmount + " to " + 
                          owner.getName() + " for " + tileName + ".\n");
                          
             // Give a small role-specific bonus to both players
@@ -620,7 +620,7 @@ private void handleDonation(Player player, Player owner, int position, String ti
             }
         } else {
             // Player doesn't have enough cash
-            gameLog.append(player.getName() + " doesn't have enough cash to donate R" + 
+            gameLog.append(player.getName() + " doesn't have enough cash to donate any Rand" + 
                          donationAmount + ".\n");
         }
     } else {
@@ -647,14 +647,14 @@ private void handlePropertyTile(Player player, int position, String propertyName
         // Property is not owned, player can buy it
         int propertyPrice = getPropertyPrice(position);
         
-        gameLog.append(" " + player.getName() + " landed on " + propertyName + " (Price: R" + propertyPrice + ")\n");
+        gameLog.append(" " + player.getName() + " landed on " + propertyName + " (Price: Rand" + propertyPrice + ")\n");
         
         // Check if player has enough money
         if (player.getCash() >= propertyPrice) {
             // Ask if player wants to buy the property
             int choice = JOptionPane.showConfirmDialog(
                 null,
-                "Would you like to buy " + propertyName + " for R" + propertyPrice + "?",
+                "Would you like to buy " + propertyName + " for Rand" + propertyPrice + "?",
                 "Property Purchase",
                 JOptionPane.YES_NO_OPTION
             );
@@ -664,7 +664,7 @@ private void handlePropertyTile(Player player, int position, String propertyName
                 player.buyProperty(position);
                 propertyOwners.put(position, player);
                 
-                gameLog.append("💰 " + player.getName() + " purchased " + propertyName + " for R" + propertyPrice + "!\n");
+                gameLog.append("💰 " + player.getName() + " purchased " + propertyName + " for Rand" + propertyPrice + "!\n");
                 
                 // Increase role-specific scores when buying property
                 if (player.getRole().equalsIgnoreCase("Business Owner")) {
@@ -687,20 +687,20 @@ private void handlePropertyTile(Player player, int position, String propertyName
         // Property is owned by another player, make a donation
         int donation = getPropertyRent(position);
         gameLog.append(player.getName() + " landed on " + propertyOwner.getName() + "'s property " + 
-                     propertyName + ". Must donate R" + donation + ".\n");
+                     propertyName + ". Must donate Rand" + donation + ".\n");
         
         if (player.getCash() >= donation) {
             player.updateCash(-donation);
             propertyOwner.updateCash(donation);
             
-            gameLog.append(player.getName() + " donated R" + donation + " to " + propertyOwner.getName() + ".\n");
+            gameLog.append(player.getName() + " donated Rand" + donation + " to " + propertyOwner.getName() + ".\n");
         } else {
             // Player can't pay full donation
             int availableCash = player.getCash();
             player.updateCash(-availableCash);
             propertyOwner.updateCash(availableCash);
             
-            gameLog.append(player.getName() + " could only donate R" + availableCash + " to " + 
+            gameLog.append(player.getName() + " could only donate Rand" + availableCash + " to " + 
                          propertyOwner.getName() + ".\n");
         }
     } else {
@@ -714,7 +714,7 @@ private void handlePropertyTile(Player player, int position, String propertyName
     private void handleCommunityFund(Player player) {
         // Random bonus between 50 and 150
         int bonus = random.nextInt(1001) + 500;
-        gameLog.append(" " + player.getName() + " landed on Community Fund and received R" + bonus + "!\n");
+        gameLog.append(" " + player.getName() + " landed on Community Fund and received Rand" + bonus + "!\n");
         player.updateCash(bonus);
         
         // Also increase role-specific scores

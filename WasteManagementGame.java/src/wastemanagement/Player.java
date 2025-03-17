@@ -181,7 +181,7 @@ public class Player {
         String baseInfo = name + " (" + role + ") - Position: " + position + 
                ", Recyclables: " + recyclables + 
                ", Food Waste: " + foodWaste + 
-               ", Cash: R" + cash;
+               ", Cash: Rand " + cash;
                
         // Add role-specific scores
         if (role.equalsIgnoreCase("Business Owner")) {

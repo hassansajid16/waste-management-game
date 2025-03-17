@@ -662,7 +662,7 @@ private void showEndGameResults(Player winner) {
         "<html><h2 style='color:white;'>2026: Recycling rates increase by 35% in Makers Valley</h2></html>",
         "<html><h2 style='color:white;'>2027: New composting facility opens, diverting 500 tons of organic waste from landfills</h2></html>",
         "<html><h2 style='color:white;'>2028: Makers Valley waste collection coverage reaches 95% of households</h2></html>",
-        "<html><h2 style='color:white;'>2029: Community income from recycling enterprises tops R2 million</h2></html>",
+        "<html><h2 style='color:white;'>2029: Community income from recycling enterprises tops Rand 2 million</h2></html>",
         "<html><h2 style='color:white;'>2030: Makers Valley recognized as South Africa's model for sustainable waste management</h2></html>",
         "<html><h1 style='color:white;'>FINAL STATE OF PLAY:</h1></html>"
     };
@@ -686,7 +686,7 @@ private void showEndGameResults(Player winner) {
     
     for (Player p : players) {
         String playerStats = "<html><h3 style='color:white;'>" + p.getName() + "</h3>" +
-                             "<p style='color:white;'>• Cash: R" + p.getCash() + "<br>" +
+                             "<p style='color:white;'>• Cash: Rand " + p.getCash() + "<br>" +
                              "• Properties: " + p.getPropertyCount() + "<br>";
                              
         if (p.getRole().equalsIgnoreCase("Business Owner")) {
@@ -764,12 +764,12 @@ private void showEndGameResults(Player winner) {
             "<html><h2>Makers Valley Waste Management Game - Help</h2>" +
             "<p><b>Goal:</b> Complete your objectives by buying properties and enhancing your role scores.</p>" +
             "<p><b>Tile Types:</b><ul>" +
-            "<li><b>Waste Management Facility:</b> Collect R3000 when passing. Also deposit any food waste and recyclables you have collected to boost your role score</li>" +
-            "<li><b>Waste Sorting Property:</b> Pay a fee of R2000 to play a waste sorting mini game where you are rewarded based on the amount of correctly sorted waste in 60 seconds. Once the minigame is complete take charge of the square and if another player lands on it they will have the option to donate to support the property.</li>" +
-            "<li><b>Quiz Challenge Property:</b> Pay a fee of R2000 to answer a question. Answer correctly to receive cash, food waste, recyclables and an increase in role score. Once the question has been attempted take charge of the square and if another player lands on it they will have the option to donate to support the property.</li></ul></p>" +
+            "<li><b>Waste Management Facility:</b> Collect Rand 3000 when passing. Also deposit any food waste and recyclables you have collected to boost your role score</li>" +
+            "<li><b>Waste Sorting Property:</b> Pay a fee of Rand 2000 to play a waste sorting mini game where you are rewarded based on the amount of correctly sorted waste in 60 seconds. Once the minigame is complete take charge of the square and if another player lands on it they will have the option to donate to support the property.</li>" +
+            "<li><b>Quiz Challenge Property:</b> Pay a fee of Rand 2000 to answer a question. Answer correctly to receive cash, food waste, recyclables and an increase in role score. Once the question has been attempted take charge of the square and if another player lands on it they will have the option to donate to support the property.</li></ul></p>" +
             "<p><b>Player Roles:</b><ul>" +
-            "<li><b>Business Owner:</b> Track Eco Score, starts with R7000</li>" +
-            "<li><b>Community Leader:</b> Track Public Influence, starts with R4000</li></ul></p>" +
+            "<li><b>Business Owner:</b> Track Eco Score, starts with Rand 7000</li>" +
+            "<li><b>Community Leader:</b> Track Public Influence, starts with Rand 4000</li></ul></p>" +
             "<p><b>Objectives:</b><ol>" +
             "<li>Role Objective: Reach 50 points in your role-specific score</li>" +
             "<li>Property Objective: Acquire 7 properties by engaging with their various tasks</li></ol></p>" +

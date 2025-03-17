@@ -491,7 +491,7 @@ public class WasteSortingGame extends JFrame {
                       " | Incorrect: " + incorrectAnswers + " | Accuracy: " + accuracy + "%\n");
         gameLog.append(" Final score: " + score + "\n");
         gameLog.append(" Rewards: " + recyclablesEarned + " recyclables, " + 
-                     foodWasteEarned + " food waste, R" + cashEarned + " cash\n");
+                     foodWasteEarned + " food waste, Rand " + cashEarned + " cash\n");
         
         // Add role specific bonuses
         if (currentPlayer.getRole().equalsIgnoreCase("Business Owner")) {

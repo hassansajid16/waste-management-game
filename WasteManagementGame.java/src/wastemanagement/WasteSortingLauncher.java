@@ -60,7 +60,7 @@ public class WasteSortingLauncher {
         player.collectWaste("recyclables");
         player.collectWaste("foodWaste");
         player.updateCash(100);
-        gameLog.append("Default rewards: 1 recyclable, 1 food waste, R100 cash\n");
+        gameLog.append("Default rewards: 1 recyclable, 1 food waste, Rand 100 cash\n");
         
         // Add role-specific bonus
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
@@ -77,7 +77,7 @@ public class WasteSortingLauncher {
             "You have been awarded default rewards:\n" +
             "• 1 recyclable\n" +
             "• 1 food waste\n" +
-            "• R100 cash",
+            "• Rand 100 cash",
             "Mini-Game Not Available",
             JOptionPane.INFORMATION_MESSAGE);
     }
