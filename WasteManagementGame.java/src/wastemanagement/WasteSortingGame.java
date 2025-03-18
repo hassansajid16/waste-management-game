@@ -124,9 +124,9 @@ public class WasteSortingGame extends JFrame {
         addWasteItem("Plastic Bottle", WasteCategory.RECYCLABLE);
         addWasteItem("Newspaper", WasteCategory.RECYCLABLE);
         addWasteItem("Glass Jar", WasteCategory.RECYCLABLE);
-        addWasteItem("Aluminum Can", WasteCategory.RECYCLABLE);
+        addWasteItem("Bean Tin", WasteCategory.RECYCLABLE);
         addWasteItem("Cardboard Box", WasteCategory.RECYCLABLE);
-        addWasteItem("Metal Tin", WasteCategory.RECYCLABLE);
+        addWasteItem("Coke Can", WasteCategory.RECYCLABLE);
         addWasteItem("Paper Bag", WasteCategory.RECYCLABLE);
         
         // Organic/Food waste items
@@ -136,15 +136,15 @@ public class WasteSortingGame extends JFrame {
         addWasteItem("Vegetable Scraps", WasteCategory.ORGANIC);
         addWasteItem("Eggshells", WasteCategory.ORGANIC);
         addWasteItem("Tea Bags", WasteCategory.ORGANIC);
-        addWasteItem("Grass Clippings", WasteCategory.ORGANIC);
+        addWasteItem("Grass", WasteCategory.ORGANIC);
         
         // General waste items
         addWasteItem("Styrofoam Cup", WasteCategory.GENERAL_WASTE);
-        addWasteItem("Candy Wrapper", WasteCategory.GENERAL_WASTE);
-        addWasteItem("Used Tissue", WasteCategory.GENERAL_WASTE);
-        addWasteItem("Plastic Bag", WasteCategory.GENERAL_WASTE);
-        addWasteItem("Disposable Diaper", WasteCategory.GENERAL_WASTE);
-        addWasteItem("Chip Packets", WasteCategory.GENERAL_WASTE);
+        addWasteItem("Sweet Wrapper", WasteCategory.GENERAL_WASTE);
+        addWasteItem("Tissue", WasteCategory.GENERAL_WASTE);
+        addWasteItem("Shopping Bag", WasteCategory.GENERAL_WASTE);
+        addWasteItem("Disposable Nappy", WasteCategory.GENERAL_WASTE);
+        addWasteItem("Crisp Packets", WasteCategory.GENERAL_WASTE);
         addWasteItem("Plastic Cutlery", WasteCategory.GENERAL_WASTE);
         
         // Hazardous waste items
