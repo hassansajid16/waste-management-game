@@ -497,6 +497,9 @@ playerStatsPanel.repaint();
 /**
  * Roll the dice and process the player's turn
  */
+/**
+ * Roll the dice and process the player's turn
+ */
 private void rollDice() {
     if (gameEnded) return;
     
@@ -536,6 +539,13 @@ private void rollDice() {
                     
                     // Process the turn in game manager
                     gameManager.processTurn(currentPlayer, diceValue, oldPosition, newPosition, gameLog);
+                    
+                    // Check if the current player has gone bankrupt after their turn
+                    if (currentPlayer.getCash() <= 0) {
+                        gameEnded = true;
+                        showFailedEndScreen(currentPlayer); // Show the failure screen
+                        return; // Exit the method early
+                    }
                     
                     // Update property ownership display
                     gameManager.updatePropertyDisplay(tilePanels);
@@ -755,35 +765,209 @@ private void showEndGameResults(Player winner) {
     // Show the dialog
     endGameDialog.setVisible(true);
 }
-    
-    /**
-     * Show game help dialog
-     */
-    private void showGameHelp() {
-        JOptionPane.showMessageDialog(this,
-            "<html><h2>Makers Valley Waste Management Game - Help</h2>" +
-            "<p><b>Goal:</b> Complete your objectives by buying properties and enhancing your role scores.</p>" +
-            "<p><b>Tile Types:</b><ul>" +
-            "<li><b>Waste Management Facility:</b> Collect Rand 3000 when passing. Also deposit any food waste and recyclables you have collected to boost your role score</li>" +
-            "<li><b>Waste Sorting Property:</b> Pay a fee of Rand 2000 to play a waste sorting mini game where you are rewarded based on the amount of correctly sorted waste in 60 seconds. Once the minigame is complete take charge of the square and if another player lands on it they will have the option to donate to support the property.</li>" +
-            "<li><b>Quiz Challenge Property:</b> Pay a fee of Rand 2000 to answer a question. Answer correctly to receive cash, food waste, recyclables and an increase in role score. Once the question has been attempted take charge of the square and if another player lands on it they will have the option to donate to support the property.</li></ul></p>" +
-            "<p><b>Player Roles:</b><ul>" +
-            "<li><b>Business Owner:</b> Track Eco Score, starts with Rand 7000</li>" +
-            "<li><b>Community Leader:</b> Track Public Influence, starts with Rand 4000</li></ul></p>" +
-            "<p><b>Objectives:</b><ol>" +
-            "<li>Role Objective: Reach 50 points in your role-specific score</li>" +
-            "<li>Property Objective: Acquire 7 properties by engaging with their various tasks</li></ol></p>" +
-            "<p><b>How to Play:</b><ol>" +
-            "<li>Roll the dice on your turn to move around the board</li>" +
-            "<li>Buy properties when you land on them</li>" +
-            "<li>Complete challenges to increase your role score</li>" +
-            "<li>Pay rent when landing on others' properties</li>" +
-            "<li>First player to complete both objectives wins!</li></ol></p></html>",
-            "Game Help",
-            JOptionPane.INFORMATION_MESSAGE
-        );
+// Add this method to your WasteManagementGame class to show the failed ending
+private void showFailedEndScreen(Player bankruptPlayer) {
+    // Stop the timer
+    if (gameTimer != null) {
+        gameTimer.stop();
     }
     
+    // Create dialog for the failed ending
+    JDialog failDialog = new JDialog(this, "Game Over - Mission Failed", true);
+    failDialog.setSize(1000, 700);
+    failDialog.setLocationRelativeTo(this);
+    failDialog.setLayout(new BorderLayout());
+    
+    // Create content panel with darker background to reflect failure
+    JPanel contentPanel = new JPanel(new BorderLayout());
+    contentPanel.setBackground(new Color(55, 40, 40)); // Darker, reddish background
+    contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    
+    // Create headlines panel
+    JPanel headlinesPanel = new JPanel();
+    headlinesPanel.setLayout(new BoxLayout(headlinesPanel, BoxLayout.Y_AXIS));
+    headlinesPanel.setBackground(new Color(55, 40, 40));
+    
+    // Failure headlines
+    String[] headlines = {
+        "<html><div style='width:700px'><h1 style='color:white; font-size:28px; text-align:center;'>MAKERS VALLEY PROJECT: TERMINATED</h1></div></html>",
+        "<html><div style='width:700px'><h2 style='color:white; font-size:22px;'>2025: " + bankruptPlayer.getName() + " runs out of resources, causing project collapse</h2></div></html>",
+        "<html><div style='width:700px'><h2 style='color:white; font-size:22px;'>2026: Without proper funding, waste management initiative abandoned</h2></div></html>",
+        "<html><div style='width:700px'><h2 style='color:white; font-size:22px;'>2027: Illegal dumping increases, worsening environmental conditions</h2></div></html>",
+        "<html><div style='width:700px'><h2 style='color:white; font-size:22px;'>2028: Community disappointed by failed sustainable development efforts</h2></div></html>",
+        "<html><div style='width:700px'><h2 style='color:orange; font-size:22px; text-align:center;'>LESSON LEARNED: Sustainable initiatives require teamwork and shared resources</h2></div></html>",
+        "<html><div style='width:700px'><h2 style='color:orange; font-size:22px; text-align:center;'>Team members must support each other to achieve community goals</h2></div></html>",
+        "<html><div style='width:700px'><h1 style='color:white; font-size:28px; text-align:center;'>FINAL STATE OF PLAY:</h1></div></html>"
+    };
+    
+    // Add space at the top for smooth scrolling start
+    headlinesPanel.add(Box.createVerticalStrut(300));
+    
+    // Add each headline with spacing
+    for (String headline : headlines) {
+        JLabel headlineLabel = new JLabel(headline);
+        headlineLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headlinesPanel.add(headlineLabel);
+        headlinesPanel.add(Box.createVerticalStrut(50));
+    }
+    
+    // Highlight the bankrupt player and show all player stats
+    JPanel statsPanel = new JPanel();
+    statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
+    statsPanel.setBackground(new Color(55, 40, 40));
+    statsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+    
+    for (Player p : players) {
+        String bgColor = (p == bankruptPlayer) ? "#772222" : "transparent"; // Highlight bankrupt player
+        String playerStats = "<html><div style='width:700px; background-color:" + bgColor + "; padding:10px;'>" +
+                             "<h3 style='color:white; font-size:20px;'>" + p.getName() + 
+                             (p == bankruptPlayer ? " ⚠️ OUT OF FUNDS" : "") + "</h3>" +
+                             "<p style='color:white; font-size:18px;'>• Cash: R" + p.getCash() + "<br>" +
+                             "• Properties: " + p.getPropertyCount() + "<br>";
+                             
+        if (p.getRole().equalsIgnoreCase("Business Owner")) {
+            playerStats += "• Eco Score: " + p.getEcoScore() + "</p></div></html>";
+        } else {
+            playerStats += "• Public Influence: " + p.getPublicInfluence() + "</p></div></html>";
+        }
+        
+        JLabel statsLabel = new JLabel(playerStats);
+        statsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        statsPanel.add(statsLabel);
+        statsPanel.add(Box.createVerticalStrut(20));
+    }
+    
+    headlinesPanel.add(statsPanel);
+    
+    // Add bottom padding for smooth scrolling end
+    headlinesPanel.add(Box.createVerticalStrut(300));
+    
+    // Create scrollable pane
+    JScrollPane scrollPane = new JScrollPane(headlinesPanel);
+    scrollPane.setBorder(null);
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    scrollPane.setBackground(new Color(55, 40, 40));
+    scrollPane.getViewport().setBackground(new Color(55, 40, 40));
+    
+    // Add a "Close" button at the bottom
+    JButton closeButton = new JButton("Close");
+    closeButton.setFont(new Font("Arial", Font.BOLD, 18));
+    closeButton.setPreferredSize(new Dimension(120, 40));
+    closeButton.setBackground(new Color(150, 60, 60)); // Red-tinted button
+    closeButton.setForeground(Color.black);
+    closeButton.addActionListener(e -> failDialog.dispose());
+    
+    // Try again button
+    JButton tryAgainButton = new JButton("Try Again?");
+    tryAgainButton.setFont(new Font("Arial", Font.BOLD, 18));
+    tryAgainButton.setPreferredSize(new Dimension(180, 40));
+    tryAgainButton.setBackground(new Color(60, 150, 60)); // Green-tinted button
+    tryAgainButton.setForeground(Color.black);
+    tryAgainButton.addActionListener(e -> {
+        failDialog.dispose();
+        // Close the game window
+        dispose();
+        // Launch a new splash screen to restart the game
+        SwingUtilities.invokeLater(() -> new SplashScreen());
+    });
+    
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+    buttonPanel.setBackground(new Color(55, 40, 40));
+    buttonPanel.add(tryAgainButton);
+    buttonPanel.add(closeButton);
+    
+    // Add all components to the dialog
+    contentPanel.add(scrollPane, BorderLayout.CENTER);
+    contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+    failDialog.add(contentPanel);
+    
+    // Automatic scrolling animation
+    Timer scrollTimer = new Timer(50, null);
+    final int[] position = {0};
+    final JScrollBar vBar = scrollPane.getVerticalScrollBar();
+    
+    scrollTimer.addActionListener(e -> {
+        position[0] += 1;
+        vBar.setValue(position[0]);
+        
+        // Stop when reaching the bottom
+        if (position[0] >= vBar.getMaximum() - vBar.getVisibleAmount()) {
+            scrollTimer.stop();
+        }
+    });
+    
+    // Start the animation after the dialog is shown
+    failDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
+        @Override
+        public void componentShown(java.awt.event.ComponentEvent e) {
+            // Start at the top and begin scrolling animation after a short delay
+            vBar.setValue(0);
+            new Timer(1000, evt -> scrollTimer.start()).start();
+        }
+    });
+    
+    // Show the dialog
+    failDialog.setVisible(true);
+}    
+private void showGameHelp() {
+    // Create a JEditorPane to display the HTML with controlled width
+    JEditorPane editorPane = new JEditorPane();
+    editorPane.setContentType("text/html");
+    editorPane.setText(
+        "<html><body style='width:500px; font-family:Arial; font-size:12px'>" +
+        "<h2 style='text-align:center'>Makers Valley Waste Management Game - Help</h2>" +
+        "<p><b>Goal:</b> Participate in sustainable waste management in Makers Valley by completing your objectives. " +
+        "Engage in waste management and test your knowledge to improve the community by passing it on to others.</p>" +
+        
+        "<p><b>Tile Types:</b></p><ul>" +
+        "<li><b>Waste Management Facility:</b> Collect R3000 when passing. Also deposit any food waste and recyclables " +
+        "you have collected to boost your role score.</li>" +
+        
+        "<li><b>Waste Sorting Properties:</b> Pay a fee of R2000 to play a waste sorting mini game where you are " +
+        "rewarded based on the amount of correctly sorted waste in 60 seconds. Once the minigame is complete, " +
+        "take charge of the square. If another player lands on it, they will have the option to donate to support the property.</li>" +
+        
+        "<li><b>Quiz Challenge Property:</b> Pay a fee of R2000 to answer a question. Answer correctly to receive cash, " +
+        "food waste, recyclables and an increase in role score. Once the question has been attempted, take charge of the square. " +
+        "If another player lands on it, they will have the option to donate to support the property.</li>" +
+        "</ul>" +
+        
+        "<p><b>Player Roles:</b></p><ul>" +
+        "<li><b>Business Owner:</b> Focuses on economic sustainability by tracking the Eco Score. Starts with R7000.</li>" +
+        "<li><b>Community Leader:</b> Focuses on improving community engagement by tracking Public Influence. Starts with R4000.</li>" +
+        "</ul>" +
+        
+        "<p><b>Objectives:</b></p><ol>" +
+        "<li>Role Objective: Reach 50 points in your role-specific score.</li>" +
+        "<li>Property Objective: Establish sustainability efforts by acquiring 4 properties through engaging with their various tasks.</li>" +
+        "</ol>" +
+        
+        "<p><b>How to Play:</b></p><ol>" +
+        "<li>Roll the dice on your turn to move around the board.</li>" +
+        "<li>Interact with properties through quizzes and sorting challenges.</li>" +
+        "<li>Increase your role score by completing challenges and contributing to sustainability.</li>" +
+        "<li>Support other players by donating to community initiatives.</li>" +
+        "<li>First player to complete both objectives to help improve Makers Valley wins!</li>" +
+        "</ol>" +
+        "</body></html>"
+    );
+    
+    // Make the editor pane non-editable and set it to be opaque
+    editorPane.setEditable(false);
+    editorPane.setOpaque(true);
+    
+    // Create a scroll pane to handle overflow
+    JScrollPane scrollPane = new JScrollPane(editorPane);
+    scrollPane.setPreferredSize(new Dimension(750, 450));
+    
+    // Create and show a dialog with better sizing
+    JOptionPane.showMessageDialog(
+        this,
+        scrollPane,
+        "Game Help",
+        JOptionPane.INFORMATION_MESSAGE
+    );
+}
     /**
      * Confirm if the player wants to end the game
      */

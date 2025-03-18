@@ -3,6 +3,7 @@ package wastemanagement;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.*;
 
 /**
@@ -67,10 +68,41 @@ public class SplashScreen extends JFrame {
         logoPanel.setOpaque(false);
         logoPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
         
-        // Create title text
-        logoLabel = new JLabel("WASTE MANAGEMENT GAME", SwingConstants.CENTER);
-        logoLabel.setFont(new Font("Arial", Font.BOLD, 32));
-        logoLabel.setForeground(Color.WHITE);
+        // Try loading the logo first
+        ImageIcon logoImg = null;
+        try {
+            // Path for the logo - update this to your actual path
+            String logoPath = "C:\\Users\\khaga\\CSC2058-2425-G31\\WasteManagementGame.java\\src\\Resources\\logo.png";
+            
+            // Try different ways to load the image
+            File file = new File(logoPath);
+            if (file.exists()) {
+                logoImg = new ImageIcon(file.getAbsolutePath());
+            } else {
+                // Try as a resource
+                logoImg = new ImageIcon(getClass().getResource("/" + logoPath));
+            }
+            
+            // Scale if needed
+            if (logoImg != null && logoImg.getIconWidth() > 0) {
+                Image img = logoImg.getImage();
+                Image scaledImg = img.getScaledInstance(300, -1, Image.SCALE_SMOOTH);
+                logoImg = new ImageIcon(scaledImg);
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading logo: " + e.getMessage());
+            logoImg = null;
+        }
+        
+        // Create title text or image
+        if (logoImg != null && logoImg.getIconWidth() > 0) {
+            logoLabel = new JLabel(logoImg, SwingConstants.CENTER);
+        } else {
+            // Fallback to text title
+            logoLabel = new JLabel("WASTE MANAGEMENT GAME", SwingConstants.CENTER);
+            logoLabel.setFont(new Font("Arial", Font.BOLD, 32));
+            logoLabel.setForeground(Color.WHITE);
+        }
         
         // Tagline label
         taglineLabel = new JLabel("Tackling Waste Management in Makers Valley", SwingConstants.CENTER);

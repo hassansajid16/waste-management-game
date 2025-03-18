@@ -71,7 +71,7 @@ public class Login extends JFrame {
     private void loadImages() {
         try {
             // Try to load images from resources
-            logoIcon = createIconFromText("Waste Management", new Font("Arial", Font.BOLD, 24), Color.WHITE);
+            // logoIcon = createIconFromText("Waste Management", new Font("Arial", Font.BOLD, 24), Color.WHITE);
             
             // Role icons
             roleIcons = new ImageIcon[2];

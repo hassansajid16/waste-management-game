@@ -377,7 +377,7 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     // Only show dialog if they have enough money
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to take part in the BinNovaters Initiative for Rand 2000?",
+        "Would you like to take part in the BINOVATORS Initiative for Rand 2000?",
         "Special Task",
         JOptionPane.YES_NO_OPTION
     );
@@ -385,7 +385,7 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append("[CASH] " + player.getName() + " spent Rand 2000 to join the BinNovaters Initiative!\n");
+        gameLog.append("[CASH] " + player.getName() + " spent Rand 2000 to join the BINOVATORS Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
@@ -428,8 +428,19 @@ private void handleSpecialTask(Player player, JTextArea gameLog) {
             advanceToNextPlayer();
         });
     } else {
-        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append("[INFO] " + player.getName() + " declined to participate in the BINOVATORS Initiative.\n");
     }
+}
+// Add this method to your GameManager class to check for bankruptcy
+public boolean checkForBankruptcy() {
+    for (Player player : players) {
+        if (player.getCash() <= 0) {
+            gameLog.append("\n⚠️ CRITICAL EVENT: " + player.getName() + " has run out of money!\n");
+            gameLog.append("Without teamwork and resource sharing, the project can't continue.\n");
+            return true;
+        }
+    }
+    return false;
 }
 // Add this method to GameManager class
 public boolean isTaskInProgress() {
@@ -462,7 +473,7 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     // Only show dialog if they have enough money
     int choice = JOptionPane.showConfirmDialog(
         null,
-        "Would you like to take part in the BinNovaters Initiative for Rand 2000?",
+        "Would you like to take part in the BINOVATORS Initiative for Rand 2000?",
         "Eco Challenge",
         JOptionPane.YES_NO_OPTION
     );
@@ -470,7 +481,7 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
     if (choice == JOptionPane.YES_OPTION) {
         // We already checked they have enough money, so we can proceed
         player.updateCash(-2000);
-        gameLog.append("[CASH] " + player.getName() + " spent Rand 2000 to join the BinNovaters Initiative!\n");
+        gameLog.append("[CASH] " + player.getName() + " spent Rand 2000 to join the BINOVATORS Initiative!\n");
         
         // Mark task as completed
         player.buyProperty(position);
@@ -513,7 +524,7 @@ private void handleEcoChallenge(Player player, JTextArea gameLog) {
             advanceToNextPlayer();
         });
     } else {
-        gameLog.append(player.getName() + " declined to participate in the BinNovaters Initiative.\n");
+        gameLog.append(player.getName() + " declined to participate in the BINOVATORS Initiative.\n");
     }
 }
 // Method to advance to next player's turn
@@ -575,7 +586,7 @@ private void handleDonation(Player player, Player owner, int position, String ti
         case 2: // Custom donation
             String input = JOptionPane.showInputDialog(
                 null,
-                "Enter donation amount (In numbers)" + player.getCash() + "):",
+                "Enter donation amount (In numbers) 0- " + player.getCash() + "):",
                 "Custom Donation",
                 JOptionPane.PLAIN_MESSAGE
             );
@@ -687,7 +698,7 @@ private void handlePropertyTile(Player player, int position, String propertyName
         // Property is owned by another player, make a donation
         int donation = getPropertyRent(position);
         gameLog.append(player.getName() + " landed on " + propertyOwner.getName() + "'s property " + 
-                     propertyName + ". Must donate Rand" + donation + ".\n");
+                     propertyName + ". A donation would be greatly appreciated" + donation + ".\n");
         
         if (player.getCash() >= donation) {
             player.updateCash(-donation);

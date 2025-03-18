@@ -7,59 +7,36 @@ import javax.swing.SwingUtilities;
 
 public class SpecialTask {
     private static final String[] QUESTIONS = {
-        "Pikitup is responsible for waste management services in Johannesburg, including Makers Valley.",
-        "Pikitup operates waste collection services in Makers Valley on a daily basis.",
-        "There is an abundance of public waste bins provided by Pikitup in Makers Valley.",
-        "Pikitup provides separate waste collection for recyclable and non-recyclable waste in Makers Valley.",
-        "Pikitup has a recycling incentive program for residents who actively recycle their waste.",
-        "Pikitup's goal is to achieve zero waste to landfill by 2030.",
-        "Pikitup has a mobile app where residents can report illegal dumping and missed waste collection.",
-        "Pikitup partners with local businesses to raise awareness about proper waste disposal.",
-        "Pikitup offers composting workshops to educate residents about organic waste management.",
-        "Makers Valley has a centralized public waste disposal system for residents to dispose of their waste.",
-        "Pikitup has a dedicated fleet of waste collection trucks serving the Makers Valley area.",
-        "Pikitup offers free waste disposal bags for garden refuse and recyclables in Makers Valley.",
-        "Makers Valley has a problem with illegal dumping due to inconsistent waste collection services.",
-        "Pikitup conducts regular waste audits in Makers Valley to analyze waste disposal habits.",
-        "There are no public waste management challenges in Makers Valley.",
-        "Pikitup encourages residents of Makers Valley to reduce their waste footprint through education programs.",
-        "The community of Makers Valley experiences frequent missed waste collection by Pikitup.",
-        "Pikitup provides a separate waste collection service for hazardous waste in Makers Valley.",
-        "Makers Valley does not have enough waste collection points for all its residents.",
-        "Pikitup maintains the waste collection schedule regularly in Makers Valley.",
-        "Makers Valley has a growing recycling culture due to Pikitup's efforts.",
-        "Pikitup offers a large recycling bin to each household in Makers Valley.",
-        "Pikitup manages waste collection on weekends in Makers Valley to avoid waste buildup.",
-        "There is an initiative in Makers Valley to encourage reducing single-use plastics through Pikitup programs.",
-        "Makers Valley does not have adequate facilities for electronic waste disposal.",
-        "Pikitup regularly cleans up areas prone to illegal dumping in Makers Valley.",
-        "Pikitup educates the community of Makers Valley about the benefits of sorting waste at home.",
-        "Makers Valley residents are actively involved in keeping their streets clean with Pikitup's support.",
-        "Makers Valley has implemented measures to reduce littering and encourage responsible waste disposal.",
-        "Pikitup's collection services in Makers Valley are extended to public areas and parks.",
-        "Makers Valley residents complain about missed waste collection due to Pikitup's service gaps.",
-        "Pikitup collaborates with the community in Makers Valley to combat illegal dumping.",
-        "Pikitup provides green waste collection services in Makers Valley on a weekly basis.",
-        "Pikitup encourages the reduction of waste by offering drop-off points for recyclables in Makers Valley.",
-        "Pikitup has successfully reduced landfill waste in Makers Valley through its recycling initiatives.",
-        "Makers Valley has community clean-up campaigns supported by Pikitup.",
-        "Pikitup has reduced waste overflow in high-density areas of Makers Valley.",
-        "Makers Valley residents are encouraged to use Pikitup's mobile app for waste-related queries.",
-        "Pikitup handles the collection of hazardous waste such as paint and batteries in Makers Valley.",
-        "Makers Valley has efficient waste sorting programs in place thanks to Pikitup.",
-        "Pikitup conducts waste separation at the curb in Makers Valley.",
-        "Makers Valley has seen a decrease in waste-related complaints since Pikitup started its initiatives.",
-        "Pikitup provides waste disposal services for major events in Makers Valley.",
-        "Pikitup's recycling efforts have reduced the amount of waste sent to landfills in Makers Valley.",
-        "Makers Valley has dedicated collection times for organic waste through Pikitup."
+        "Do residents of Makers Valley produce more waste per person compared to the city's average?", 
+        "Is more than half of Johannesburg's total waste successfully recycled each year?",
+        "Can turning organic waste into compost help minimize landfill use and benefit local farming?",
+        "Does Pikitup have a goal of cutting landfill waste by at least 33% through the Separation at Source program?",
+        "Is illegal dumping in Makers Valley an uncommon issue?",
+        "Do informal waste collectors play a role in recycling by retrieving valuable materials from waste?",
+        "Does uncollected waste in informal settlements contribute to a rise in respiratory and waterborne illnesses?",
+        "Are Pikitup workers the sole providers of waste collection and processing in Johannesburg?",
+        "Would placing separate waste bins in Makers Valley help tackle the problem of illegal dumping?",
+        "Does Johannesburg have an endless capacity for landfill waste?", 
+        "Is the City of Johannesburg and Pikitup spending more than Rand 80 million each year to manage illegal dumping?"
     };
 
     private static final boolean[] ANSWERS = {
-        true, false, false, true, true, true, true, true, true, true,
-        true, false, true, true, false, true, true, false, true, false,
-        true, false, false, true, false, true, true, true, true, true,
-        true, false, true, false, true, true, true, true, true, true,
-        true, false, true, true, true, true, true, true, true, true
+        true, false, true, true, false, true, true, false, true, false, true
+    };
+    
+    // Added detailed explanations for each answer
+    private static final String[] EXPLANATIONS = {
+        "The area generates around 0.8 kg per person daily, whereas the citywide average is 0.65 kg.",
+        "Only about 10% of the city's waste is processed or recycled.",
+        "Composting reduces landfill waste while also providing useful resources for agriculture.",
+        "The initiative encourages residents to separate waste for better recycling.",
+        "It remains a widespread problem, particularly in informal settlements and public areas.",
+        "They recover and recycle between 20-25% of recyclable materials daily.",
+        "The lack of proper waste management has led to a 25% increase in these health issues.",
+        "Informal waste collectors and composting initiatives also contribute significantly.",
+        "Providing designated bins for different types of waste can improve disposal habits and cleanliness.",
+        "The city's landfill space is running out and may reach full capacity in less than eight years.",
+        "Illegal dumping is a major financial burden, worsening the city's waste management problems."
     };
 
     public static void askQuestion(Player player, JTextArea gameLog, Runnable onCompleted) {
@@ -74,19 +51,22 @@ public class SpecialTask {
         
         SwingUtilities.invokeLater(() -> {
             int choice = JOptionPane.showConfirmDialog(
-                null, QUESTIONS[index], "BinNovaters Initiative", JOptionPane.YES_NO_OPTION
+                null, QUESTIONS[index], "BINOVATORS Initiative", JOptionPane.YES_NO_OPTION
             );
             
             boolean playerAnswer = (choice == JOptionPane.YES_OPTION);
             boolean correctAnswer = ANSWERS[index];
             
+            // Include the detailed explanation in the response
             if(playerAnswer == correctAnswer){
-                gameLog.append("Correct! " + player.getName() + " completes the special task.\n");
+                gameLog.append("Correct! " + (correctAnswer ? "Yes" : "No") + " - " + EXPLANATIONS[index] + "\n");
+                gameLog.append(player.getName() + " completes the special task successfully.\n");
                 
                 // Existing reward code...
                 
             } else {
-                gameLog.append("Incorrect. No reward for " + player.getName() + ".\n");
+                gameLog.append("Incorrect. The answer is " + (correctAnswer ? "Yes" : "No") + " - " + EXPLANATIONS[index] + "\n");
+                gameLog.append("No reward for " + player.getName() + ".\n");
             }
             
             // Call the completion callback
