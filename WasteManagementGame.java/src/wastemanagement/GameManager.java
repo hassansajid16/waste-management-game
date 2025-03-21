@@ -8,9 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import javax.swing.*;
 
-/**
- * The GameManager class handles the core game logic for the Waste Management Game
- */
+// The GameManager class handles the core game logic for the Waste Management Game
+
 public class GameManager {
     // Game components
     private ArrayList<Player> players;
@@ -42,9 +41,8 @@ private static final int GO_MONEY = 3000; // Increased from 2000
     private Map<Integer, Player> propertyOwners;
     private Random random = new Random();
 
-    /**
-     * Constructor for GameManager
-     */
+    // Constructor for GameManager
+     
     public GameManager(JTextArea gameLog, JLabel currentPlayerLabel, JLabel[] playerLabels, JPanel playerStatsPanel) {
         players = new ArrayList<>();
         board = new Board();
@@ -57,9 +55,8 @@ private static final int GO_MONEY = 3000; // Increased from 2000
         propertyOwners = new HashMap<>();
     }
 
-    /**
-     * Add a player to the game
-     */
+    // Add a player to the game
+     
     public void addPlayer(String name) {
         players.add(new Player(name));
     }
@@ -68,16 +65,13 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
     this.tilePanels = tilePanels;
 }
 
-    /**
-     * Get all players
-     */
+    // Get all players
+     
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
-    /**
-     * Get the current player
-     */
+    //Get the current player
     public Player getCurrentPlayer() {
         if (players.isEmpty()) {
             return null;
@@ -85,9 +79,7 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
         return players.get(currentPlayerIndex);
     }
 
-    /**
-     * Move to the next player's turn
-     */
+    //Move to next players turn
     public void nextTurn() {
         if (players.isEmpty()) {
             return;
@@ -103,9 +95,8 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
         updateAllPlayerStats();
     }
     
-    /**
-     * Update the display to highlight the current player
-     */
+    // Update the display to highlight the current player
+     
     public void updateCurrentPlayerDisplay() {
         if (players.isEmpty()) {
             return;
@@ -130,14 +121,12 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
         }
     }
     
-    /**
-     * Update the statistics panel for all players
-     */
+    // Update the statistics panel for all players
     public void updateAllPlayerStats() {
         // Clear the stats panel
         playerStatsPanel.removeAll();
         
-        // Add a header
+        //Header
         JLabel headerLabel = new JLabel("Player Statistics", SwingConstants.CENTER);
         headerLabel.setFont(new Font("Arial", Font.BOLD, 14));
         headerLabel.setForeground(Color.WHITE);
@@ -197,25 +186,19 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
         playerStatsPanel.repaint();
     }
 
-    /**
-     * Calculate property price based on position
-     */
+    // Road price based on position
     private int getPropertyPrice(int position) {
         // Make properties progressively more expensive around the board
         return PROPERTY_BASE_PRICE + (position * 20);
     }
 
-    /**
-     * Calculate rent based on position
-     */
+    //Rent based on position
     private int getPropertyRent(int position) {
         // Base rent plus position factor
         return PROPERTY_BASE_RENT + (position * 10);
     }
 
-    /**
-     * Check if a player has completed their objectives
-     */
+    //Check to see if a player has completed all objectives
     // Update the checkObjectiveCompletion method
 private void checkObjectiveCompletion(Player player) {
     // Check role-specific objective
@@ -246,10 +229,9 @@ private void checkObjectiveCompletion(Player player) {
         gameLog.append("CONGRATULATIONS! " + player.getName() + " has completed all objectives and won the game!\n");
     }
 }
-/**
- * Process waste deposits at the Waste Management Facility
- * Add this method to your GameManager class
- */
+//  Process waste deposits at the Waste Management Facility
+// Add this method to your GameManager class
+ 
 private void processWasteDeposits(Player player, JTextArea gameLog) {
     int recyclables = player.getRecyclables();
     int foodWaste = player.getFoodWaste();
