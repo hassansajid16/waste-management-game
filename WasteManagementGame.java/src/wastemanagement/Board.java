@@ -1,7 +1,8 @@
 package wastemanagement;
 
 public class Board {
-    public static final int BOARD_SIZE = 20; // Keep the same board size
+    // Board size
+    public static final int BOARD_SIZE = 20; 
     private Tile[] tiles;
 
     public Board() {
@@ -9,7 +10,7 @@ public class Board {
       
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (i == 0) {
-                // GO square - keep this unchanged
+                // Start square
                 tiles[i] = new Tile("Waste Management Facility", "StartSquare");
             } else {
                 // Alternating between SpecialTask and EcoChallenge
@@ -22,7 +23,7 @@ public class Board {
                     tileType = "EcoChallenge"; // Waste sorting game
                 }
                 
-                // Assign names to each position
+                // Assigning road names to each position
                 switch (i) {
                     case 1: tiles[i] = new Tile("Kimberely Road", tileType); break;
                     case 2: tiles[i] = new Tile("Gordon Road", tileType); break;
