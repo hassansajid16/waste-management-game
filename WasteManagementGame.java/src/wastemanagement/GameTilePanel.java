@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 
-/**
- * Custom panel that represents a game board tile and can display player tokens
- */
+/* Custom panel that represents a game board tile and can display player tokens */
 public class GameTilePanel extends JPanel {
     private String tileName;
     private String tileType;
