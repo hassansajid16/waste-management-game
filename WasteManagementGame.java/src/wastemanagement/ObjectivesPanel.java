@@ -3,9 +3,7 @@ package wastemanagement;
 import java.awt.*;
 import javax.swing.*;
 
-/**
- * Panel for displaying game objectives and player progress
- */
+//Panel for displaying game objectives and player progress
 public class ObjectivesPanel extends JPanel {
     private Player player;
     private JProgressBar ecoScoreBar;
@@ -47,7 +45,7 @@ public class ObjectivesPanel extends JPanel {
         objective1Label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         objective1Label.setForeground(Color.WHITE);
         
-        // Progress bar for objective 1 - shorter height and NO STRING PAINTED
+        // Progress bar for objective 1 - shorter height and no String Painted
         JProgressBar objective1Bar = player.getRole().equalsIgnoreCase("Business Owner")
             ? createCompactProgressBar(Color.GREEN, ECO_SCORE_THRESHOLD)
             : createCompactProgressBar(Color.BLUE, PUBLIC_INFLUENCE_THRESHOLD);
@@ -60,12 +58,12 @@ public class ObjectivesPanel extends JPanel {
             publicInfluenceBar.setValue(player.getPublicInfluence());
         }
         
-        // Objective 2 - Tasks (previously Properties) - CHANGED FROM "Props" TO "Tasks"
+        // Objective 2 - Tasks (previously Properties) - changed from props to tasks
         objective2Label = new JLabel("Tasks: " + player.getPropertyCount() + "/" + PROPERTY_THRESHOLD);
         objective2Label.setFont(new Font("Arial", Font.PLAIN, 11)); // Smaller font
         objective2Label.setForeground(Color.WHITE);
         
-        // Progress bar for objective 2 - shorter height and NO STRING PAINTED
+        // Progress bar for objective 2 - shorter height and no string painted
         propertiesBar = createCompactProgressBar(new Color(255, 165, 0), PROPERTY_THRESHOLD);
         propertiesBar.setValue(player.getPropertyCount());
         
@@ -84,9 +82,7 @@ public class ObjectivesPanel extends JPanel {
         add(contentPanel, BorderLayout.CENTER);
     }
     
-    /**
-     * Create a compact progress bar with reduced height and no string painted
-     */
+    //Create a compact progress bar with reduced height and no string painted
     private JProgressBar createCompactProgressBar(Color foreground, int maximum) {
         JProgressBar bar = new JProgressBar(0, maximum);
         bar.setValue(0);
@@ -100,9 +96,7 @@ public class ObjectivesPanel extends JPanel {
         return bar;
     }
     
-    /**
-     * Update the progress bars and labels with current player data
-     */
+    //Update the progress bars and labels with current player data
     public void updateProgress() {
         if (player.getRole().equalsIgnoreCase("Business Owner")) {
             int ecoScore = player.getEcoScore();
