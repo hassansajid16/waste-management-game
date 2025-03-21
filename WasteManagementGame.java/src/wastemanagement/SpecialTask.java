@@ -80,9 +80,7 @@ public class SpecialTask {
     public static void askQuestion(Player player, JTextArea gameLog) {
         askQuestion(player, gameLog, null);
     }
-    /**
-     * Launches the waste sorting mini-game
-     */
+    //Launches the waste sorting game
     private static void launchWasteSortingGame(Player player, JTextArea gameLog) {
         gameLog.append("\n " + player.getName() + " has encountered a Waste Sorting Challenge!\n");
         gameLog.append("Sort the waste items correctly to earn rewards.\n");

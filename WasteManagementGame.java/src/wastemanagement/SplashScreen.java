@@ -6,9 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.*;
 
-/**
- * Splash screen that displays when the game first launches
- */
+//Splash screen that displays when the game first launches
 public class SplashScreen extends JFrame {
     private static final long serialVersionUID = 1L;
     
@@ -23,15 +21,14 @@ public class SplashScreen extends JFrame {
     private Color accentColor = new Color(89, 116, 89);  // Accent color
     private Color buttonColor = new Color(173, 216, 230);  // Light blue for buttons
     
-    /**
-     * Constructor
-     */
+    //Constructor
     public SplashScreen() {
         // Setup frame
         setTitle("Waste Management Game");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);  // Center on screen
+         // Center on screen
+        setLocationRelativeTo(null); 
         
         // Setup UI
         setupUI();
@@ -40,9 +37,7 @@ public class SplashScreen extends JFrame {
         setVisible(true);
     }
     
-    /**
-     * Setup the UI components
-     */
+    //Setup the UI components
     private void setupUI() {
         // Main panel with gradient background
         mainPanel = new JPanel() {
