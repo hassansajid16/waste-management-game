@@ -52,9 +52,8 @@ public class WasteSortingLauncher {
         public static void launchSortingGame(Player player, JTextArea gameLog) {
             launchSortingGame(player, gameLog, null);
         }
-    /**
-     * Provides default rewards when game fails to launch
-     */
+    //  Provides default rewards when game fails to launch
+     
     private static void provideDefaultRewards(Player player, JTextArea gameLog) {
         gameLog.append("Waste Sorting game couldn't launch. " + player.getName() + " receives default rewards.\n");
         player.collectWaste("recyclables");
@@ -70,7 +69,6 @@ public class WasteSortingLauncher {
             player.increasePublicInfluence(2);
             gameLog.append(player.getName() + " gained 2 Public Influence points.\n");
         }
-        
         // Show message to player
         JOptionPane.showMessageDialog(null,
             "Unfortunately, the Waste Sorting mini-game could not be launched.\n" +
