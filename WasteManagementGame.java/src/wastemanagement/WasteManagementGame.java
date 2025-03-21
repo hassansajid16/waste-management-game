@@ -7,11 +7,9 @@ import java.util.Map;
 import java.util.Random;
 import javax.swing.*;
 
-/**
- * Main Game Class for the Waste Management Game
- * This represents a Monopoly-style board game that simulates
- * waste management challenges in Makers Valley, Johannesburg
- */
+//   Main Game Class for the Waste Management Game
+//  This represents a Monopoly-style board game that simulates
+// waste management challenges in Makers Valley, Johannesburg
 public class WasteManagementGame extends JFrame {
     // Game constants
     private static final long serialVersionUID = 1L;
@@ -43,9 +41,7 @@ public class WasteManagementGame extends JFrame {
     private int gameSeconds = 0;
     private boolean gameEnded = false;
     
-    /**
-     * Constructor with players and player colors
-     */
+    //Constructor with players and player colors
     public WasteManagementGame(ArrayList<Player> players, Map<String, Color> playerColors) {
         // Setup basic window properties
         setTitle("Makers Valley Waste Management Game");
@@ -75,16 +71,13 @@ public class WasteManagementGame extends JFrame {
         setVisible(true);
     }
     
-    /**
-     * Constructor with just players (creates default colors)
-     */
+    //Constructor with just players (creates default colors)
+      
     public WasteManagementGame(ArrayList<Player> players) {
         this(players, createDefaultPlayerColors(players));
     }
     
-    /**
-     * Setup all UI components
-     */
+    //Setup all UI components
     private void setupUI() {
         // Setup UI components in proper order
         setupLeftSidebar();
@@ -154,9 +147,7 @@ playerStatsPanel.repaint();
 
 
     
-    /**
-     * Setup the left sidebar with player information
-     */
+    //Setup the left sidebar with player information
     private void setupLeftSidebar() {
         // Create left sidebar panel
         JPanel leftSidebar = new JPanel();
@@ -297,9 +288,7 @@ playerStatsPanel.repaint();
         add(leftSidebar, BorderLayout.WEST);
     }
     
-    /**
-     * Setup the game board (center panel)
-     */
+    //Setup the game board (center panel)
     private void setupGameBoard() {
         // Main layout panel
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
@@ -418,9 +407,7 @@ playerStatsPanel.repaint();
         add(rightSidebar, BorderLayout.EAST);
     }
     
-    /**
-     * Setup the bottom control panel
-     */
+    //Setup the bottom control panel
     private void setupBottomPanel() {
         // Create bottom panel
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
@@ -447,9 +434,7 @@ playerStatsPanel.repaint();
         add(bottomPanel, BorderLayout.SOUTH);
     }
     
-    /**
-     * Setup the objectives panel
-     */
+    //Setup the objectives panel
   
         private void setupObjectivesPanel() {
             objectivesContainer.removeAll();
@@ -458,9 +443,7 @@ playerStatsPanel.repaint();
         }
     
 
-    /**
-     * Setup the game timer
-     */
+    //Setup the game timer
     private void setupGameTimer() {
         gameTimer = new Timer(1000, e -> {
             gameSeconds++;
@@ -469,9 +452,7 @@ playerStatsPanel.repaint();
         gameTimer.start();
     }
     
-    /**
-     * Update the timer label with current game time
-     */
+    //Update the timer label with current game time
     private void updateTimerLabel() {
         int minutes = gameSeconds / 60;
         int seconds = gameSeconds % 60;
@@ -605,9 +586,7 @@ public void handleNextTurn() {
     updatePlayerStats();
 }
 
-    /**
-     * Set the dice image for a specific value
-     */
+    //Set the dice image for a specific value
     private void setDiceImage(int value) {
         diceImage.setIcon(null);
         diceImage.setText(String.valueOf(value));
@@ -621,9 +600,7 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
     this.tilePanels = tilePanels;
 }
 
-    /**
-     * Check if a player has won the game
-     */
+    //Check if a player has won the game
     private void checkForWinner(Player player) {
         if (player.hasCompletedAllObjectives() && !gameEnded) {
             gameEnded = true;
@@ -639,9 +616,7 @@ public void setTilePanels(GameTilePanel[] tilePanels) {
         }
     }
     
-    /**
-     * Show the end game results with a future headlines feature
-     */
+    //Show the end game results with a future headlines feature
     // Add this method to your WasteManagementGame class to create a scrolling headlines animation
 private void showEndGameResults(Player winner) {
     // Stop the timer
@@ -968,9 +943,7 @@ private void showGameHelp() {
         JOptionPane.INFORMATION_MESSAGE
     );
 }
-    /**
-     * Confirm if the player wants to end the game
-     */
+    //Confirm if the player wants to end the game
     private void confirmEndGame() {
         int choice = JOptionPane.showConfirmDialog(this,
             "Are you sure you want to end the game?",
@@ -986,10 +959,7 @@ private void showGameHelp() {
             showEndGameResults(bestPlayer);
         }
     }
-    
-    /**
-     * Find the player with the best progress toward objectives
-     */
+    //Find the player with the best progress toward objectives
     private Player findBestPlayer() {
         Player bestPlayer = players.get(0);
         int bestScore = calculatePlayerScore(bestPlayer);
@@ -1007,9 +977,7 @@ private void showGameHelp() {
         return bestPlayer;
     }
     
-    /**
-     * Calculate a score to compare players' progress
-     */
+    //Calculate a score to compare players' progress
     private int calculatePlayerScore(Player player) {
         int score = 0;
         
@@ -1038,9 +1006,7 @@ private void showGameHelp() {
         return score;
     }
     
-    /**
-     * Helper method to create default colors if none provided
-     */
+    //Helper method to create default colors if none provided
     private static Map<String, Color> createDefaultPlayerColors(ArrayList<Player> players) {
         Map<String, Color> colors = new HashMap<>();
         Color[] defaultColors = {
@@ -1057,9 +1023,7 @@ private void showGameHelp() {
         return colors;
     }
     
-    /**
-     * Helper method to assign colors to players
-     */
+    //Helper method to assign colors to players
     private void assignColorsToPlayers(ArrayList<Player> players, Map<String, Color> colors) {
         for (Player player : players) {
             // Get color directly by player name
@@ -1073,9 +1037,7 @@ private void showGameHelp() {
         }
     }
     
-    /**
-     * Get game log text area
-     */
+    //Get game log text area
     public JTextArea getGameLog() {
         return gameLog;
     }
@@ -1099,9 +1061,7 @@ public void updatePlayerStats() {
         }
     }
 }
-    /**
-     * Clean up resources when the game closes
-     */
+    //Clean up resources when the game closes
     @Override
     public void dispose() {
         if (gameTimer != null) {
@@ -1110,13 +1070,10 @@ public void updatePlayerStats() {
         super.dispose();
     }
     
-    /**
-     * Main method for testing
-     */
+    //Main method for testing
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             ArrayList<Player> testPlayers = new ArrayList<>();
-            
             
             
             Player p1 = new Player("Alice");
