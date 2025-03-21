@@ -11,10 +11,9 @@ import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
-/**
- * An improved mini-game that allows players to sort waste items into appropriate bins.
- * Includes proper validation and feedback for bin selections.
- */
+//An improved mini-game that allows players to sort waste items into appropriate bins.
+// Includes proper validation and feedback for bin selections.
+
 public class WasteSortingGame extends JFrame {
     // Constants
     private static final int GAME_DURATION = 60; // Game duration in seconds
@@ -73,9 +72,8 @@ public class WasteSortingGame extends JFrame {
         }
     }
     
-    /**
-     * Creates a new waste sorting game for the specified player with callback
-     */
+    // Creates a new waste sorting game for the specified player with callback
+    
     public WasteSortingGame(Player player, JTextArea gameLog, Runnable onCompletedCallback) {
         super("Waste Sorting Challenge");
         System.out.println("Creating Waste Sorting game for player: " + player.getName());
@@ -109,16 +107,13 @@ public class WasteSortingGame extends JFrame {
         }
     }
     
-    /**
-     * Creates a new waste sorting game for the specified player (original constructor)
-     */
+    // Creates a new waste sorting game for the specified player (original constructor)
+   
     public WasteSortingGame(Player player, JTextArea gameLog) {
         this(player, gameLog, null);
     }
     
-    /**
-     * Sets up the waste item data for the game
-     */
+    //Sets up the waste item data for the game
     private void setupGameData() {
         // Recyclable items
         addWasteItem("Plastic Bottle", WasteCategory.RECYCLABLE);
@@ -157,17 +152,13 @@ public class WasteSortingGame extends JFrame {
         addWasteItem("Pesticides", WasteCategory.HAZARDOUS);
     }
     
-    /**
-     * Helper method to add waste items and build the item-category map
-     */
+    //Helper method to add waste items and build the item-category map
     private void addWasteItem(String name, WasteCategory category) {
         wasteItems.add(new WasteItem(name, category));
         itemCategoryMap.put(name, category);
     }
     
-    /**
-     * Sets up the user interface for the game
-     */
+    //Sets up the user interface for the game
     private void setupUI() {
         // Main panel
         gamePanel = new JPanel(new BorderLayout(10, 10));
@@ -283,9 +274,7 @@ public class WasteSortingGame extends JFrame {
         });
     }
     
-    /**
-     * Creates a styled button for a waste bin
-     */
+    //Creates a styled button for a waste bin
     private JButton createBinButton(String name, Color color, WasteCategory category) {
         JButton button = new JButton(name);
         button.setFont(new Font("Arial", Font.BOLD, 14));
@@ -307,9 +296,7 @@ public class WasteSortingGame extends JFrame {
         return button;
     }
     
-    /**
-     * Starts the waste sorting game
-     */
+    //Starts the waste sorting game
     private void startGame() {
         // Show the first waste item
         showNextItem();
@@ -332,9 +319,7 @@ public class WasteSortingGame extends JFrame {
         }, 1000, 1000);
     }
     
-    /**
-     * Updates the time remaining label
-     */
+    //Updates the time remaining label
     private void updateTimeLabel() {
         SwingUtilities.invokeLater(() -> {
             timeLabel.setText("Time: " + timeRemaining + "s");
@@ -346,9 +331,7 @@ public class WasteSortingGame extends JFrame {
         });
     }
     
-    /**
-     * Displays the next random waste item
-     */
+    //Displays the next random waste item
     private void showNextItem() {
         if (wasteItems.size() > 0) {
             int index = random.nextInt(wasteItems.size());
@@ -364,9 +347,7 @@ public class WasteSortingGame extends JFrame {
         }
     }
     
-    /**
-     * Reset all bin buttons to their default style
-     */
+    //Reset all bin buttons to their default style
     private void resetBinButtonStyles() {
         recyclablesButton.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.BLACK),

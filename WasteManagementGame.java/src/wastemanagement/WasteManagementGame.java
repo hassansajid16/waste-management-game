@@ -1002,7 +1002,6 @@ private void showGameHelp() {
         if (player.hasCompletedObjective2()) {
             score += 30;
         }
-        
         return score;
     }
     
