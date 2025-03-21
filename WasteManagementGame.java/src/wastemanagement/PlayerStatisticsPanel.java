@@ -5,9 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Panel for displaying player statistics with objectives integrated
- */
+// Panel for displaying player statistics with objectives integrated
 public class PlayerStatisticsPanel extends JPanel {
     private Player player;
     private JLabel positionLabel;
@@ -169,9 +167,8 @@ public class PlayerStatisticsPanel extends JPanel {
         add(separator);
     }
     
-    /**
-     * Update the panel with the player's current information
-     */
+    //Update the panel with the player's current information
+    
     public void update() {
         // Update all labels with current player data - Fixed to match constructor labels
         positionLabel.setText("Pos: " + player.getPosition());
