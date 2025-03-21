@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 
-/**
- * The login screen for player setup
- */
+//Login screen for player setup
 public class Login extends JFrame {
     private ArrayList<Player> players = new ArrayList<>();
     private int currentPlayerIndex = 0;
@@ -45,9 +43,8 @@ public class Login extends JFrame {
     private ImageIcon logoIcon;
     private ImageIcon[] roleIcons;
 
-    /**
-     * Constructor for the login screen
-     */
+    //Constructor for login
+
     public Login() {
         // Setup frame properties
         setTitle("Waste Management Game - Player Setup");
@@ -65,9 +62,7 @@ public class Login extends JFrame {
         setVisible(true);
     }
     
-    /**
-     * Load images for the UI
-     */
+    // Images for UI
     private void loadImages() {
         try {
             // Try to load images from resources
@@ -84,9 +79,7 @@ public class Login extends JFrame {
         }
     }
     
-    /**
-     * Create an icon from text
-     */
+    //Icon from text
     private ImageIcon createIconFromText(String text, Font font, Color textColor) {
         // Create a label with the text
         JLabel label = new JLabel(text);
@@ -112,9 +105,7 @@ public class Login extends JFrame {
         return new ImageIcon(image);
     }
     
-    /**
-     * Setup the main UI
-     */
+    //Set up the main UI
     private void setupUI() {
         // Main content panel with background
         mainPanel = new JPanel(new BorderLayout(0, 10));
@@ -134,9 +125,7 @@ public class Login extends JFrame {
         setContentPane(mainPanel);
     }
     
-    /**
-     * Setup the header panel
-     */
+    //Set up the header panel
     private void setupHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(headerColor);
@@ -169,9 +158,7 @@ public class Login extends JFrame {
         mainPanel.add(headerPanel, BorderLayout.NORTH);
     }
     
-    /**
-     * Setup the content panel
-     */
+    //Set up the content panel
     private void setupContentPanel() {
         JPanel contentPanel = new JPanel(new BorderLayout(20, 0));
         contentPanel.setOpaque(false);
@@ -190,9 +177,7 @@ public class Login extends JFrame {
         mainPanel.add(contentPanel, BorderLayout.CENTER);
     }
     
-    /**
-     * Create panel for setting up current player
-     */
+    //Create panel for setting up current player
     private JPanel createCurrentPlayerPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 15));
         panel.setOpaque(false);
@@ -212,9 +197,7 @@ public class Login extends JFrame {
         return panel;
     }
     
-    /**
-     * Refresh the current player card
-     */
+    //Refresh the current player card
     private void refreshCurrentPlayerCard() {
         currentPlayerCardPanel.removeAll();
         currentPlayerCardPanel.setLayout(new BorderLayout(10, 15));
@@ -323,9 +306,7 @@ public class Login extends JFrame {
         currentPlayerCardPanel.repaint();
     }
     
-    /**
-     * Create a button for color selection
-     */
+    //Create a button for color selection
     private JButton createColorButton(Color color) {
         final int SIZE = 37;
         
@@ -341,9 +322,7 @@ public class Login extends JFrame {
         return button;
     }
     
-    /**
-     * Get the name of a color
-     */
+    //Get the name of a color
     private String getColorName(Color color) {
         if (color.equals(new Color(65, 105, 225))) return "Blue";
         if (color.equals(new Color(220, 20, 60))) return "Red";
@@ -352,9 +331,7 @@ public class Login extends JFrame {
         return "Unknown";
     }
     
-    /**
-     * Create panel for registered players
-     */
+    //Create panel for registered players
     private JPanel createRegisteredPlayersPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setPreferredSize(new Dimension(250, 400));
@@ -386,9 +363,7 @@ public class Login extends JFrame {
         return panel;
     }
     
-    /**
-     * Setup the navigation panel
-     */
+    //Setup the navigation panel
     private void setupNavigationPanel() {
         JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         navPanel.setOpaque(false);
@@ -408,9 +383,7 @@ public class Login extends JFrame {
         mainPanel.add(navPanel, BorderLayout.SOUTH);
     }
     
-    /**
-     * Create a navigation button
-     */
+    //Create a navigation button
     private JButton createNavigationButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 14));
@@ -424,9 +397,7 @@ public class Login extends JFrame {
         return button;
     }
     
-    /**
-     * Select a color for the current player
-     */
+    //Select a color for the current player
     private void selectPlayerColor(String colorName, Color color) {
         // Validate name
         String name = nameField.getText().trim();
@@ -481,9 +452,7 @@ public class Login extends JFrame {
         refreshCurrentPlayerCard();
     }
     
-    /**
-     * Add a player card to the registered players panel
-     */
+    //Add a player card to the registered players panel
     private void addPlayerCard(Player player, Color playerColor) {
         JPanel card = new JPanel(new BorderLayout(10, 0));
         card.setBackground(new Color(45, 55, 45));
@@ -537,9 +506,7 @@ public class Login extends JFrame {
         playerCardsPanel.repaint();
     }
     
-    /**
-     * Start the game with the registered players
-     */
+    //Start the game with the registered players
     private void startGame() {
         if (players.size() >= 2) {
             // Log the players and their colors
