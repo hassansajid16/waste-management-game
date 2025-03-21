@@ -6,9 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 
-/**
- * Manages the game board display and player token movements
- */
+// Manages the game board display and player token movements
+ 
 public class GameBoardManager {
     private JPanel boardPanel;
     private ArrayList<Player> players;
@@ -42,14 +41,14 @@ public class GameBoardManager {
         Board board = new Board();
         tilePanels = new GameTilePanel[Board.BOARD_SIZE];
         
-        // Create tile panels
+        // Tile panels
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             Tile tile = board.getTile(i);
             tilePanels[i] = new GameTilePanel(tile.getName(), tile.getType(), i);
             boardPanel.add(tilePanels[i]);
         }
         
-        // Add all players to start position
+        // All players on start position
         for (Player player : players) {
             tilePanels[0].addPlayerToken(player);
         }
@@ -63,9 +62,7 @@ public class GameBoardManager {
         return boardPanel;
     }
     
-    /**
-     * Move a player to a new position
-     */
+    //Player movement to new position
     public void movePlayer(Player player, int newPosition) {
         if (player == null) {
             System.err.println("Error: Attempted to move null player");
@@ -111,15 +108,13 @@ public class GameBoardManager {
                          tilePanels[newPosition].getPlayerTokenCount());
     }
     
-    /**
-     * Highlight a specific tile on the board
-     */
+    //  Highlighting specific tile on the board
     public void highlightTile(int position) {
         if (position < 0 || position >= Board.BOARD_SIZE) {
             System.err.println("Error: Attempted to highlight invalid position " + position);
             return;
         }
-        
+
         // Reset all highlights
         for (GameTilePanel tilePanel : tilePanels) {
             tilePanel.setHighlighted(false);
@@ -132,9 +127,8 @@ public class GameBoardManager {
         System.out.println("Highlighted position: " + position);
     }
     
-    /**
-     * Reset all player positions to start
-     */
+    // Reset all player positions to start
+    
     public void resetPlayerPositions() {
         // Clear all player tokens from tiles
         for (GameTilePanel tilePanel : tilePanels) {
@@ -160,9 +154,8 @@ public class GameBoardManager {
         System.out.println("Player tokens at position 0: " + tilePanels[0].getPlayerTokenCount());
     }
     
-    /**
-     * Update player positions based on their current game state
-     */
+    //Update player positions based on their current game state
+    
     public void refreshPlayerPositions() {
         // Clear all tiles first
         for (GameTilePanel tile : tilePanels) {
