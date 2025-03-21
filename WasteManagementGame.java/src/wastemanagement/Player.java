@@ -13,7 +13,7 @@ public class Player {
     private String role;
     private Color playerColor;
     
-    // New properties for Monopoly-style gameplay
+    // New properties for gameplay
     private List<Integer> ownedProperties;
     private int ecoScore;
     private int publicInfluence;
@@ -120,7 +120,7 @@ public class Player {
         cash += money;
     }
     
-    // New methods for Monopoly-style gameplay
+    // New methods for gameplay
     
     public boolean ownsProperty(int propertyPosition) {
         return ownedProperties.contains(propertyPosition);
