@@ -2,14 +2,14 @@ package wastemanagement;
 
 import java.awt.*;
 
-/**
- * Represents a player's token on the game board
- */
+//Represents a player's token on the game board
 public class PlayerToken {
     private Player player;
     private Color color;
-    private int size = 20; // Default size of the token
-    private int offsetX = 0; // For positioning multiple tokens on the same tile
+    // Default size of the token
+    private int size = 20; 
+    // For positioning multiple tokens on the same tile
+    private int offsetX = 0; 
     private int offsetY = 0;
 
     public PlayerToken(Player player, Color color) {
@@ -29,10 +29,7 @@ public class PlayerToken {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
     }
-
-    /**
-     * Draws the player token on a given graphics context
-     */
+    //Draws the player token on a given graphics context
     public void draw(Graphics2D g2d, int x, int y) {
         // Save original settings
         Stroke originalStroke = g2d.getStroke();
